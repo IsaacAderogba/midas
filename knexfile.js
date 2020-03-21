@@ -1,4 +1,5 @@
 // Todo - investigate __dirname
+// TODO - create PROCFILE so heroku runs knex migrate:latest
 module.exports = {
   development: {
     client: "pg",
