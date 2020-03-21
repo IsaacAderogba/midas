@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "concurrently redis-server \"npm run server\" \"npm run client\"",
+    "test": "concurrently \"npm run test-server\" \"npm run test-client\"",
     "start": "node index.js",
     "server": "nodemon index.js",
-    "dev": "concurrently redis-server \"npm run server\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "client": "npm start --prefix client",
+    "test-server": "jest --watch",
+    "test-client": "npm test --prefix client"
   },
   "keywords": [],
   "author": "",
@@ -20,9 +23,9 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "graphql": "^14.6.0",
     "helmet": "^3.21.3",
     "ioredis": "^4.16.0",
+    "jest": "^25.1.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.12",
     "nexus": "^0.12.0-rc.14",

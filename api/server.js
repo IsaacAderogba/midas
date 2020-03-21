@@ -1,4 +1,5 @@
 // TODO - review helmet and cors
+// TODO - allow signup with google etc. (see Tandem)
 require("dotenv").config();
 require("../services/redis");
 const cors = require("cors");
