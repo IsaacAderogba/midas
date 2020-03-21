@@ -1,10 +1,15 @@
+// TODO - review helmet and cors
 require("dotenv").config();
 require("../services/redis");
+const cors = require("cors");
+const helmet = require("helmet");
 const { makeSchema } = require("nexus");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 
-const app = express();
+const server = express();
+
+// schema setup
 const schema = makeSchema({
   types: [],
   outputs: {
@@ -13,8 +18,12 @@ const schema = makeSchema({
   }
 });
 
-app.use(express.json());
-const server = new ApolloServer({ schema });
-server.applyMiddleware({ app });
+// server middlewares
+server.use(helmet());
+server.use(cors());
+server.use(express.json());
 
-module.exports = app;
+const apolloServer = new ApolloServer({ schema });
+apolloServer.applyMiddleware({ app: server });
+
+module.exports = server;
