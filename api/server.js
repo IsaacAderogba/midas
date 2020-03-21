@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const { makeSchema } = require("nexus");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
+const path = require("path");
 
 const server = express();
 
@@ -26,5 +27,10 @@ server.use(express.json());
 
 const apolloServer = new ApolloServer({ schema });
 apolloServer.applyMiddleware({ app: server });
+
+server.use(express.static("public"));
+server.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "public", "index.html"));
+});
 
 module.exports = server;
