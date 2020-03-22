@@ -2,7 +2,7 @@
   "name": "midas",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "dev": "concurrently redis-server \"npm run server\" \"npm run client\"",
     "test": "concurrently \"npm run test-server\" \"npm run test-client\"",
@@ -10,7 +10,8 @@
     "server": "nodemon index.js",
     "client": "npm start --prefix client",
     "test-server": "jest --watch",
-    "test-client": "npm test --prefix client"
+    "test-client": "npm test --prefix client",
+    "electron": "concurrently \"npm run dev\" \"nodemon --exec 'electron .'\""
   },
   "keywords": [],
   "author": "",
@@ -32,6 +33,7 @@
     "pg": "^7.18.2"
   },
   "devDependencies": {
+    "electron": "^8.1.1",
     "eslint": "^6.8.0"
   }
 }
