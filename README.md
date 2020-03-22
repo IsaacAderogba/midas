@@ -80,3 +80,6 @@ From root folder
 
     Starts server and client using concurrently
     $ npm run dev
+
+    Starts server, client and electron instance
+    $ npm run electron
