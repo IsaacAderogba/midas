@@ -2,6 +2,26 @@
 ### Do not make changes to this file directly
 
 
+type AuthUser {
+  avatarURL: String
+  firstName: String!
+  lastName: String!
+  token: String!
+  userId: ID!
+}
+
+type Mutation {
+  registerUser(userInput: UserInput): AuthUser
+}
+
 type Query {
   helloWorld: String!
+}
+
+input UserInput {
+  avatarURL: String
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
 }

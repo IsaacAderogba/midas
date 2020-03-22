@@ -1,5 +1,7 @@
 const { userQueryKeys } = require("./userUtils");
-const { extendType } = require("nexus");
+const { extendType, arg } = require("nexus");
+const { AuthUser, UserInput } = require("./userTypes");
+const UserController = require("./userControllers");
 
 const Query = extendType({
   type: "Query",
@@ -14,6 +16,24 @@ const Query = extendType({
   }
 });
 
+const Mutation = extendType({
+  type: "Mutation",
+  definition(t) {
+    t.field("registerUser", {
+      type: AuthUser,
+      nullable: true,
+      args: {
+        userInput: arg({ type: UserInput })
+      },
+      resolve: async (parent, args) => {
+        const user = await UserController.registerUser(args.userInput);
+        return user;
+      }
+    });
+  }
+});
+
 module.exports = {
-  userQuery: Query
+  userQuery: Query,
+  userMutation: Mutation
 };

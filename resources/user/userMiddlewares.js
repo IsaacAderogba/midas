@@ -1,3 +1,4 @@
+// Todo - write middleware to check for user existence
 const { userQueryKeys } = require("./userUtils");
 
 async function logUserMiddleware(resolve, parent, args, context, info) {
