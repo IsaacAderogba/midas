@@ -33,7 +33,7 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 
 export interface NexusGenFieldTypes {
   Query: { // field return type
-    ok: boolean; // Boolean!
+    helloWorld: string; // String!
   }
 }
 
