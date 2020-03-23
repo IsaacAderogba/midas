@@ -1,10 +1,8 @@
-const {
-  userMiddlewares: { userMiddleware },
-  userResolvers: { userQuery, userMutation }
-} = require("./user");
+const { UserMiddleware } = require("./user/userMiddlewares");
+const { UserQuery, UserMutation } = require("./user/userResolvers");
 
 module.exports = {
-  Query: [userQuery],
-  Mutation: [userMutation],
-  Middleware: [userMiddleware]
+  Query: [UserQuery],
+  Mutation: [UserMutation],
+  Middleware: [UserMiddleware]
 };

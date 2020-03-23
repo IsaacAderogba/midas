@@ -10,14 +10,14 @@ function logUser() {
   return { user: "Isaac" };
 }
 
-const userMiddleware = {
+const UserMiddleware = {
   Query: {
     [userQueryKeys.helloWorld]: logUserMiddleware
   }
 };
 
 module.exports = {
-  userMiddleware,
+  UserMiddleware,
   logUserMiddleware,
   logUser
 };

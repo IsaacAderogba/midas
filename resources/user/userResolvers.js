@@ -1,7 +1,6 @@
 const { userQueryKeys } = require("./userUtils");
 const { extendType, arg } = require("nexus");
 const { AuthUser, UserInput } = require("./userTypes");
-const UserController = require("./userControllers");
 
 const Query = extendType({
   type: "Query",
@@ -25,8 +24,8 @@ const Mutation = extendType({
       args: {
         userInput: arg({ type: UserInput })
       },
-      resolve: async (parent, args) => {
-        const user = await UserController.registerUser(args.userInput);
+      resolve: async (parent, args, { dataSources }) => {
+        const user = await dataSources.userAPI.registerUser(args.userInput);
         return user;
       }
     });
@@ -34,6 +33,6 @@ const Mutation = extendType({
 });
 
 module.exports = {
-  userQuery: Query,
-  userMutation: Mutation
+  UserQuery: Query,
+  UserMutation: Mutation
 };
