@@ -17,6 +17,7 @@ input LoginInput {
 }
 
 type Mutation {
+  deleteUser: User
   registerUser(registerInput: RegisterInput): AuthUser
   updateUser(userInput: UserInput): User
 }

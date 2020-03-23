@@ -57,7 +57,16 @@ class UserAPI extends SQLDataSource {
     }
   }
 
-  async deleteUser() {}
+  async deleteUser(whereObj) {
+    const userToBeDeleted = await this._readUser(whereObj);
+    try {
+      await this._deleteUser(whereObj);
+      return userToBeDeleted;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
   async updateUser(whereObj, user) {
     await this._updateUser(whereObj, user);
     return await this._readUser(whereObj);

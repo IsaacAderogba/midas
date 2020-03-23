@@ -67,8 +67,13 @@ const Mutation = extendType({
         );
       }
     });
-
-    // delete user
+    t.field(userResolverKeys.deleteUser, {
+      type: User,
+      nullable: true,
+      resolve: async (parent, args, { dataSources, userId }) => {
+        return await dataSources.userAPI.deleteUser({ id: userId });
+      }
+    });
   }
 });
 

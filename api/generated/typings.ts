@@ -80,6 +80,7 @@ export interface NexusGenFieldTypes {
     userId: string; // ID!
   }
   Mutation: { // field return type
+    deleteUser: NexusGenRootTypes['User'] | null; // User
     registerUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
     updateUser: NexusGenRootTypes['User'] | null; // User
   }
