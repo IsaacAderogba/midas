@@ -11,8 +11,16 @@ const AuthUser = objectType({
   }
 });
 
-const UserInput = inputObjectType({
-  name: "UserInput",
+const LoginInput = inputObjectType({
+  name: "LoginInput",
+  definition(t) {
+    t.string("email", { required: true });
+    t.string("password", { required: true });
+  }
+});
+
+const RegisterInput = inputObjectType({
+  name: "RegisterInput",
   definition(t) {
     t.string("firstName", { required: true });
     t.string("lastName", { required: true });
@@ -24,5 +32,6 @@ const UserInput = inputObjectType({
 
 module.exports = {
   AuthUser,
-  UserInput
+  LoginInput,
+  RegisterInput
 };

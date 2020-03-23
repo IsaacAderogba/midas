@@ -1,8 +1,8 @@
+// TODO - Error Handling
 const bcrypt = require("bcryptjs");
 const { SQLDataSource } = require("datasource-sql");
 const { generateToken } = require("./userUtils");
 const { knexConfig } = require("../../db/dbConfig");
-
 
 const MINUTE = 60;
 const TABLE = "User";
@@ -32,7 +32,28 @@ class UserAPI extends SQLDataSource {
       console.log(err);
     }
   }
-  async loginUser() {}
+
+  async loginUser({ email, password }) {
+    const userDetails = await this._readUser({ email });
+    try {
+      if (
+        userDetails &&
+        (await bcrypt.compare(password, userDetails.password))
+      ) {
+        return {
+          userId: userDetails.id.toString(),
+          firstName: userDetails.firstName,
+          lastName: userDetails.lastName,
+          avatarURL: userDetails.avatarURL,
+          token: generateToken(userDetails)
+        };
+      }
+      return null;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async deleteUser() {}
   async updateUser() {}
   async getUser() {}

@@ -28,7 +28,6 @@
     "express": "^4.17.1",
     "graphql-middleware": "^4.0.2",
     "helmet": "^3.21.3",
-    "ioredis": "^4.16.0",
     "jest": "^24.9.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.12",

@@ -10,15 +10,21 @@ type AuthUser {
   userId: ID!
 }
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
 type Mutation {
-  registerUser(userInput: UserInput): AuthUser
+  registerUser(registerInput: RegisterInput): AuthUser
 }
 
 type Query {
   helloWorld: String!
+  loginUser(loginInput: LoginInput): AuthUser
 }
 
-input UserInput {
+input RegisterInput {
   avatarURL: String
   email: String!
   firstName: String!
