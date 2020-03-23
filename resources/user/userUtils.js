@@ -7,7 +7,9 @@ const userQueryKeys = {
 };
 
 const userResolverKeys = {
-  registerUser: "registerUser"
+  registerUser: "registerUser",
+  updateUser: "updateUser",
+  deleteUser: "deleteUser"
 };
 
 const generateToken = ({ id, firstName, lastName }) => {

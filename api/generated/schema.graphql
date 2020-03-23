@@ -18,6 +18,7 @@ input LoginInput {
 
 type Mutation {
   registerUser(registerInput: RegisterInput): AuthUser
+  updateUser(userInput: UserInput): User
 }
 
 type Query {
@@ -42,4 +43,12 @@ type User {
   isVerified: Boolean!
   lastName: String!
   photoId: Boolean
+}
+
+input UserInput {
+  avatarURL: String
+  firstName: String
+  isVerified: String
+  lastName: String
+  photoId: String
 }

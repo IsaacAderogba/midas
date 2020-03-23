@@ -25,6 +25,13 @@ export interface NexusGenInputs {
     lastName: string; // String!
     password: string; // String!
   }
+  UserInput: { // input type
+    avatarURL?: string | null; // String
+    firstName?: string | null; // String
+    isVerified?: string | null; // String
+    lastName?: string | null; // String
+    photoId?: string | null; // String
+  }
 }
 
 export interface NexusGenEnums {
@@ -60,6 +67,7 @@ export interface NexusGenRootTypes {
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   LoginInput: NexusGenInputs['LoginInput'];
   RegisterInput: NexusGenInputs['RegisterInput'];
+  UserInput: NexusGenInputs['UserInput'];
 }
 
 export interface NexusGenFieldTypes {
@@ -73,6 +81,7 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     registerUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
+    updateUser: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
     helloWorld: string; // String!
@@ -95,6 +104,9 @@ export interface NexusGenArgTypes {
     registerUser: { // args
       registerInput?: NexusGenInputs['RegisterInput'] | null; // RegisterInput
     }
+    updateUser: { // args
+      userInput?: NexusGenInputs['UserInput'] | null; // UserInput
+    }
   }
   Query: {
     loginUser: { // args
@@ -110,7 +122,7 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Query" | "User";
 
-export type NexusGenInputNames = "LoginInput" | "RegisterInput";
+export type NexusGenInputNames = "LoginInput" | "RegisterInput" | "UserInput";
 
 export type NexusGenEnumNames = never;
 

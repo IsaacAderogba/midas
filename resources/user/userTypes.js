@@ -44,9 +44,22 @@ const RegisterInput = inputObjectType({
   }
 });
 
+const UserInput = inputObjectType({
+  name: "UserInput",
+  definition(t) {
+    // exclude email and password from being updated for now
+    t.string("firstName", { required: false });
+    t.string("lastName", { required: false });
+    t.string("avatarURL", { required: false });
+    t.string("isVerified", { required: false });
+    t.string("photoId", { required: false });
+  }
+});
+
 module.exports = {
   AuthUser,
   User,
   LoginInput,
-  RegisterInput
+  RegisterInput,
+  UserInput
 };

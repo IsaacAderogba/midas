@@ -58,7 +58,10 @@ class UserAPI extends SQLDataSource {
   }
 
   async deleteUser() {}
-  async updateUser() {}
+  async updateUser(whereObj, user) {
+    await this._updateUser(whereObj, user);
+    return await this._readUser(whereObj);
+  }
   async getUser(whereObj) {
     return this._readUser(whereObj);
   }
