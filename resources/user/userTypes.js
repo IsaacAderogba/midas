@@ -8,6 +8,20 @@ const AuthUser = objectType({
     t.string("lastName");
     t.string("avatarURL", { nullable: true });
     t.string("token");
+    t.boolean("isVerified");
+  }
+});
+
+const User = objectType({
+  name: "User",
+  definition(t) {
+    t.id("id");
+    t.string("firstName");
+    t.string("lastName");
+    t.string("email");
+    t.string("avatarURL", { nullable: true });
+    t.boolean("isVerified");
+    t.boolean("photoId", { nullable: true });
   }
 });
 
@@ -32,6 +46,7 @@ const RegisterInput = inputObjectType({
 
 module.exports = {
   AuthUser,
+  User,
   LoginInput,
   RegisterInput
 };

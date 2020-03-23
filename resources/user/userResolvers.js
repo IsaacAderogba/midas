@@ -1,6 +1,6 @@
 const { userQueryKeys, userResolverKeys } = require("./userUtils");
 const { extendType, arg } = require("nexus");
-const { AuthUser, LoginInput, RegisterInput } = require("./userTypes");
+const { AuthUser, LoginInput, RegisterInput, User } = require("./userTypes");
 
 const Query = extendType({
   type: "Query",
@@ -24,6 +24,14 @@ const Query = extendType({
         });
       }
     });
+
+    t.field(userQueryKeys.user, {
+      type: User,
+      nullable: true,
+      resolve: async (parent, args, { dataSources, userId }) => {
+        return await dataSources.userAPI.getUser({ id: userId });
+      }
+    });
   }
 });
 
@@ -37,7 +45,7 @@ const Mutation = extendType({
         registerInput: arg({ type: RegisterInput })
       },
       resolve: async (parent, args, { dataSources }) => {
-        return await dataSources.userAPI.registerUser(args.userInput);
+        return await dataSources.userAPI.registerUser(args.registerInput);
       }
     });
   }

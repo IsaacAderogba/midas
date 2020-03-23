@@ -34,12 +34,22 @@ export interface NexusGenRootTypes {
   AuthUser: { // root type
     avatarURL?: string | null; // String
     firstName: string; // String!
+    isVerified: boolean; // Boolean!
     lastName: string; // String!
     token: string; // String!
     userId: string; // ID!
   }
   Mutation: {};
   Query: {};
+  User: { // root type
+    avatarURL?: string | null; // String
+    email: string; // String!
+    firstName: string; // String!
+    id: string; // ID!
+    isVerified: boolean; // Boolean!
+    lastName: string; // String!
+    photoId?: boolean | null; // Boolean
+  }
   String: string;
   Int: number;
   Float: number;
@@ -56,6 +66,7 @@ export interface NexusGenFieldTypes {
   AuthUser: { // field return type
     avatarURL: string | null; // String
     firstName: string; // String!
+    isVerified: boolean; // Boolean!
     lastName: string; // String!
     token: string; // String!
     userId: string; // ID!
@@ -66,6 +77,16 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     helloWorld: string; // String!
     loginUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
+    user: NexusGenRootTypes['User'] | null; // User
+  }
+  User: { // field return type
+    avatarURL: string | null; // String
+    email: string; // String!
+    firstName: string; // String!
+    id: string; // ID!
+    isVerified: boolean; // Boolean!
+    lastName: string; // String!
+    photoId: boolean | null; // Boolean
   }
 }
 
@@ -87,7 +108,7 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Query";
+export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Query" | "User";
 
 export type NexusGenInputNames = "LoginInput" | "RegisterInput";
 

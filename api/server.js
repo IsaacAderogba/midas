@@ -5,7 +5,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const { makeSchema } = require("nexus");
 const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer, PubSub } = require("apollo-server-express");
 const { applyMiddleware } = require("graphql-middleware");
 const { RedisCache } = require("apollo-server-cache-redis");
 const path = require("path");
@@ -31,7 +31,11 @@ server.use(express.json());
 const schemaWithMiddleware = applyMiddleware(schema, ...Middleware);
 const apolloServer = new ApolloServer({
   schema: schemaWithMiddleware,
-  context: async ({ req, res }) => ({ req, res }),
+  context: async ({ req }) => ({
+    req,
+    pubsub: new PubSub(),
+    userId: await UserAPI.authenticateUser(req)
+  }),
   cache: new RedisCache(process.env.REDIS_URL),
   dataSources: () => ({
     userAPI: UserAPI

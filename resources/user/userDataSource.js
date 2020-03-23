@@ -1,10 +1,11 @@
 // TODO - Error Handling
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { SQLDataSource } = require("datasource-sql");
 const { generateToken } = require("./userUtils");
 const { knexConfig } = require("../../db/dbConfig");
 
-const MINUTE = 60;
+// const MINUTE = 60;
 const TABLE = "User";
 
 class UserAPI extends SQLDataSource {
@@ -25,6 +26,7 @@ class UserAPI extends SQLDataSource {
           firstName: userDetails.firstName,
           lastName: userDetails.lastName,
           avatarURL: userDetails.avatarURL,
+          isVerified: userDetails.isVerified,
           token: generateToken(userDetails)
         };
       }
@@ -45,6 +47,7 @@ class UserAPI extends SQLDataSource {
           firstName: userDetails.firstName,
           lastName: userDetails.lastName,
           avatarURL: userDetails.avatarURL,
+          isVerified: userDetails.isVerified,
           token: generateToken(userDetails)
         };
       }
@@ -56,9 +59,26 @@ class UserAPI extends SQLDataSource {
 
   async deleteUser() {}
   async updateUser() {}
-  async getUser() {}
+  async getUser(whereObj) {
+    return this._readUser(whereObj);
+  }
 
-  _createUser(user) {
+  async authenticateUser(req) {
+    const token = req.headers.authorization;
+    if (token) {
+      try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await this._readUser({ id: decodedToken.userId });
+        if (user) return user.id;
+        return null;
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    return null;
+  }
+
+  async _createUser(user) {
     return this.knex(TABLE)
       .insert(user)
       .returning("id")
@@ -68,8 +88,7 @@ class UserAPI extends SQLDataSource {
   _readUser(whereObj) {
     return this.knex(TABLE)
       .where(whereObj)
-      .first()
-      .cache(MINUTE);
+      .first();
   }
 
   _updateUser(whereObj, user) {

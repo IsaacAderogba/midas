@@ -5,6 +5,7 @@
 type AuthUser {
   avatarURL: String
   firstName: String!
+  isVerified: Boolean!
   lastName: String!
   token: String!
   userId: ID!
@@ -22,6 +23,7 @@ type Mutation {
 type Query {
   helloWorld: String!
   loginUser(loginInput: LoginInput): AuthUser
+  user: User
 }
 
 input RegisterInput {
@@ -30,4 +32,14 @@ input RegisterInput {
   firstName: String!
   lastName: String!
   password: String!
+}
+
+type User {
+  avatarURL: String
+  email: String!
+  firstName: String!
+  id: ID!
+  isVerified: Boolean!
+  lastName: String!
+  photoId: Boolean
 }

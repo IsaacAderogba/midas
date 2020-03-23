@@ -2,7 +2,8 @@ const jwt = require("jsonwebtoken");
 
 const userQueryKeys = {
   helloWorld: "helloWorld",
-  loginUser: 'loginUser'
+  loginUser: "loginUser",
+  user: "user"
 };
 
 const userResolverKeys = {
