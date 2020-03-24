@@ -34,7 +34,7 @@ const apolloServer = new ApolloServer({
   context: async ({ req }) => ({
     req,
     pubsub: new PubSub(),
-    userId: await UserAPI.authenticateUser(req)
+    user: await UserAPI.authenticateUser(req)
   }),
   cache: new RedisCache(process.env.REDIS_URL),
   dataSources: () => ({

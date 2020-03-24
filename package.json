@@ -27,6 +27,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "graphql-middleware": "^4.0.2",
+    "graphql-shield": "^7.2.1",
     "helmet": "^3.21.3",
     "jest": "^24.9.0",
     "jsonwebtoken": "^8.5.1",

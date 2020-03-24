@@ -81,7 +81,11 @@ class UserAPI extends SQLDataSource {
       try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const user = await this._readUser({ id: decodedToken.userId });
-        if (user) return user.id;
+        if (user)
+          return {
+            id: user.id,
+            isAuthenticated: true
+          };
         return null;
       } catch (err) {
         console.log(err);

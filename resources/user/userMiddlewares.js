@@ -1,23 +1,45 @@
-// Todo - write middleware to check for user existence
-const { userQueryKeys } = require("./userUtils");
+const { shield } = require("graphql-shield");
+const { userQueryKeys, userResolverKeys, userErrors } = require("./userUtils");
+const UserAPI = require("./userDataSource");
+const { isAuthenticated } = require("../permissions");
 
-async function logUserMiddleware(resolve, parent, args, context, info) {
-  const argsWithUser = { user: "Isaac", ...logUser() };
-  return resolve(parent, argsWithUser, context, info);
+async function validUserMiddleware(resolve, parent, args, context, info) {
+  const validUser = await UserAPI.getUser({ id: context.user.id });
+  if (!validUser) throw userErrors.UserNotFound;
+
+  return resolve(parent, args, context, info);
 }
 
-function logUser() {
-  return { user: "Isaac" };
+async function emailExistsMiddleware(resolve, parent, args, context, info) {
+  const { email } = args.registerInput;
+  const validUser = await UserAPI.getUser({ email });
+  if (validUser) throw userErrors.UserAlreadyExists;
+
+  return resolve(parent, args, context, info);
 }
+
+const UserPermissions = shield({
+  Query: {
+    [userQueryKeys.user]: isAuthenticated
+  },
+  Mutation: {
+    [userResolverKeys.updateUser]: isAuthenticated,
+    [userResolverKeys.deleteUser]: isAuthenticated
+  }
+});
 
 const UserMiddleware = {
   Query: {
-    [userQueryKeys.helloWorld]: logUserMiddleware
+    [userQueryKeys.user]: validUserMiddleware
+  },
+  Mutation: {
+    [userResolverKeys.updateUser]: validUserMiddleware,
+    [userResolverKeys.deleteUser]: validUserMiddleware,
+    [userResolverKeys.registerUser]: emailExistsMiddleware
   }
 };
 
 module.exports = {
-  UserMiddleware,
-  logUserMiddleware,
-  logUser
+  UserPermissions,
+  UserMiddleware
 };

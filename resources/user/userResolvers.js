@@ -11,13 +11,6 @@ const {
 const Query = extendType({
   type: "Query",
   definition(t) {
-    t.field(userQueryKeys.helloWorld, {
-      type: "String",
-      resolve: () => {
-        return "Hello World";
-      }
-    });
-
     t.field(userQueryKeys.loginUser, {
       type: AuthUser,
       nullable: true,
@@ -34,8 +27,8 @@ const Query = extendType({
     t.field(userQueryKeys.user, {
       type: User,
       nullable: true,
-      resolve: async (parent, args, { dataSources, userId }) => {
-        return await dataSources.userAPI.getUser({ id: userId });
+      resolve: async (parent, args, { dataSources, user }) => {
+        return await dataSources.userAPI.getUser({ id: user.id });
       }
     });
   }
@@ -60,9 +53,9 @@ const Mutation = extendType({
       args: {
         userInput: arg({ type: UserInput })
       },
-      resolve: async (parent, args, { dataSources, userId }) => {
+      resolve: async (parent, args, { dataSources, user }) => {
         return await dataSources.userAPI.updateUser(
-          { id: userId },
+          { id: user.id },
           { ...args.userInput }
         );
       }
@@ -70,8 +63,8 @@ const Mutation = extendType({
     t.field(userResolverKeys.deleteUser, {
       type: User,
       nullable: true,
-      resolve: async (parent, args, { dataSources, userId }) => {
-        return await dataSources.userAPI.deleteUser({ id: userId });
+      resolve: async (parent, args, { dataSources, user }) => {
+        return await dataSources.userAPI.deleteUser({ id: user.id });
       }
     });
   }

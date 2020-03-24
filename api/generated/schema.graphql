@@ -23,7 +23,6 @@ type Mutation {
 }
 
 type Query {
-  helloWorld: String!
   loginUser(loginInput: LoginInput): AuthUser
   user: User
 }

@@ -85,7 +85,6 @@ export interface NexusGenFieldTypes {
     updateUser: NexusGenRootTypes['User'] | null; // User
   }
   Query: { // field return type
-    helloWorld: string; // String!
     loginUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
     user: NexusGenRootTypes['User'] | null; // User
   }
