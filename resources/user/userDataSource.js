@@ -6,7 +6,7 @@ const { generateToken } = require("./userUtils");
 const { knexConfig } = require("../../db/dbConfig");
 
 // const MINUTE = 60;
-const TABLE = "User";
+const USER_TABLE = "User";
 
 class UserAPI extends SQLDataSource {
   async registerUser(user) {
@@ -59,8 +59,9 @@ class UserAPI extends SQLDataSource {
 
   async deleteUser(whereObj) {
     try {
-      await this._deleteUser(whereObj);
-      return true;
+      const isSuccess = await this._deleteUser(whereObj);
+      if (isSuccess) return true;
+      return false;
     } catch (err) {
       console.log(err);
       return false;
@@ -70,7 +71,7 @@ class UserAPI extends SQLDataSource {
     await this._updateUser(whereObj, user);
     return await this._readUser(whereObj);
   }
-  async getUser(whereObj) {
+  async readUser(whereObj) {
     return this._readUser(whereObj);
   }
 
@@ -94,26 +95,26 @@ class UserAPI extends SQLDataSource {
   }
 
   async _createUser(user) {
-    return this.knex(TABLE)
+    return this.knex(USER_TABLE)
       .insert(user)
       .returning("id")
       .then(([id]) => id);
   }
 
   _readUser(whereObj) {
-    return this.knex(TABLE)
+    return this.knex(USER_TABLE)
       .where(whereObj)
       .first();
   }
 
   _updateUser(whereObj, user) {
-    return this.knex(TABLE)
+    return this.knex(USER_TABLE)
       .where(whereObj)
       .update(user);
   }
 
   _deleteUser(whereObj) {
-    return this.knex(TABLE)
+    return this.knex(USER_TABLE)
       .where(whereObj)
       .del();
   }

@@ -12,6 +12,8 @@ const path = require("path");
 const server = express();
 
 const UserAPI = require("../resources/user/userDataSource");
+const WorkspaceAPI = require("../resources/workspace/workspaceDataSource");
+const WorkspaceUserAPI = require("../resources/workspace_user/workspaceUserDataSource");
 const { Query, Mutation, Middleware } = require("../resources");
 
 // schema setup
@@ -38,7 +40,9 @@ const apolloServer = new ApolloServer({
   }),
   cache: new RedisCache(process.env.REDIS_URL),
   dataSources: () => ({
-    userAPI: UserAPI
+    userAPI: UserAPI,
+    workspaceAPI: WorkspaceAPI,
+    workspaceUserAPI: WorkspaceUserAPI
   })
 });
 apolloServer.applyMiddleware({ app: server });

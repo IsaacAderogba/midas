@@ -28,7 +28,7 @@ const Query = extendType({
       type: User,
       nullable: true,
       resolve: async (parent, args, { dataSources, user }) => {
-        return await dataSources.userAPI.getUser({ id: user.id });
+        return await dataSources.userAPI.readUser({ id: user.id });
       }
     });
   }

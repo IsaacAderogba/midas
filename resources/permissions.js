@@ -1,5 +1,11 @@
 const { rule } = require("graphql-shield");
 
+const ROLES = {
+  owner: "owner",
+  admin: "admin",
+  editor: "editor",
+  viewer: "viewer"
+};
 
 const isAuthenticated = rule({ cache: "contextual" })(
   async (parent, args, ctx) => {
@@ -8,5 +14,6 @@ const isAuthenticated = rule({ cache: "contextual" })(
 );
 
 module.exports = {
-  isAuthenticated
-}
+  isAuthenticated,
+  ROLES
+};
