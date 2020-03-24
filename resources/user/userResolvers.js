@@ -61,8 +61,8 @@ const Mutation = extendType({
       }
     });
     t.field(userResolverKeys.deleteUser, {
-      type: User,
-      nullable: true,
+      type: "Boolean",
+      nullable: false,
       resolve: async (parent, args, { dataSources, user }) => {
         return await dataSources.userAPI.deleteUser({ id: user.id });
       }

@@ -17,7 +17,7 @@ input LoginInput {
 }
 
 type Mutation {
-  deleteUser: User
+  deleteUser: Boolean!
   registerUser(registerInput: RegisterInput): AuthUser
   updateUser(userInput: UserInput): User
 }
