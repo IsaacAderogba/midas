@@ -1,4 +1,5 @@
 const { objectType, inputObjectType } = require("nexus");
+const { Workspace } = require("../workspace/workspaceTypes");
 
 const AuthUser = objectType({
   name: "AuthUser",
@@ -16,60 +17,32 @@ const User = objectType({
   name: "User",
   definition(t) {
     t.id("id", {
-      nullable: false,
-      resolve: async ({ userId }, args, { dataSources }) => {
-        const { id } = await dataSources.userAPI.readUser({ id: userId });
-        return id;
-      }
+      nullable: false
     });
     t.string("firstName", {
-      nullable: false,
-      resolve: async ({ userId }, args, { dataSources }) => {
-        const { firstName } = await dataSources.userAPI.readUser({
-          id: userId
-        });
-        return firstName;
-      }
+      nullable: false
     });
     t.string("lastName", {
-      nullable: false,
-      resolve: async ({ userId }, args, { dataSources }) => {
-        const { lastName } = await dataSources.userAPI.readUser({
-          id: userId
-        });
-        return lastName;
-      }
+      nullable: false
     });
     t.string("email", {
-      nullable: false,
-      resolve: async ({ userId }, args, { dataSources }) => {
-        const { email } = await dataSources.userAPI.readUser({ id: userId });
-        return email;
-      }
+      nullable: false
     });
     t.string("avatarURL", {
-      nullable: true,
-      resolve: async ({ userId }, args, { dataSources }) => {
-        const { avatarURL } = await dataSources.userAPI.readUser({
-          id: userId
-        });
-        return avatarURL;
-      }
+      nullable: true
     });
     t.boolean("isVerified", {
-      nullable: false,
-      resolve: async ({ userId }, args, { dataSources }) => {
-        const { isVerified } = await dataSources.userAPI.readUser({
-          id: userId
-        });
-        return isVerified;
-      }
+      nullable: false
     });
     t.boolean("photoId", {
-      nullable: true,
-      resolve: async ({ userId }, args, { dataSources }) => {
-        const { photoId } = await dataSources.userAPI.readUser({ id: userId });
-        return photoId;
+      nullable: true
+    });
+    t.list.field("workspaces", {
+      type: Workspace,
+      resolve: async (user, args, { dataSources }) => {
+        return await dataSources.workspaceAPI.readWorkspaceList({
+          userId: user.id
+        });
       }
     });
   }

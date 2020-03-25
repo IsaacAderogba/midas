@@ -27,7 +27,9 @@ const Query = extendType({
     t.field(userQueryKeys.user, {
       type: User,
       nullable: true,
-      resolve: async (parent, args, { user }) => ({ userId: user.id })
+      resolve: (parent, args, { user, dataSources }) => {
+        return dataSources.userAPI.readUser({ id: user.id });
+      }
     });
   }
 });
@@ -41,8 +43,8 @@ const Mutation = extendType({
       args: {
         registerInput: arg({ type: RegisterInput })
       },
-      resolve: async (parent, args, { dataSources }) => {
-        return await dataSources.userAPI.registerUser(args.registerInput);
+      resolve: (parent, args, { dataSources }) => {
+        return dataSources.userAPI.registerUser(args.registerInput);
       }
     });
     t.field(userResolverKeys.updateUser, {
@@ -51,19 +53,18 @@ const Mutation = extendType({
       args: {
         userInput: arg({ type: UserInput })
       },
-      resolve: async (parent, args, { dataSources, user }) => {
-        const userId = await dataSources.userAPI.updateUser(
+      resolve: (parent, args, { dataSources, user }) => {
+        return dataSources.userAPI.updateUser(
           { id: user.id },
           { ...args.userInput }
         );
-        return { userId }
       }
     });
     t.field(userResolverKeys.deleteUser, {
       type: "Boolean",
       nullable: false,
-      resolve: async (parent, args, { dataSources, user }) => {
-        return await dataSources.userAPI.deleteUser({ id: user.id });
+      resolve: (parent, args, { dataSources, user }) => {
+        return dataSources.userAPI.deleteUser({ id: user.id });
       }
     });
   }

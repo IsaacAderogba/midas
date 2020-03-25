@@ -20,7 +20,11 @@ const Query = extendType({
       args: {
         workspaceId: idArg({ required: true })
       },
-      resolve: async (parent, { workspaceId }) => ({ workspaceId })
+      resolve: (parent, { workspaceId }, { dataSources }) => {
+        return dataSources.workspaceAPI.readWorkspace({
+          id: workspaceId
+        });
+      }
     });
   }
 });
@@ -34,12 +38,11 @@ const Mutation = extendType({
       args: {
         newWorkspaceInput: arg({ type: NewWorkspaceInput })
       },
-      resolve: async (parent, { newWorkspaceInput }, { dataSources, user }) => {
-        const workspaceId = await dataSources.workspaceAPI.createWorkspaceBatch(
+      resolve: (parent, { newWorkspaceInput }, { dataSources, user }) => {
+        return dataSources.workspaceAPI.createWorkspaceBatch(
           { ...newWorkspaceInput },
           user.id
         );
-        return { workspaceId };
       }
     });
 
@@ -50,16 +53,11 @@ const Mutation = extendType({
         workspaceId: idArg({ required: true }),
         workspaceInput: arg({ type: WorkspaceInput })
       },
-      resolve: async (
-        parent,
-        { workspaceInput, workspaceId },
-        { dataSources }
-      ) => {
-        const id = await dataSources.workspaceAPI.updateWorkspace(
+      resolve: (parent, { workspaceInput, workspaceId }, { dataSources }) => {
+        return dataSources.workspaceAPI.updateWorkspace(
           { id: workspaceId },
           workspaceInput
         );
-        return { workspaceId: id };
       }
     });
 
@@ -69,8 +67,8 @@ const Mutation = extendType({
       args: {
         workspaceId: idArg({ required: true })
       },
-      resolve: async (parent, { workspaceId }, { dataSources }) => {
-        return await dataSources.workspaceAPI.deleteWorkspace({
+      resolve: (parent, { workspaceId }, { dataSources }) => {
+        return dataSources.workspaceAPI.deleteWorkspace({
           id: workspaceId
         });
       }

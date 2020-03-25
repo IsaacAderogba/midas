@@ -57,8 +57,24 @@ export interface NexusGenRootTypes {
   }
   Mutation: {};
   Query: {};
-  User: {};
-  Workspace: {};
+  User: { // root type
+    avatarURL?: string | null; // String
+    email: string; // String!
+    firstName: string; // String!
+    id: string; // ID!
+    isVerified: boolean; // Boolean!
+    lastName: string; // String!
+    photoId?: boolean | null; // Boolean
+  }
+  Workspace: { // root type
+    id: string; // ID!
+    name: string; // String!
+    photoId?: string | null; // String
+    photoURL?: string | null; // String
+    seats: number; // Int!
+    trialStartedAt?: string | null; // String
+    url: string; // String!
+  }
   String: string;
   Int: number;
   Float: number;
@@ -104,6 +120,7 @@ export interface NexusGenFieldTypes {
     isVerified: boolean; // Boolean!
     lastName: string; // String!
     photoId: boolean | null; // Boolean
+    workspaces: NexusGenRootTypes['Workspace'][]; // [Workspace!]!
   }
   Workspace: { // field return type
     id: string; // ID!

@@ -53,6 +53,7 @@ type User {
   isVerified: Boolean!
   lastName: String!
   photoId: Boolean
+  workspaces: [Workspace!]!
 }
 
 input UserInput {

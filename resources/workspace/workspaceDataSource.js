@@ -2,7 +2,7 @@ const { SQLDataSource } = require("datasource-sql");
 const { knexConfig } = require("../../db/dbConfig");
 const { ROLES } = require("../permissions");
 
-const MINUTE = 60;
+// const MINUTE = 60;
 const WORKSPACE_TABLE = "Workspace";
 const WORKSPACE_USER_TABLE = "Workspace_User";
 
@@ -17,7 +17,7 @@ class WorkspaceAPI extends SQLDataSource {
         userId
       );
 
-      return workspaceId;
+      return await this._readWorkspace({ id: workspaceId });
     } catch (err) {
       console.log(err);
       throw err;
@@ -33,9 +33,19 @@ class WorkspaceAPI extends SQLDataSource {
     }
   }
 
+  async readWorkspaceList(whereObj) {
+    try {
+      return await this._readWorkspaceList(whereObj);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
   async updateWorkspace(whereObj, workspace) {
     try {
-      return await this._updateWorkspace(whereObj, workspace);
+      await this._updateWorkspace(whereObj, workspace);
+      return await this._readWorkspace(whereObj);
     } catch (err) {
       console.log(err);
       throw err;
@@ -81,11 +91,29 @@ class WorkspaceAPI extends SQLDataSource {
     });
   }
 
+  _readWorkspaceList(whereObj) {
+    return this.knex(WORKSPACE_TABLE)
+      .join(
+        WORKSPACE_USER_TABLE,
+        `${WORKSPACE_TABLE}.id`,
+        `${WORKSPACE_USER_TABLE}.workspaceId`
+      )
+      .select(
+        "id",
+        "name",
+        "url",
+        "photoURL",
+        "photoId",
+        "trialStartedAt",
+        "seats"
+      )
+      .where(whereObj);
+  }
+
   _readWorkspace(whereObj) {
     return this.knex(WORKSPACE_TABLE)
       .where(whereObj)
-      .first()
-      .cache(MINUTE);
+      .first();
   }
 
   _updateWorkspace(whereObj, workspace) {
