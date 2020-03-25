@@ -12,20 +12,34 @@ class WorkspaceAPI extends SQLDataSource {
    */
   async createWorkspaceBatch(workspace, userId) {
     try {
-      const workspaceId = await this._createWorkspaceBatch(workspace, userId);
-      return this._readWorkspace({ id: workspaceId });
+      const workspaceId = await this._createWorkspaceBatch(
+        { ...workspace, trialStartedAt: new Date().toISOString() },
+        userId
+      );
+
+      return workspaceId;
     } catch (err) {
       console.log(err);
+      throw err;
     }
   }
 
   async readWorkspace(whereObj) {
-    return await this._readWorkspace(whereObj);
+    try {
+      return await this._readWorkspace(whereObj);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   async updateWorkspace(whereObj, workspace) {
-    await this._updateWorkspace(whereObj, workspace);
-    return await this._readWorkspace(whereObj);
+    try {
+      return await this._updateWorkspace(whereObj, workspace);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   async deleteWorkspace(whereObj) {
@@ -35,7 +49,8 @@ class WorkspaceAPI extends SQLDataSource {
       if (isSuccess) return true;
       return false;
     } catch (err) {
-      return false;
+      console.log(err);
+      throw err;
     }
   }
 
@@ -44,12 +59,14 @@ class WorkspaceAPI extends SQLDataSource {
    */
   async _createWorkspaceBatch(workspace, userId) {
     return this.knex.transaction(async trx => {
-      return trx
+      let workspaceId;
+
+      await trx
         .insert(workspace)
         .into(WORKSPACE_TABLE)
         .returning("id")
         .then(([id]) => {
-          const workspaceId = id;
+          workspaceId = id;
           const workspaceUser = {
             workspaceId,
             userId,
@@ -57,8 +74,10 @@ class WorkspaceAPI extends SQLDataSource {
           };
           trx(WORKSPACE_USER_TABLE)
             .insert(workspaceUser)
-            .then(() => workspaceId);
+            .then(() => {});
         });
+
+      return workspaceId;
     });
   }
 
@@ -72,7 +91,9 @@ class WorkspaceAPI extends SQLDataSource {
   _updateWorkspace(whereObj, workspace) {
     return this.knex(WORKSPACE_TABLE)
       .where(whereObj)
-      .update(workspace);
+      .update(workspace)
+      .returning("id")
+      .then(([id]) => id);
   }
 
   _deleteWorkspace(whereObj) {

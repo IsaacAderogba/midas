@@ -17,14 +17,24 @@ input LoginInput {
 }
 
 type Mutation {
+  createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace
   deleteUser: Boolean!
+  deleteWorkspace(workspaceId: ID!): Boolean!
   registerUser(registerInput: RegisterInput): AuthUser
   updateUser(userInput: UserInput): User
+  updateWorkspace(workspaceId: ID!, workspaceInput: WorkspaceInput): Workspace
+}
+
+input NewWorkspaceInput {
+  name: String
+  photoURL: String
+  url: String
 }
 
 type Query {
   loginUser(loginInput: LoginInput): AuthUser
   user: User
+  workspace(workspaceId: ID!): Workspace
 }
 
 input RegisterInput {
@@ -51,4 +61,19 @@ input UserInput {
   isVerified: String
   lastName: String
   photoId: String
+}
+
+type Workspace {
+  id: ID!
+  name: String!
+  photoId: String
+  photoURL: String
+  seats: Int!
+  trialStartedAt: String
+  url: String!
+}
+
+input WorkspaceInput {
+  name: String
+  photoURL: String
 }

@@ -18,6 +18,11 @@ export interface NexusGenInputs {
     email: string; // String!
     password: string; // String!
   }
+  NewWorkspaceInput: { // input type
+    name?: string | null; // String
+    photoURL?: string | null; // String
+    url?: string | null; // String
+  }
   RegisterInput: { // input type
     avatarURL?: string | null; // String
     email: string; // String!
@@ -31,6 +36,10 @@ export interface NexusGenInputs {
     isVerified?: string | null; // String
     lastName?: string | null; // String
     photoId?: string | null; // String
+  }
+  WorkspaceInput: { // input type
+    name?: string | null; // String
+    photoURL?: string | null; // String
   }
 }
 
@@ -48,15 +57,8 @@ export interface NexusGenRootTypes {
   }
   Mutation: {};
   Query: {};
-  User: { // root type
-    avatarURL?: string | null; // String
-    email: string; // String!
-    firstName: string; // String!
-    id: string; // ID!
-    isVerified: boolean; // Boolean!
-    lastName: string; // String!
-    photoId?: boolean | null; // Boolean
-  }
+  User: {};
+  Workspace: {};
   String: string;
   Int: number;
   Float: number;
@@ -66,8 +68,10 @@ export interface NexusGenRootTypes {
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   LoginInput: NexusGenInputs['LoginInput'];
+  NewWorkspaceInput: NexusGenInputs['NewWorkspaceInput'];
   RegisterInput: NexusGenInputs['RegisterInput'];
   UserInput: NexusGenInputs['UserInput'];
+  WorkspaceInput: NexusGenInputs['WorkspaceInput'];
 }
 
 export interface NexusGenFieldTypes {
@@ -80,13 +84,17 @@ export interface NexusGenFieldTypes {
     userId: string; // ID!
   }
   Mutation: { // field return type
+    createWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     deleteUser: boolean; // Boolean!
+    deleteWorkspace: boolean; // Boolean!
     registerUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
     updateUser: NexusGenRootTypes['User'] | null; // User
+    updateWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
   }
   Query: { // field return type
     loginUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
     user: NexusGenRootTypes['User'] | null; // User
+    workspace: NexusGenRootTypes['Workspace'] | null; // Workspace
   }
   User: { // field return type
     avatarURL: string | null; // String
@@ -97,20 +105,42 @@ export interface NexusGenFieldTypes {
     lastName: string; // String!
     photoId: boolean | null; // Boolean
   }
+  Workspace: { // field return type
+    id: string; // ID!
+    name: string; // String!
+    photoId: string | null; // String
+    photoURL: string | null; // String
+    seats: number; // Int!
+    trialStartedAt: string | null; // String
+    url: string; // String!
+  }
 }
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createWorkspace: { // args
+      newWorkspaceInput?: NexusGenInputs['NewWorkspaceInput'] | null; // NewWorkspaceInput
+    }
+    deleteWorkspace: { // args
+      workspaceId: string; // ID!
+    }
     registerUser: { // args
       registerInput?: NexusGenInputs['RegisterInput'] | null; // RegisterInput
     }
     updateUser: { // args
       userInput?: NexusGenInputs['UserInput'] | null; // UserInput
     }
+    updateWorkspace: { // args
+      workspaceId: string; // ID!
+      workspaceInput?: NexusGenInputs['WorkspaceInput'] | null; // WorkspaceInput
+    }
   }
   Query: {
     loginUser: { // args
       loginInput?: NexusGenInputs['LoginInput'] | null; // LoginInput
+    }
+    workspace: { // args
+      workspaceId: string; // ID!
     }
   }
 }
@@ -120,9 +150,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Query" | "User";
+export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Query" | "User" | "Workspace";
 
-export type NexusGenInputNames = "LoginInput" | "RegisterInput" | "UserInput";
+export type NexusGenInputNames = "LoginInput" | "NewWorkspaceInput" | "RegisterInput" | "UserInput" | "WorkspaceInput";
 
 export type NexusGenEnumNames = never;
 

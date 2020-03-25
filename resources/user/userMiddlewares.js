@@ -18,15 +18,20 @@ async function emailExistsMiddleware(resolve, parent, args, context, info) {
   return resolve(parent, args, context, info);
 }
 
-const UserPermissions = shield({
-  Query: {
-    [userQueryKeys.user]: isAuthenticated
+const UserPermissions = shield(
+  {
+    Query: {
+      [userQueryKeys.user]: isAuthenticated
+    },
+    Mutation: {
+      [userResolverKeys.updateUser]: isAuthenticated,
+      [userResolverKeys.deleteUser]: isAuthenticated
+    }
   },
-  Mutation: {
-    [userResolverKeys.updateUser]: isAuthenticated,
-    [userResolverKeys.deleteUser]: isAuthenticated
+  {
+    debug: process.env.DB_ENV === "development" ? true : false
   }
-});
+);
 
 const UserMiddleware = {
   Query: {

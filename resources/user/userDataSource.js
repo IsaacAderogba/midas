@@ -15,6 +15,7 @@ class UserAPI extends SQLDataSource {
       user.password = hash;
     } catch (err) {
       console.log(err);
+      throw err;
     }
 
     try {
@@ -54,6 +55,7 @@ class UserAPI extends SQLDataSource {
       return null;
     } catch (err) {
       console.log(err);
+      throw err;
     }
   }
 
@@ -64,15 +66,25 @@ class UserAPI extends SQLDataSource {
       return false;
     } catch (err) {
       console.log(err);
-      return false;
+      throw err;
     }
   }
+
   async updateUser(whereObj, user) {
-    await this._updateUser(whereObj, user);
-    return await this._readUser(whereObj);
+    try {
+      return await this._updateUser(whereObj, user);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
   async readUser(whereObj) {
-    return this._readUser(whereObj);
+    try {
+      return this._readUser(whereObj);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 
   async authenticateUser(req) {
@@ -89,6 +101,7 @@ class UserAPI extends SQLDataSource {
         return null;
       } catch (err) {
         console.log(err);
+        throw err;
       }
     }
     return null;
@@ -107,10 +120,12 @@ class UserAPI extends SQLDataSource {
       .first();
   }
 
-  _updateUser(whereObj, user) {
+  async _updateUser(whereObj, user) {
     return this.knex(USER_TABLE)
       .where(whereObj)
-      .update(user);
+      .update(user)
+      .returning("id")
+      .then(([id]) => id);
   }
 
   _deleteUser(whereObj) {

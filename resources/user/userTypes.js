@@ -15,13 +15,63 @@ const AuthUser = objectType({
 const User = objectType({
   name: "User",
   definition(t) {
-    t.id("id");
-    t.string("firstName");
-    t.string("lastName");
-    t.string("email");
-    t.string("avatarURL", { nullable: true });
-    t.boolean("isVerified");
-    t.boolean("photoId", { nullable: true });
+    t.id("id", {
+      nullable: false,
+      resolve: async ({ userId }, args, { dataSources }) => {
+        const { id } = await dataSources.userAPI.readUser({ id: userId });
+        return id;
+      }
+    });
+    t.string("firstName", {
+      nullable: false,
+      resolve: async ({ userId }, args, { dataSources }) => {
+        const { firstName } = await dataSources.userAPI.readUser({
+          id: userId
+        });
+        return firstName;
+      }
+    });
+    t.string("lastName", {
+      nullable: false,
+      resolve: async ({ userId }, args, { dataSources }) => {
+        const { lastName } = await dataSources.userAPI.readUser({
+          id: userId
+        });
+        return lastName;
+      }
+    });
+    t.string("email", {
+      nullable: false,
+      resolve: async ({ userId }, args, { dataSources }) => {
+        const { email } = await dataSources.userAPI.readUser({ id: userId });
+        return email;
+      }
+    });
+    t.string("avatarURL", {
+      nullable: true,
+      resolve: async ({ userId }, args, { dataSources }) => {
+        const { avatarURL } = await dataSources.userAPI.readUser({
+          id: userId
+        });
+        return avatarURL;
+      }
+    });
+    t.boolean("isVerified", {
+      nullable: false,
+      resolve: async ({ userId }, args, { dataSources }) => {
+        const { isVerified } = await dataSources.userAPI.readUser({
+          id: userId
+        });
+        return isVerified;
+      }
+    });
+    t.boolean("photoId", {
+      nullable: true,
+      resolve: async ({ userId }, args, { dataSources }) => {
+        const { photoId } = await dataSources.userAPI.readUser({ id: userId });
+        return photoId;
+      }
+    });
   }
 });
 

@@ -27,9 +27,7 @@ const Query = extendType({
     t.field(userQueryKeys.user, {
       type: User,
       nullable: true,
-      resolve: async (parent, args, { dataSources, user }) => {
-        return await dataSources.userAPI.readUser({ id: user.id });
-      }
+      resolve: async (parent, args, { user }) => ({ userId: user.id })
     });
   }
 });
@@ -54,10 +52,11 @@ const Mutation = extendType({
         userInput: arg({ type: UserInput })
       },
       resolve: async (parent, args, { dataSources, user }) => {
-        return await dataSources.userAPI.updateUser(
+        const userId = await dataSources.userAPI.updateUser(
           { id: user.id },
           { ...args.userInput }
         );
+        return { userId }
       }
     });
     t.field(userResolverKeys.deleteUser, {
