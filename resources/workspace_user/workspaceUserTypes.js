@@ -1,0 +1,58 @@
+const { objectType, inputObjectType, enumType } = require("nexus");
+const { ROLES } = require("../permissions");
+
+const WorkspaceUserRoles = enumType({
+  name: "WorkspaceUserRoles",
+  members: [...Object.keys(ROLES)]
+});
+
+const WorkspaceUserStatus = enumType({
+  name: "WorkspaceUserStatus",
+  members: ["active"]
+});
+
+const WorkspaceUser = objectType({
+  name: "WorkspaceUser",
+  definition(t) {
+    t.int("workspaceId", { nullable: false });
+    t.int("userId", { nullable: false });
+    t.field("role", { type: WorkspaceUserRoles, nullable: false });
+    t.string("lastSeen", { nullable: true });
+    t.field("status", { type: WorkspaceUserStatus, nullable: false });
+  }
+});
+
+// write middleware to check that where isn't empty
+const WorkspaceUserWhere = inputObjectType({
+  name: "WorkspaceUserWhere",
+  definition(t) {
+    t.int("workspaceId", { required: false });
+    t.int("userId", { required: false });
+  }
+});
+
+const WorkspaceUserInput = inputObjectType({
+  name: "WorkspaceUserInput",
+  definition(t) {
+    t.field("role", { type: WorkspaceUserRoles });
+    t.field("status", { type: WorkspaceUserStatus });
+  }
+});
+
+const NewWorkspaceUserInput = inputObjectType({
+  name: "NewWorkspaceUserInput",
+  definition(t) {
+    t.int("workspaceId", { required: true });
+    t.int("userId", { required: true });
+    t.field("role", { type: WorkspaceUserRoles, required: true });
+  }
+});
+
+module.exports = {
+  WorkspaceUserRoles,
+  WorkspaceUserStatus,
+  WorkspaceUser,
+  WorkspaceUserInput,
+  NewWorkspaceUserInput,
+  WorkspaceUserWhere
+};

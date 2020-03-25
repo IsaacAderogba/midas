@@ -23,6 +23,11 @@ export interface NexusGenInputs {
     photoURL?: string | null; // String
     url?: string | null; // String
   }
+  NewWorkspaceUserInput: { // input type
+    role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
+    userId: number; // Int!
+    workspaceId: number; // Int!
+  }
   RegisterInput: { // input type
     avatarURL?: string | null; // String
     email: string; // String!
@@ -41,9 +46,19 @@ export interface NexusGenInputs {
     name?: string | null; // String
     photoURL?: string | null; // String
   }
+  WorkspaceUserInput: { // input type
+    role?: NexusGenEnums['WorkspaceUserRoles'] | null; // WorkspaceUserRoles
+    status?: NexusGenEnums['WorkspaceUserStatus'] | null; // WorkspaceUserStatus
+  }
+  WorkspaceUserWhere: { // input type
+    userId?: number | null; // Int
+    workspaceId?: number | null; // Int
+  }
 }
 
 export interface NexusGenEnums {
+  WorkspaceUserRoles: "admin" | "editor" | "owner" | "viewer"
+  WorkspaceUserStatus: "active"
 }
 
 export interface NexusGenRootTypes {
@@ -75,6 +90,13 @@ export interface NexusGenRootTypes {
     trialStartedAt?: string | null; // String
     url: string; // String!
   }
+  WorkspaceUser: { // root type
+    lastSeen?: string | null; // String
+    role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
+    status: NexusGenEnums['WorkspaceUserStatus']; // WorkspaceUserStatus!
+    userId: number; // Int!
+    workspaceId: number; // Int!
+  }
   String: string;
   Int: number;
   Float: number;
@@ -85,9 +107,14 @@ export interface NexusGenRootTypes {
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   LoginInput: NexusGenInputs['LoginInput'];
   NewWorkspaceInput: NexusGenInputs['NewWorkspaceInput'];
+  NewWorkspaceUserInput: NexusGenInputs['NewWorkspaceUserInput'];
   RegisterInput: NexusGenInputs['RegisterInput'];
   UserInput: NexusGenInputs['UserInput'];
   WorkspaceInput: NexusGenInputs['WorkspaceInput'];
+  WorkspaceUserInput: NexusGenInputs['WorkspaceUserInput'];
+  WorkspaceUserWhere: NexusGenInputs['WorkspaceUserWhere'];
+  WorkspaceUserRoles: NexusGenEnums['WorkspaceUserRoles'];
+  WorkspaceUserStatus: NexusGenEnums['WorkspaceUserStatus'];
 }
 
 export interface NexusGenFieldTypes {
@@ -101,16 +128,21 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     createWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
+    createWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
     deleteUser: boolean; // Boolean!
     deleteWorkspace: boolean; // Boolean!
+    deleteWorkspaceUser: boolean; // Boolean!
     registerUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
     updateUser: NexusGenRootTypes['User'] | null; // User
     updateWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
+    updateWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
   }
   Query: { // field return type
     loginUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
     user: NexusGenRootTypes['User'] | null; // User
     workspace: NexusGenRootTypes['Workspace'] | null; // Workspace
+    workspaces: NexusGenRootTypes['Workspace'][]; // [Workspace!]!
+    workspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
   }
   User: { // field return type
     avatarURL: string | null; // String
@@ -131,6 +163,13 @@ export interface NexusGenFieldTypes {
     trialStartedAt: string | null; // String
     url: string; // String!
   }
+  WorkspaceUser: { // field return type
+    lastSeen: string | null; // String
+    role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
+    status: NexusGenEnums['WorkspaceUserStatus']; // WorkspaceUserStatus!
+    userId: number; // Int!
+    workspaceId: number; // Int!
+  }
 }
 
 export interface NexusGenArgTypes {
@@ -138,8 +177,14 @@ export interface NexusGenArgTypes {
     createWorkspace: { // args
       newWorkspaceInput?: NexusGenInputs['NewWorkspaceInput'] | null; // NewWorkspaceInput
     }
+    createWorkspaceUser: { // args
+      newWorkspaceUserInput?: NexusGenInputs['NewWorkspaceUserInput'] | null; // NewWorkspaceUserInput
+    }
     deleteWorkspace: { // args
       workspaceId: string; // ID!
+    }
+    deleteWorkspaceUser: { // args
+      where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere
     }
     registerUser: { // args
       registerInput?: NexusGenInputs['RegisterInput'] | null; // RegisterInput
@@ -151,6 +196,10 @@ export interface NexusGenArgTypes {
       workspaceId: string; // ID!
       workspaceInput?: NexusGenInputs['WorkspaceInput'] | null; // WorkspaceInput
     }
+    updateWorkspaceUser: { // args
+      where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere
+      workspaceUserInput?: NexusGenInputs['WorkspaceUserInput'] | null; // WorkspaceUserInput
+    }
   }
   Query: {
     loginUser: { // args
@@ -158,6 +207,12 @@ export interface NexusGenArgTypes {
     }
     workspace: { // args
       workspaceId: string; // ID!
+    }
+    workspaces: { // args
+      userId: string; // ID!
+    }
+    workspaceUser: { // args
+      where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere
     }
   }
 }
@@ -167,11 +222,11 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Query" | "User" | "Workspace";
+export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Query" | "User" | "Workspace" | "WorkspaceUser";
 
-export type NexusGenInputNames = "LoginInput" | "NewWorkspaceInput" | "RegisterInput" | "UserInput" | "WorkspaceInput";
+export type NexusGenInputNames = "LoginInput" | "NewWorkspaceInput" | "NewWorkspaceUserInput" | "RegisterInput" | "UserInput" | "WorkspaceInput" | "WorkspaceUserInput" | "WorkspaceUserWhere";
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = "WorkspaceUserRoles" | "WorkspaceUserStatus";
 
 export type NexusGenInterfaceNames = never;
 

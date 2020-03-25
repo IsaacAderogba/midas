@@ -1,7 +1,8 @@
 const { UserInputError } = require("apollo-server-express")
 
 const workspaceQueryKeys = {
-  workspace: 'workspace'
+  workspace: 'workspace',
+  workspaces: "workspaces"
 }
 
 const workspaceResolverKeys = {

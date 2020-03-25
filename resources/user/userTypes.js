@@ -40,7 +40,7 @@ const User = objectType({
     t.list.field("workspaces", {
       type: Workspace,
       resolve: async (user, args, { dataSources }) => {
-        return await dataSources.workspaceAPI.readWorkspaceList({
+        return await dataSources.workspaceAPI.readWorkspaces({
           userId: user.id
         });
       }

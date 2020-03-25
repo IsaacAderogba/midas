@@ -1,10 +1,10 @@
 // TODO - use husky for commits
 // TODO - check all nullable fields which I've been defaulting to true
+const { extendType, arg, idArg } = require("nexus");
 const {
   workspaceQueryKeys,
   workspaceResolverKeys
 } = require("./workspaceUtils");
-const { extendType, arg, idArg } = require("nexus");
 const {
   NewWorkspaceInput,
   Workspace,
@@ -23,6 +23,17 @@ const Query = extendType({
       resolve: (parent, { workspaceId }, { dataSources }) => {
         return dataSources.workspaceAPI.readWorkspace({
           id: workspaceId
+        });
+      }
+    });
+    t.list.field(workspaceQueryKeys.workspaces, {
+      type: Workspace,
+      args: {
+        userId: idArg({ required: true })
+      },
+      resolve: async (parent, { userId }, { dataSources }) => {
+        return await dataSources.workspaceAPI.readWorkspaces({
+          userId
         });
       }
     });

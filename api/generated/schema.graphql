@@ -18,11 +18,14 @@ input LoginInput {
 
 type Mutation {
   createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace
+  createWorkspaceUser(newWorkspaceUserInput: NewWorkspaceUserInput): WorkspaceUser
   deleteUser: Boolean!
   deleteWorkspace(workspaceId: ID!): Boolean!
+  deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   registerUser(registerInput: RegisterInput): AuthUser
   updateUser(userInput: UserInput): User
   updateWorkspace(workspaceId: ID!, workspaceInput: WorkspaceInput): Workspace
+  updateWorkspaceUser(where: WorkspaceUserWhere, workspaceUserInput: WorkspaceUserInput): WorkspaceUser
 }
 
 input NewWorkspaceInput {
@@ -31,10 +34,18 @@ input NewWorkspaceInput {
   url: String
 }
 
+input NewWorkspaceUserInput {
+  role: WorkspaceUserRoles!
+  userId: Int!
+  workspaceId: Int!
+}
+
 type Query {
   loginUser(loginInput: LoginInput): AuthUser
   user: User
   workspace(workspaceId: ID!): Workspace
+  workspaces(userId: ID!): [Workspace!]!
+  workspaceUser(where: WorkspaceUserWhere): WorkspaceUser
 }
 
 input RegisterInput {
@@ -77,4 +88,33 @@ type Workspace {
 input WorkspaceInput {
   name: String
   photoURL: String
+}
+
+type WorkspaceUser {
+  lastSeen: String
+  role: WorkspaceUserRoles!
+  status: WorkspaceUserStatus!
+  userId: Int!
+  workspaceId: Int!
+}
+
+input WorkspaceUserInput {
+  role: WorkspaceUserRoles
+  status: WorkspaceUserStatus
+}
+
+enum WorkspaceUserRoles {
+  admin
+  editor
+  owner
+  viewer
+}
+
+enum WorkspaceUserStatus {
+  active
+}
+
+input WorkspaceUserWhere {
+  userId: Int
+  workspaceId: Int
 }

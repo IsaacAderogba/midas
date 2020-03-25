@@ -72,8 +72,7 @@ class UserAPI extends SQLDataSource {
 
   async updateUser(whereObj, user) {
     try {
-      await this._updateUser(whereObj, user);
-      return await this._readUser(whereObj)
+      return this._updateUser(whereObj, user);
     } catch (err) {
       console.log(err);
       throw err;
@@ -125,8 +124,8 @@ class UserAPI extends SQLDataSource {
     return this.knex(USER_TABLE)
       .where(whereObj)
       .update(user)
-      .returning("id")
-      .then(([id]) => id);
+      .returning("*")
+      .then(([user]) => user)
   }
 
   _deleteUser(whereObj) {
