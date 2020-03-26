@@ -20,11 +20,11 @@ type Mutation {
   createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace
   createWorkspaceUser(newWorkspaceUserInput: NewWorkspaceUserInput): WorkspaceUser
   deleteUser: Boolean!
-  deleteWorkspace(workspaceId: ID!): Boolean!
+  deleteWorkspace: Boolean!
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   registerUser(registerInput: RegisterInput): AuthUser
   updateUser(userInput: UserInput): User
-  updateWorkspace(workspaceId: ID!, workspaceInput: WorkspaceInput): Workspace
+  updateWorkspace(workspaceInput: WorkspaceInput): Workspace
   updateWorkspaceUser(where: WorkspaceUserWhere, workspaceUserInput: WorkspaceUserInput): WorkspaceUser
 }
 
@@ -43,9 +43,10 @@ input NewWorkspaceUserInput {
 type Query {
   loginUser(loginInput: LoginInput): AuthUser
   user: User
-  workspace(workspaceId: ID!): Workspace
-  workspaces(userId: ID!): [Workspace!]!
+  workspace: Workspace
+  workspaces: [Workspace!]!
   workspaceUser(where: WorkspaceUserWhere): WorkspaceUser
+  workspaceUsers: [WorkspaceUser!]
 }
 
 input RegisterInput {
@@ -94,7 +95,9 @@ type WorkspaceUser {
   lastSeen: String
   role: WorkspaceUserRoles!
   status: WorkspaceUserStatus!
+  user: User!
   userId: Int!
+  workspace: Workspace!
   workspaceId: Int!
 }
 
@@ -116,5 +119,4 @@ enum WorkspaceUserStatus {
 
 input WorkspaceUserWhere {
   userId: Int
-  workspaceId: Int
 }

@@ -1,13 +1,22 @@
 const { SQLDataSource } = require("datasource-sql");
 const { knexConfig } = require("../../db/dbConfig");
 
-const WORKSPACE_TABLE = "Workspace";
+// const WORKSPACE_TABLE = "Workspace";
 const WORKSPACE_USER_TABLE = "Workspace_User";
 
 class WorkspaceUserAPI extends SQLDataSource {
   async createWorkspaceUser(workspaceUser) {
     try {
       return await this._createWorkspaceUser(workspaceUser);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
+  async readWorkspaceUsers(whereObj) {
+    try {
+      return await this._readWorkspaceUsers(whereObj);
     } catch (err) {
       console.log(err);
       throw err;
@@ -48,6 +57,10 @@ class WorkspaceUserAPI extends SQLDataSource {
       .insert(workspaceUser)
       .returning("*")
       .then(([workspaceUserDetails]) => workspaceUserDetails);
+  }
+
+  async _readWorkspaceUsers(whereObj) {
+    return this.knex(WORKSPACE_USER_TABLE).where(whereObj);
   }
 
   _readWorkspaceUser(whereObj) {

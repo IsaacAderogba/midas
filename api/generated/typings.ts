@@ -52,7 +52,6 @@ export interface NexusGenInputs {
   }
   WorkspaceUserWhere: { // input type
     userId?: number | null; // Int
-    workspaceId?: number | null; // Int
   }
 }
 
@@ -143,6 +142,7 @@ export interface NexusGenFieldTypes {
     workspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     workspaces: NexusGenRootTypes['Workspace'][]; // [Workspace!]!
     workspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
+    workspaceUsers: NexusGenRootTypes['WorkspaceUser'][] | null; // [WorkspaceUser!]
   }
   User: { // field return type
     avatarURL: string | null; // String
@@ -167,7 +167,9 @@ export interface NexusGenFieldTypes {
     lastSeen: string | null; // String
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
     status: NexusGenEnums['WorkspaceUserStatus']; // WorkspaceUserStatus!
+    user: NexusGenRootTypes['User']; // User!
     userId: number; // Int!
+    workspace: NexusGenRootTypes['Workspace']; // Workspace!
     workspaceId: number; // Int!
   }
 }
@@ -180,9 +182,6 @@ export interface NexusGenArgTypes {
     createWorkspaceUser: { // args
       newWorkspaceUserInput?: NexusGenInputs['NewWorkspaceUserInput'] | null; // NewWorkspaceUserInput
     }
-    deleteWorkspace: { // args
-      workspaceId: string; // ID!
-    }
     deleteWorkspaceUser: { // args
       where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere
     }
@@ -193,7 +192,6 @@ export interface NexusGenArgTypes {
       userInput?: NexusGenInputs['UserInput'] | null; // UserInput
     }
     updateWorkspace: { // args
-      workspaceId: string; // ID!
       workspaceInput?: NexusGenInputs['WorkspaceInput'] | null; // WorkspaceInput
     }
     updateWorkspaceUser: { // args
@@ -204,12 +202,6 @@ export interface NexusGenArgTypes {
   Query: {
     loginUser: { // args
       loginInput?: NexusGenInputs['LoginInput'] | null; // LoginInput
-    }
-    workspace: { // args
-      workspaceId: string; // ID!
-    }
-    workspaces: { // args
-      userId: string; // ID!
     }
     workspaceUser: { // args
       where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere

@@ -1,4 +1,6 @@
 const { objectType, inputObjectType, enumType } = require("nexus");
+const { User } = require("../user/userTypes");
+const { Workspace } = require("../workspace/workspaceTypes");
 const { ROLES } = require("../permissions");
 
 const WorkspaceUserRoles = enumType({
@@ -19,6 +21,20 @@ const WorkspaceUser = objectType({
     t.field("role", { type: WorkspaceUserRoles, nullable: false });
     t.string("lastSeen", { nullable: true });
     t.field("status", { type: WorkspaceUserStatus, nullable: false });
+    t.field("user", {
+      type: User,
+      resolve: async (workspaceUser, args, { dataSources }) => {
+        return dataSources.userAPI.readUser({ id: workspaceUser.userId });
+      }
+    });
+    t.field("workspace", {
+      type: Workspace,
+      resolve: async (workspaceUser, args, { dataSources }) => {
+        return dataSources.workspaceAPI.readWorkspace({
+          id: workspaceUser.workspaceId
+        });
+      }
+    });
   }
 });
 
@@ -26,7 +42,6 @@ const WorkspaceUser = objectType({
 const WorkspaceUserWhere = inputObjectType({
   name: "WorkspaceUserWhere",
   definition(t) {
-    t.int("workspaceId", { required: false });
     t.int("userId", { required: false });
   }
 });

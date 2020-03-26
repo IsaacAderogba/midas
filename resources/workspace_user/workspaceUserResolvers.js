@@ -19,8 +19,20 @@ const Query = extendType({
       args: {
         where: WorkspaceUserWhere
       },
-      resolve: (parent, { where }, { dataSources }) => {
-        return dataSources.workspaceUserAPI.readWorkspaceUser(where);
+      resolve: (parent, { where }, { dataSources, user }) => {
+        return dataSources.workspaceUserAPI.readWorkspaceUser({
+          ...where,
+          workspaceId: user.workspaceId
+        });
+      }
+    });
+    t.list.field(workspaceUserQueryKeys.workspaceUsers, {
+      type: WorkspaceUser,
+      nullable: true,
+      resolve: (parent, args, { dataSources, user }) => {
+        return dataSources.workspaceUserAPI.readWorkspaceUsers({
+          workspaceId: user.workspaceId
+        });
       }
     });
   }
@@ -48,9 +60,13 @@ const Mutation = extendType({
         where: WorkspaceUserWhere,
         workspaceUserInput: WorkspaceUserInput
       },
-      resolve: (parent, { where, workspaceUserInput }, { dataSources }) => {
+      resolve: (
+        parent,
+        { where, workspaceUserInput },
+        { dataSources, user }
+      ) => {
         return dataSources.workspaceUserAPI.updateWorkspaceUser(
-          where,
+          { ...where, workspaceId: user.workspaceId },
           workspaceUserInput
         );
       }
@@ -61,8 +77,11 @@ const Mutation = extendType({
       args: {
         where: WorkspaceUserWhere
       },
-      resolve: (parent, { where }, { dataSources }) => {
-        return dataSources.workspaceUserAPI.deleteWorkspaceUser(where);
+      resolve: (parent, { where }, { dataSources, user }) => {
+        return dataSources.workspaceUserAPI.deleteWorkspaceUser({
+          ...where,
+          workspaceId: user.workspaceId
+        });
       }
     });
   }

@@ -1,6 +1,6 @@
 // TODO - use husky for commits
 // TODO - check all nullable fields which I've been defaulting to true
-const { extendType, arg, idArg } = require("nexus");
+const { extendType, arg } = require("nexus");
 const {
   workspaceQueryKeys,
   workspaceResolverKeys
@@ -17,23 +17,17 @@ const Query = extendType({
     t.field(workspaceQueryKeys.workspace, {
       type: Workspace,
       nullable: true,
-      args: {
-        workspaceId: idArg({ required: true })
-      },
-      resolve: (parent, { workspaceId }, { dataSources }) => {
+      resolve: (parent, args, { dataSources, user }) => {
         return dataSources.workspaceAPI.readWorkspace({
-          id: workspaceId
+          id: user.workspaceId
         });
       }
     });
     t.list.field(workspaceQueryKeys.workspaces, {
       type: Workspace,
-      args: {
-        userId: idArg({ required: true })
-      },
-      resolve: async (parent, { userId }, { dataSources }) => {
+      resolve: async (parent, args, { dataSources, user }) => {
         return await dataSources.workspaceAPI.readWorkspaces({
-          userId
+          userId: user.id
         });
       }
     });
@@ -61,12 +55,11 @@ const Mutation = extendType({
       type: Workspace,
       nullable: true,
       args: {
-        workspaceId: idArg({ required: true }),
         workspaceInput: arg({ type: WorkspaceInput })
       },
-      resolve: (parent, { workspaceInput, workspaceId }, { dataSources }) => {
+      resolve: (parent, { workspaceInput }, { dataSources, user }) => {
         return dataSources.workspaceAPI.updateWorkspace(
-          { id: workspaceId },
+          { id: user.workspaceId },
           workspaceInput
         );
       }
@@ -75,12 +68,10 @@ const Mutation = extendType({
     t.field(workspaceResolverKeys.deleteWorkspace, {
       type: "Boolean",
       nullable: false,
-      args: {
-        workspaceId: idArg({ required: true })
-      },
-      resolve: (parent, { workspaceId }, { dataSources }) => {
+
+      resolve: (parent, args, { dataSources, user }) => {
         return dataSources.workspaceAPI.deleteWorkspace({
-          id: workspaceId
+          id: user.workspaceId
         });
       }
     });
