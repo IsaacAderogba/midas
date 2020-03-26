@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { SQLDataSource } = require("datasource-sql");
 const { generateToken } = require("./userUtils");
 const { knexConfig } = require("../../db/dbConfig");
+const WorkspaceUserAPI = require("../workspace_user/workspaceUserDataSource");
 
 // const MINUTE = 60;
 const USER_TABLE = "User";
@@ -87,17 +88,33 @@ class UserAPI extends SQLDataSource {
     }
   }
 
+  /**
+   *
+   * Parses authorization header for workspaceId and jwtToken
+   */
   async authenticateUser(req) {
-    const token = req.headers.authorization;
-    if (token) {
+    // authheader looks like: 'workspaceId-jwtToken'
+    const authHeader = req.headers.authorization;
+    const [workspaceId, token] = authHeader.split(" ");
+
+    if (workspaceId && token) {
       try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const user = await this._readUser({ id: decodedToken.userId });
-        if (user)
-          return {
-            id: user.id,
-            isAuthenticated: true
-          };
+        if (user) {
+          const authUser = { id: user.id };
+          const workspaceUser = await WorkspaceUserAPI._readWorkspaceUser({
+            userId: user.id,
+            workspaceId
+          });
+
+          if (workspaceUser) {
+            authUser.role = workspaceUser.role;
+            authUser.workspaceId = workspaceUser.workspaceId;
+          }
+
+          return authUser;
+        }
         return null;
       } catch (err) {
         console.log(err);
@@ -125,7 +142,7 @@ class UserAPI extends SQLDataSource {
       .where(whereObj)
       .update(user)
       .returning("*")
-      .then(([user]) => user)
+      .then(([user]) => user);
   }
 
   _deleteUser(whereObj) {
