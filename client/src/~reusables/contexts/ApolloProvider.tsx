@@ -5,7 +5,7 @@ import { HttpLink } from "apollo-link-http";
 import { onError } from "apollo-link-error";
 import { ApolloLink } from "apollo-link";
 import { setContext } from "apollo-link-context";
-import { ApolloProvider } from "react-apollo";
+import { ApolloProvider as ApolloContextProvider } from "react-apollo";
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("token");
@@ -37,6 +37,6 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-export const ApolloContextProvider: React.FC = ({ children }) => {
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+export const ApolloProvider: React.FC = ({ children }) => {
+  return <ApolloContextProvider client={client}>{children}</ApolloContextProvider>;
 };
