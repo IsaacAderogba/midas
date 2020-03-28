@@ -1,3 +1,7 @@
+/**
+ * If updating the theme values, make sure to also update them
+ * in config.overrides.js
+ */
 import React, { useContext, createContext } from "react";
 import baseStyled, {
   ThemedStyledInterface,
