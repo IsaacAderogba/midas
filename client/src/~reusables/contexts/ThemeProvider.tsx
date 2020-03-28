@@ -84,7 +84,6 @@ export const theme = {
     deepDark:
       "0px 11px 15px rgba(26, 32, 44, 0.2), 0px 9px 46px rgba(151, 162, 185, 0.12), 0px 24px 38px rgba(26, 32, 44, 0.14)"
   },
-
   colors: {
     white: "#FFFFFF",
     primary: "#5168C2",

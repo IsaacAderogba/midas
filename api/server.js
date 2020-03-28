@@ -43,7 +43,11 @@ const apolloServer = new ApolloServer({
     userAPI: UserAPI,
     workspaceAPI: WorkspaceAPI,
     workspaceUserAPI: WorkspaceUserAPI
-  })
+  }),
+  engine: {
+    debugPrintReports: true,
+    apiKey: process.env.ENGINE_METRICS_KEY
+  }
 });
 apolloServer.applyMiddleware({ app: server });
 

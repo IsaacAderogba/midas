@@ -31,12 +31,15 @@ const client = new ApolloClient({
     authLink,
     new HttpLink({
       uri: "/graphql",
-      credentials: "same-origin"
+      credentials:
+        process.env.NODE_ENV === "development" ? "include" : "same-origin"
     })
   ]),
   cache: new InMemoryCache()
 });
 
 export const ApolloProvider: React.FC = ({ children }) => {
-  return <ApolloContextProvider client={client}>{children}</ApolloContextProvider>;
+  return (
+    <ApolloContextProvider client={client}>{children}</ApolloContextProvider>
+  );
 };
