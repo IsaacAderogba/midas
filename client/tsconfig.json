@@ -20,6 +20,6 @@
     "jsx": "react"
   },
   "include": [
-    "src", "config-overrides.js"
+    "src", "config-overrides.js", "codegen.js"
   ]
 }

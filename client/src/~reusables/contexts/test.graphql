@@ -1,0 +1,10 @@
+query getUser {
+  user {
+    id
+    firstName
+    lastName
+    workspaces {
+      name
+    }
+  }
+}
