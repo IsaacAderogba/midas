@@ -152,7 +152,7 @@ export interface NexusGenFieldTypes {
     isVerified: boolean; // Boolean!
     lastName: string; // String!
     photoId: boolean | null; // Boolean
-    workspaces: NexusGenRootTypes['Workspace'][]; // [Workspace!]!
+    workspaces: NexusGenRootTypes['Workspace'][] | null; // [Workspace!]
   }
   Workspace: { // field return type
     id: string; // ID!

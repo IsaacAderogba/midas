@@ -419,19 +419,15 @@
             "description": "",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Workspace",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "Workspace",
+                  "ofType": null
                 }
               }
             },

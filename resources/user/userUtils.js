@@ -3,7 +3,7 @@ const { UserInputError } = require("apollo-server-express")
 
 const userQueryKeys = {
   loginUser: "loginUser",
-  user: "user"
+  user: "user",
 };
 
 const userResolverKeys = {

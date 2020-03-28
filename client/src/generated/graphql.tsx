@@ -124,7 +124,7 @@ export type User = {
   avatarURL?: Maybe<Scalars['String']>;
   isVerified: Scalars['Boolean'];
   photoId?: Maybe<Scalars['Boolean']>;
-  workspaces: Array<Workspace>;
+  workspaces?: Maybe<Array<Workspace>>;
 };
 
 export type UserInput = {
@@ -189,11 +189,11 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { user?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'firstName' | 'lastName'>
-    & { workspaces: Array<(
+    & Pick<User, 'id' | 'firstName' | 'lastName' | 'email' | 'avatarURL' | 'isVerified' | 'photoId'>
+    & { workspaces?: Maybe<Array<(
       { __typename?: 'Workspace' }
-      & Pick<Workspace, 'name'>
-    )> }
+      & Pick<Workspace, 'id' | 'name' | 'photoURL'>
+    )>> }
   )> }
 );
 
@@ -204,8 +204,14 @@ export const GetUserDocument = gql`
     id
     firstName
     lastName
+    email
+    avatarURL
+    isVerified
+    photoId
     workspaces {
+      id
       name
+      photoURL
     }
   }
 }

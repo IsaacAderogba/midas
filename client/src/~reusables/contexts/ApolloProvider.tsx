@@ -5,7 +5,7 @@ import { HttpLink } from "apollo-link-http";
 import { onError } from "apollo-link-error";
 import { ApolloLink } from "apollo-link";
 import { setContext } from "apollo-link-context";
-import { ApolloProvider as ApolloContextProvider } from "react-apollo-hooks";
+import { ApolloProvider as ApolloContextProvider } from "@apollo/react-hooks";
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("token");

@@ -13,13 +13,16 @@ import App from "./App";
 // helpers
 import * as serviceWorker from "./serviceWorker";
 import "./index.css";
+import { AuthProvider } from "./~reusables/contexts/AuthProvider";
 
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider>
       <ThemeProvider>
         <RouterProvider>
-          <App />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </RouterProvider>
       </ThemeProvider>
     </ApolloProvider>
