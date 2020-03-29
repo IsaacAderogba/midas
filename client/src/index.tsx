@@ -14,15 +14,18 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "./index.css";
 import { AuthProvider } from "./~reusables/contexts/AuthProvider";
+import { UIProvider } from "./~reusables/contexts/UIProvider";
 
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider>
       <ThemeProvider>
         <RouterProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <UIProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </UIProvider>
         </RouterProvider>
       </ThemeProvider>
     </ApolloProvider>

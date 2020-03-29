@@ -1,3 +1,4 @@
+// modules
 import React from "react";
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
@@ -7,8 +8,11 @@ import { ApolloLink } from "apollo-link";
 import { setContext } from "apollo-link-context";
 import { ApolloProvider as ApolloContextProvider } from "@apollo/react-hooks";
 
+// helpers
+import { LOCAL_STORAGE_TOKEN_KEY } from "../constants/constants";
+
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
   return {
     headers: {
       ...headers,

@@ -1,5 +1,5 @@
 // modules
-import React from "react";
+import React, { useContext } from "react";
 
 // components
 import { Container } from "./Container";
@@ -8,14 +8,29 @@ import { Logo } from "../atoms/Logo";
 
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
+import { useUI } from "../../~reusables/contexts/UIProvider";
 
 export const MarketingHeader: React.FC = () => {
+  const { setModalState } = useUI();
   return (
     <StyledMarketingHeader>
       <Logo />
       <div>
-        <Button>Login</Button>
-        <Button type="primary">Sign up</Button>
+        <Button
+          onClick={() =>
+            setModalState({ modal: "auth-modal", props: { type: "login" } })
+          }
+        >
+          Login
+        </Button>
+        <Button
+          onClick={() =>
+            setModalState({ modal: "auth-modal", props: { type: "signup" } })
+          }
+          type="primary"
+        >
+          Sign up
+        </Button>
       </div>
     </StyledMarketingHeader>
   );
