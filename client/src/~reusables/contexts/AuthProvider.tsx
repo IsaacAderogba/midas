@@ -1,5 +1,5 @@
 // modules
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useEffect } from "react";
 import { useLocalStore } from "mobx-react";
 import gql from "graphql-tag";
 

@@ -1,5 +1,5 @@
 // modules
-import React, { useContext } from "react";
+import React from "react";
 
 // components
 import { Container } from "./Container";
@@ -22,7 +22,7 @@ export const MarketingHeader: React.FC = () => {
             setModalState({ modal: "auth-modal", props: { type: "login" } })
           }
         >
-          Login
+          Log in
         </Button>
         <Button
           onClick={() =>
