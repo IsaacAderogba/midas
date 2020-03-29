@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Modal, Tabs } from "antd";
 
 // helpers
-import { useUI } from "../../~reusables/contexts/UIProvider";
+import { useUIStore } from "../../~reusables/contexts/UIProvider";
 
 enum AuthModalTabs {
   Signup = "Signup",
@@ -17,13 +17,14 @@ export interface IAuthModal {
 }
 
 export interface IAuthModalAction {
-  modal: 'auth-modal',
-  props: IAuthModal
+  modal: "auth-modal";
+  props: IAuthModal;
 }
 
 export const AuthModal: React.FC<IAuthModal> = ({ type }) => {
   const [isModalVisible, setModalVisibility] = useState(true);
-  const { resetModalState } = useUI();
+  const resetModalState = useUIStore(state => state.resetModalState);
+  
   return (
     <Modal
       visible={isModalVisible}

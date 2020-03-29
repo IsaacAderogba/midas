@@ -8,23 +8,27 @@ import {
   IAuthModalAction
 } from "../../components/~modals/AuthModal";
 
+// helpers
+import { useStoreState } from "../hooks/useStoreState";
+
 type IModalTypes = IAuthModalAction | null;
-interface IUIState {
+interface IUIStore {
   modalState: IModalTypes;
   setModalState: (modal: IModalTypes) => void;
   resetModalState: () => void;
 }
 
-export const UIContext = createContext<IUIState>({
+export const UIContext = createContext<IUIStore>({
   modalState: null,
   setModalState: () => {},
   resetModalState: () => {}
 });
 
-export const useUI = () => useContext(UIContext);
+export const useUIStore = <S,>(dataSelector: (store: IUIStore) => S) =>
+  useStoreState(UIContext, contextData => contextData!, dataSelector);
 
 export const UIProvider: React.FC = ({ children }) => {
-  const store = useLocalStore<IUIState>(() => ({
+  const store = useLocalStore<IUIStore>(() => ({
     modalState: null,
     setModalState: (modal: IModalTypes) => {
       store.modalState = modal;

@@ -8,10 +8,11 @@ import { Logo } from "../atoms/Logo";
 
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
-import { useUI } from "../../~reusables/contexts/UIProvider";
+import { useUIStore } from "../../~reusables/contexts/UIProvider";
 
 export const MarketingHeader: React.FC = () => {
-  const { setModalState } = useUI();
+  const setModalState = useUIStore(state => state.setModalState);
+
   return (
     <StyledMarketingHeader>
       <Logo />
