@@ -123,6 +123,7 @@ export interface NexusGenFieldTypes {
     isVerified: boolean; // Boolean!
     lastName: string; // String!
     token: string; // String!
+    user: NexusGenRootTypes['User']; // User!
     userId: string; // ID!
   }
   Mutation: { // field return type
@@ -131,13 +132,13 @@ export interface NexusGenFieldTypes {
     deleteUser: boolean; // Boolean!
     deleteWorkspace: boolean; // Boolean!
     deleteWorkspaceUser: boolean; // Boolean!
+    loginUser: NexusGenRootTypes['AuthUser']; // AuthUser!
     registerUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
     updateUser: NexusGenRootTypes['User'] | null; // User
     updateWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     updateWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
   }
   Query: { // field return type
-    loginUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
     user: NexusGenRootTypes['User'] | null; // User
     workspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     workspaces: NexusGenRootTypes['Workspace'][]; // [Workspace!]!
@@ -185,6 +186,9 @@ export interface NexusGenArgTypes {
     deleteWorkspaceUser: { // args
       where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere
     }
+    loginUser: { // args
+      loginInput?: NexusGenInputs['LoginInput'] | null; // LoginInput
+    }
     registerUser: { // args
       registerInput?: NexusGenInputs['RegisterInput'] | null; // RegisterInput
     }
@@ -200,9 +204,6 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
-    loginUser: { // args
-      loginInput?: NexusGenInputs['LoginInput'] | null; // LoginInput
-    }
     workspaceUser: { // args
       where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere
     }

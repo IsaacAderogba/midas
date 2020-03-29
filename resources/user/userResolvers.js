@@ -1,4 +1,4 @@
-const { userQueryKeys, userResolverKeys } = require("./userUtils");
+const { userQueryKeys, userResolverKeys, userErrors } = require("./userUtils");
 const { extendType, arg } = require("nexus");
 const {
   AuthUser,
@@ -11,19 +11,6 @@ const {
 const Query = extendType({
   type: "Query",
   definition(t) {
-    t.field(userQueryKeys.loginUser, {
-      type: AuthUser,
-      nullable: true,
-      args: {
-        loginInput: LoginInput
-      },
-      resolve: async (parent, args, { dataSources }) => {
-        return await dataSources.userAPI.loginUser({
-          ...args.loginInput
-        });
-      }
-    });
-
     t.field(userQueryKeys.user, {
       type: User,
       nullable: true,
@@ -37,6 +24,20 @@ const Query = extendType({
 const Mutation = extendType({
   type: "Mutation",
   definition(t) {
+    t.field(userResolverKeys.loginUser, {
+      type: AuthUser,
+      nullable: false,
+      args: {
+        loginInput: LoginInput
+      },
+      resolve: async (parent, args, { dataSources }) => {
+        const user = await dataSources.userAPI.loginUser({
+          ...args.loginInput
+        });
+        if(!user) throw userErrors.EmailPasswordWrong
+        return user;
+      }
+    });
     t.field(userResolverKeys.registerUser, {
       type: AuthUser,
       nullable: true,

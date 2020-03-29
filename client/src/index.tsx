@@ -17,19 +17,17 @@ import { AuthProvider } from "./~reusables/contexts/AuthProvider";
 import { UIProvider } from "./~reusables/contexts/UIProvider";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <ApolloProvider>
+  <ApolloProvider>
+    <AuthProvider>
       <ThemeProvider>
         <RouterProvider>
           <UIProvider>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
+            <App />
           </UIProvider>
         </RouterProvider>
       </ThemeProvider>
-    </ApolloProvider>
-  </React.StrictMode>,
+    </AuthProvider>
+  </ApolloProvider>,
   document.getElementById("root")
 );
 

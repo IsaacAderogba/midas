@@ -2,11 +2,11 @@ const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server-express")
 
 const userQueryKeys = {
-  loginUser: "loginUser",
   user: "user",
 };
 
 const userResolverKeys = {
+  loginUser: "loginUser",
   registerUser: "registerUser",
   updateUser: "updateUser",
   deleteUser: "deleteUser"
@@ -15,6 +15,7 @@ const userResolverKeys = {
 const userErrors = {
   UserAlreadyExists: new UserInputError("User already exists"),
   UserNotFound: new UserInputError("User not found"),
+  EmailPasswordWrong: new UserInputError("Incorrect email/password combination")
 }
 
 const generateToken = ({ id, firstName, lastName }) => {

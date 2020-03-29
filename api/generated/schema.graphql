@@ -8,6 +8,7 @@ type AuthUser {
   isVerified: Boolean!
   lastName: String!
   token: String!
+  user: User!
   userId: ID!
 }
 
@@ -22,6 +23,7 @@ type Mutation {
   deleteUser: Boolean!
   deleteWorkspace: Boolean!
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
+  loginUser(loginInput: LoginInput): AuthUser!
   registerUser(registerInput: RegisterInput): AuthUser
   updateUser(userInput: UserInput): User
   updateWorkspace(workspaceInput: WorkspaceInput): Workspace
@@ -41,7 +43,6 @@ input NewWorkspaceUserInput {
 }
 
 type Query {
-  loginUser(loginInput: LoginInput): AuthUser
   user: User
   workspace: Workspace
   workspaces: [Workspace!]!

@@ -7,36 +7,29 @@ import gql from "graphql-tag";
 import { useGetUserQuery, GetUserQuery } from "../../generated/graphql";
 import { LOCAL_STORAGE_TOKEN_KEY } from "../constants/constants";
 import { useStoreState } from "../hooks/useStoreState";
+import { User } from "../utils/fragments";
 
 export const getUser = gql`
   query getUser {
     user {
-      id
-      firstName
-      lastName
-      email
-      avatarURL
-      isVerified
-      photoId
-      workspaces {
-        id
-        name
-        photoURL
-      }
+      ...userAttributes
     }
   }
+  ${User.fragments.attributes}
 `;
 
 interface IAuthStore {
   user: GetUserQuery["user"];
   isLoading: boolean;
-  setToken: (token: string) => void;
+  setToken: (token: string, workspaceId: string) => void;
+  setUser: (user: GetUserQuery["user"]) => void;
 }
 
 export const AuthContext = createContext<IAuthStore>({
   user: null,
   isLoading: true,
-  setToken: () => {}
+  setToken: () => {},
+  setUser: () => {}
 });
 
 export const useAuthStore = <S,>(dataSelector: (store: IAuthStore) => S) =>
@@ -46,14 +39,20 @@ export const AuthProvider: React.FC = ({ children }) => {
   const { data, loading } = useGetUserQuery();
   const store = useLocalStore<IAuthStore>(() => ({
     user: null,
+    setUser: user => {
+      store.user = user;
+    },
     isLoading: true,
-    setToken: (token: string) =>
-      localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, token)
+    setToken: (token, workspaceId) => {
+      localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, `${workspaceId} ${token}`);
+    }
   }));
 
   useEffect(() => {
     if (data) {
       store.user = data["user"];
+      store.isLoading = loading;
+    } else {
       store.isLoading = loading;
     }
   }, [loading, data, store.isLoading, store.user]);

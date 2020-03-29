@@ -1,13 +1,17 @@
 // modules
 import React, { useState } from "react";
 import { css } from "styled-components/macro";
+import gql from "graphql-tag";
 
 // components
-import { Modal, Tabs, Input, Form, Button } from "antd";
+import { Modal, Tabs, Input, Form, Button, Alert } from "antd";
 
 // helpers
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
+import { User } from "../../~reusables/utils/fragments";
+import { useLoginUserMutation } from "../../generated/graphql";
+import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
 
 enum AuthModalTabs {
   Signup = "Signup",
@@ -54,6 +58,18 @@ export const AuthModal: React.FC<IAuthModal> = ({ type }) => {
   );
 };
 
+export const registerUser = gql`
+  mutation registerUser($registerInput: RegisterInput) {
+    registerUser(registerInput: $registerInput) {
+      token
+      user {
+        ...userAttributes
+      }
+    }
+  }
+  ${User.fragments.attributes}
+`;
+
 export const RegisterFields: React.FC = () => {
   const { space } = useTheme();
 
@@ -93,7 +109,11 @@ export const RegisterFields: React.FC = () => {
         <Input.Password placeholder="password" />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          style={{ width: "100%", marginTop: `${space[5]}px` }}
+        >
           Sign up
         </Button>
       </Form.Item>
@@ -101,20 +121,88 @@ export const RegisterFields: React.FC = () => {
   );
 };
 
+export const loginUser = gql`
+  mutation loginUser($loginInput: LoginInput) {
+    loginUser(loginInput: $loginInput) {
+      token
+      user {
+        ...userAttributes
+      }
+    }
+  }
+  ${User.fragments.attributes}
+`;
+
 export const LoginFields: React.FC = () => {
+  const { space } = useTheme();
+  const resetModalState = useUIStore(state => state.resetModalState);
+  const { setToken, setUser } = useAuthStore(state => ({
+    setToken: state.setToken,
+    setUser: state.setUser
+  }));
+
+  const [loginUser, { loading, error }] = useLoginUserMutation({
+    update(_, { data }) {
+      if (data) {
+        const { token, user } = data.loginUser;
+        const workspaceId =
+          user.workspaces && user.workspaces.length > 0
+            ? user.workspaces[0].id
+            : "0";
+            
+        setToken(token, workspaceId);
+        setUser(user);
+        resetModalState();
+      }
+    },
+    onError() {}
+  });
+
+  const onFinish = (values: any) =>
+    loginUser({ variables: { loginInput: { ...values } } });
+
   return (
-    <Form layout="vertical">
-      <Form.Item label="Email">
+    <Form
+      layout="vertical"
+      onFinish={onFinish}
+      initialValues={{ email: "", password: "" }}
+    >
+      <Form.Item
+        label="Email"
+        name="email"
+        rules={[
+          { required: true, type: "email", message: "Please input your email" }
+        ]}
+      >
         <Input placeholder="johndoe@gmail.com" />
       </Form.Item>
-      <Form.Item label="Password">
+      <Form.Item
+        label="Password"
+        name="password"
+        rules={[
+          {
+            required: true,
+            type: "string",
+            message: "Please input your password"
+          }
+        ]}
+      >
         <Input.Password placeholder="password" />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+        <Button
+          loading={loading}
+          type="primary"
+          htmlType="submit"
+          style={{ width: "100%", marginTop: `${space[5]}px` }}
+        >
           Log in
         </Button>
       </Form.Item>
+      {error &&
+        error.graphQLErrors.map(({ message }, i) => (
+          <Alert closable key={i} message={message} type="error" showIcon />
+        ))}
     </Form>
   );
 };

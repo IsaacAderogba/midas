@@ -1,14 +1,26 @@
 // modules
 import React from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Redirect } from "react-router-dom";
 
 // components
 import { MarketingHeader } from "../../components/~layout/MarketingHeader";
+import { LOCAL_STORAGE_TOKEN_KEY } from "../../~reusables/constants/constants";
 
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
+import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
+import { FullPageSpinner } from "../../components/atoms/FullPageSpinner";
 
 export const Landing: React.FC<RouteComponentProps> = () => {
+  const isToken = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
+  const { isLoading, user } = useAuthStore(state => ({
+    user: state.user,
+    isLoading: state.isLoading
+  }));
+    
+  if (isLoading && isToken) return <FullPageSpinner />;
+  if (user) return <Redirect to="/app" />;
+
   return (
     <StyledLanding>
       <div className="stripes">

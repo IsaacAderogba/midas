@@ -10,6 +10,13 @@ const AuthUser = objectType({
     t.string("avatarURL", { nullable: true });
     t.string("token");
     t.boolean("isVerified");
+    t.field("user", {
+      type: User,
+      nullable: false,
+      resolve: (authUser, args, { dataSources }) => {
+        return dataSources.userAPI.readUser({ id: authUser.userId });
+      }
+    });
   }
 });
 

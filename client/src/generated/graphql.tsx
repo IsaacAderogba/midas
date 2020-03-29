@@ -19,6 +19,7 @@ export type AuthUser = {
   avatarURL?: Maybe<Scalars['String']>;
   token: Scalars['String'];
   isVerified: Scalars['Boolean'];
+  user: User;
 };
 
 export type LoginInput = {
@@ -28,6 +29,7 @@ export type LoginInput = {
 
 export type Mutation = {
    __typename?: 'Mutation';
+  loginUser: AuthUser;
   registerUser?: Maybe<AuthUser>;
   updateUser?: Maybe<User>;
   deleteUser: Scalars['Boolean'];
@@ -37,6 +39,11 @@ export type Mutation = {
   createWorkspaceUser?: Maybe<WorkspaceUser>;
   updateWorkspaceUser?: Maybe<WorkspaceUser>;
   deleteWorkspaceUser: Scalars['Boolean'];
+};
+
+
+export type MutationLoginUserArgs = {
+  loginInput?: Maybe<LoginInput>;
 };
 
 
@@ -89,17 +96,11 @@ export type NewWorkspaceUserInput = {
 
 export type Query = {
    __typename?: 'Query';
-  loginUser?: Maybe<AuthUser>;
   user?: Maybe<User>;
   workspace?: Maybe<Workspace>;
   workspaces: Array<Workspace>;
   workspaceUser?: Maybe<WorkspaceUser>;
   workspaceUsers?: Maybe<Array<WorkspaceUser>>;
-};
-
-
-export type QueryLoginUserArgs = {
-  loginInput?: Maybe<LoginInput>;
 };
 
 
@@ -182,6 +183,40 @@ export type WorkspaceUserWhere = {
   userId?: Maybe<Scalars['Int']>;
 };
 
+export type RegisterUserMutationVariables = {
+  registerInput?: Maybe<RegisterInput>;
+};
+
+
+export type RegisterUserMutation = (
+  { __typename?: 'Mutation' }
+  & { registerUser?: Maybe<(
+    { __typename?: 'AuthUser' }
+    & Pick<AuthUser, 'token'>
+    & { user: (
+      { __typename?: 'User' }
+      & UserAttributesFragment
+    ) }
+  )> }
+);
+
+export type LoginUserMutationVariables = {
+  loginInput?: Maybe<LoginInput>;
+};
+
+
+export type LoginUserMutation = (
+  { __typename?: 'Mutation' }
+  & { loginUser: (
+    { __typename?: 'AuthUser' }
+    & Pick<AuthUser, 'token'>
+    & { user: (
+      { __typename?: 'User' }
+      & UserAttributesFragment
+    ) }
+  ) }
+);
+
 export type GetUserQueryVariables = {};
 
 
@@ -189,33 +224,112 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { user?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'firstName' | 'lastName' | 'email' | 'avatarURL' | 'isVerified' | 'photoId'>
-    & { workspaces?: Maybe<Array<(
-      { __typename?: 'Workspace' }
-      & Pick<Workspace, 'id' | 'name' | 'photoURL'>
-    )>> }
+    & UserAttributesFragment
   )> }
 );
 
+export type UserAttributesFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'firstName' | 'lastName' | 'email' | 'avatarURL' | 'isVerified' | 'photoId'>
+  & { workspaces?: Maybe<Array<(
+    { __typename?: 'Workspace' }
+    & Pick<Workspace, 'id' | 'name' | 'photoURL'>
+  )>> }
+);
 
-export const GetUserDocument = gql`
-    query getUser {
-  user {
+export const UserAttributesFragmentDoc = gql`
+    fragment userAttributes on User {
+  id
+  firstName
+  lastName
+  email
+  avatarURL
+  isVerified
+  photoId
+  workspaces {
     id
-    firstName
-    lastName
-    email
-    avatarURL
-    isVerified
-    photoId
-    workspaces {
-      id
-      name
-      photoURL
-    }
+    name
+    photoURL
   }
 }
     `;
+export const RegisterUserDocument = gql`
+    mutation registerUser($registerInput: RegisterInput) {
+  registerUser(registerInput: $registerInput) {
+    token
+    user {
+      ...userAttributes
+    }
+  }
+}
+    ${UserAttributesFragmentDoc}`;
+export type RegisterUserMutationFn = ApolloReactCommon.MutationFunction<RegisterUserMutation, RegisterUserMutationVariables>;
+
+/**
+ * __useRegisterUserMutation__
+ *
+ * To run a mutation, you first call `useRegisterUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerUserMutation, { data, loading, error }] = useRegisterUserMutation({
+ *   variables: {
+ *      registerInput: // value for 'registerInput'
+ *   },
+ * });
+ */
+export function useRegisterUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RegisterUserMutation, RegisterUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<RegisterUserMutation, RegisterUserMutationVariables>(RegisterUserDocument, baseOptions);
+      }
+export type RegisterUserMutationHookResult = ReturnType<typeof useRegisterUserMutation>;
+export type RegisterUserMutationResult = ApolloReactCommon.MutationResult<RegisterUserMutation>;
+export type RegisterUserMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterUserMutation, RegisterUserMutationVariables>;
+export const LoginUserDocument = gql`
+    mutation loginUser($loginInput: LoginInput) {
+  loginUser(loginInput: $loginInput) {
+    token
+    user {
+      ...userAttributes
+    }
+  }
+}
+    ${UserAttributesFragmentDoc}`;
+export type LoginUserMutationFn = ApolloReactCommon.MutationFunction<LoginUserMutation, LoginUserMutationVariables>;
+
+/**
+ * __useLoginUserMutation__
+ *
+ * To run a mutation, you first call `useLoginUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginUserMutation, { data, loading, error }] = useLoginUserMutation({
+ *   variables: {
+ *      loginInput: // value for 'loginInput'
+ *   },
+ * });
+ */
+export function useLoginUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LoginUserMutation, LoginUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<LoginUserMutation, LoginUserMutationVariables>(LoginUserDocument, baseOptions);
+      }
+export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
+export type LoginUserMutationResult = ApolloReactCommon.MutationResult<LoginUserMutation>;
+export type LoginUserMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
+export const GetUserDocument = gql`
+    query getUser {
+  user {
+    ...userAttributes
+  }
+}
+    ${UserAttributesFragmentDoc}`;
 
 /**
  * __useGetUserQuery__
