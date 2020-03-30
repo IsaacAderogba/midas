@@ -13,12 +13,12 @@ import { FullPageSpinner } from "../../components/atoms/FullPageSpinner";
 
 export const Landing: React.FC<RouteComponentProps> = () => {
   const isToken = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
-  const { isLoading, user } = useAuthStore(state => ({
+  const { isUserLoading, user } = useAuthStore(state => ({
     user: state.user,
-    isLoading: state.isLoading
+    isUserLoading: state.isUserLoading
   }));
     
-  if (isLoading && isToken) return <FullPageSpinner />;
+  if (isUserLoading && isToken) return <FullPageSpinner />;
   if (user) return <Redirect to="/app" />;
 
   return (

@@ -1,4 +1,5 @@
 const { objectType, inputObjectType } = require("nexus");
+// const { WorkspaceUser } = require("../workspace_user/workspaceUserTypes");
 
 const Workspace = objectType({
   name: "Workspace",
@@ -10,6 +11,15 @@ const Workspace = objectType({
     t.string("photoId", { nullable: true });
     t.string("trialStartedAt", { nullable: true });
     t.int("seats", { nullable: false });
+    t.list.field("workspaceUsers", {
+      type: 'WorkspaceUser', // using the actual type introduces a circular dependecy
+      nullable: false,
+      resolve: async (workspace, args, { dataSources }) => {
+        return dataSources.workspaceUserAPI.readWorkspaceUsers({
+          workspaceId: workspace.id
+        });
+      }
+    });
   }
 });
 

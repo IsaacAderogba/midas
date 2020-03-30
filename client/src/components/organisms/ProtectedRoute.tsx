@@ -23,12 +23,12 @@ const ProtectedRoute: React.FC<IProtectedRoute> = ({
   component: Component,
   ...rest
 }) => {
-  const { isLoading, user } = useAuthStore(state => ({
+  const { isUserLoading, user } = useAuthStore(state => ({
     user: state.user,
-    isLoading: state.isLoading
+    isUserLoading: state.isUserLoading
   }));
 
-  if (isLoading) return <FullPageSpinner />;
+  if (isUserLoading) return <FullPageSpinner />;
 
   return (
     <Route

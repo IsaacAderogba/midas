@@ -85,6 +85,7 @@ type Workspace {
   seats: Int!
   trialStartedAt: String
   url: String!
+  workspaceUsers: [WorkspaceUser!]!
 }
 
 input WorkspaceInput {

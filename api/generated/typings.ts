@@ -163,6 +163,7 @@ export interface NexusGenFieldTypes {
     seats: number; // Int!
     trialStartedAt: string | null; // String
     url: string; // String!
+    workspaceUsers: NexusGenRootTypes['WorkspaceUser'][]; // [WorkspaceUser!]!
   }
   WorkspaceUser: { // field return type
     lastSeen: string | null; // String

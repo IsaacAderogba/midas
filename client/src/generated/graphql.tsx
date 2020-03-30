@@ -145,6 +145,7 @@ export type Workspace = {
   photoId?: Maybe<Scalars['String']>;
   trialStartedAt?: Maybe<Scalars['String']>;
   seats: Scalars['Int'];
+  workspaceUsers: Array<WorkspaceUser>;
 };
 
 export type WorkspaceInput = {
@@ -215,6 +216,25 @@ export type LoginUserMutation = (
       & UserAttributesFragment
     ) }
   ) }
+);
+
+export type GetWorkspaceQueryVariables = {};
+
+
+export type GetWorkspaceQuery = (
+  { __typename?: 'Query' }
+  & { workspace?: Maybe<(
+    { __typename?: 'Workspace' }
+    & Pick<Workspace, 'id' | 'name' | 'url' | 'photoURL' | 'photoId' | 'trialStartedAt' | 'seats'>
+    & { workspaceUsers: Array<(
+      { __typename?: 'WorkspaceUser' }
+      & Pick<WorkspaceUser, 'role'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'firstName' | 'lastName' | 'avatarURL' | 'email'>
+      ) }
+    )> }
+  )> }
 );
 
 export type GetUserQueryVariables = {};
@@ -323,6 +343,54 @@ export function useLoginUserMutation(baseOptions?: ApolloReactHooks.MutationHook
 export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
 export type LoginUserMutationResult = ApolloReactCommon.MutationResult<LoginUserMutation>;
 export type LoginUserMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
+export const GetWorkspaceDocument = gql`
+    query getWorkspace {
+  workspace {
+    id
+    name
+    url
+    photoURL
+    photoId
+    trialStartedAt
+    seats
+    workspaceUsers {
+      role
+      user {
+        id
+        firstName
+        lastName
+        avatarURL
+        email
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetWorkspaceQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspaceQuery, GetWorkspaceQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, baseOptions);
+      }
+export function useGetWorkspaceLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspaceQuery, GetWorkspaceQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, baseOptions);
+        }
+export type GetWorkspaceQueryHookResult = ReturnType<typeof useGetWorkspaceQuery>;
+export type GetWorkspaceLazyQueryHookResult = ReturnType<typeof useGetWorkspaceLazyQuery>;
+export type GetWorkspaceQueryResult = ApolloReactCommon.QueryResult<GetWorkspaceQuery, GetWorkspaceQueryVariables>;
 export const GetUserDocument = gql`
     query getUser {
   user {

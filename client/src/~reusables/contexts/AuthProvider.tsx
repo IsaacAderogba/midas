@@ -19,13 +19,13 @@ export const getUser = gql`
 
 export interface IAuthStore {
   user: GetUserQuery["user"];
-  isLoading: boolean;
+  isUserLoading: boolean;
   setUser: (user: GetUserQuery["user"]) => void;
 }
 
 export const AuthContext = createContext<IAuthStore>({
   user: null,
-  isLoading: true,
+  isUserLoading: false,
   setUser: () => {}
 });
 
@@ -39,17 +39,17 @@ export const AuthProvider: React.FC = ({ children }) => {
     setUser: user => {
       store.user = user;
     },
-    isLoading: true
+    isUserLoading: true
   }));
 
   useEffect(() => {
     if (data) {
       store.user = data["user"];
-      store.isLoading = loading;
+      store.isUserLoading = loading;
     } else {
-      store.isLoading = loading;
+      store.isUserLoading = loading;
     }
-  }, [loading, data, store.isLoading, store.user]);
+  }, [loading, data, store.isUserLoading, store.user]);
 
   return <AuthContext.Provider value={store}>{children}</AuthContext.Provider>;
 };
