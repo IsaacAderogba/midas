@@ -1,12 +1,15 @@
 // modules
-import React, { createContext } from "react";
+import React, { createContext, useEffect } from "react";
 import { useLocalStore } from "mobx-react";
-import { Workspace } from "../../generated/graphql";
+import {
+  GetWorkspace_WorkspacesQuery,
+  useGetWorkspace_WorkspacesQuery
+} from "../../generated/graphql";
 import gql from "graphql-tag";
 
 // helpers
-import { Maybe } from "../utils/types";
 import { useStoreState } from "../hooks/useStoreState";
+import { Workspace } from "../utils/fragments";
 
 /**
  * Heavy duty
@@ -18,8 +21,8 @@ import { useStoreState } from "../hooks/useStoreState";
  * else set it to null
  */
 
-export const getWorkspace = gql`
-  query getWorkspace {
+export const getWorkspace_Workspaces = gql`
+  query getWorkspace_Workspaces {
     workspace {
       id
       name
@@ -39,16 +42,22 @@ export const getWorkspace = gql`
         }
       }
     }
+    workspaces {
+      ...workspacesAttributes
+    }
   }
+  ${Workspace.fragments.attributes}
 `;
 
 export interface IAppStore {
-  workspace: Maybe<Workspace>;
+  workspace: GetWorkspace_WorkspacesQuery["workspace"];
+  workspaces: GetWorkspace_WorkspacesQuery["workspaces"];
   isWorkspaceLoading: boolean;
 }
 
 export const AppContext = createContext<IAppStore>({
   workspace: null,
+  workspaces: [],
   isWorkspaceLoading: false
 });
 
@@ -56,10 +65,28 @@ export const useAppStore = <S,>(dataSelector: (store: IAppStore) => S) =>
   useStoreState(AppContext, contextData => contextData!, dataSelector);
 
 export const AppProvider: React.FC = ({ children }) => {
+  const { data, loading } = useGetWorkspace_WorkspacesQuery();
   const store = useLocalStore<IAppStore>(() => ({
     workspace: null,
+    workspaces: [],
     isWorkspaceLoading: true
   }));
+
+  useEffect(() => {
+    if (data) {
+      store.workspace = data["workspace"];
+      store.workspaces = data["workspaces"];
+      store.isWorkspaceLoading = loading;
+    } else {
+      store.isWorkspaceLoading = loading;
+    }
+  }, [
+    loading,
+    data,
+    store.isWorkspaceLoading,
+    store.workspace,
+    store.workspaces
+  ]);
 
   return <AppContext.Provider value={store}>{children}</AppContext.Provider>;
 };

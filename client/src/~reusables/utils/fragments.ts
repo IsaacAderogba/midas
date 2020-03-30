@@ -1,5 +1,18 @@
 import gql from "graphql-tag";
 
+export const Workspace = {
+  fragments: {
+    attributes: gql`
+      fragment workspacesAttributes on Workspace {
+        id
+        name
+        url
+        photoURL
+      }
+    `
+  }
+};
+
 export const User = {
   fragments: {
     attributes: gql`
@@ -12,11 +25,10 @@ export const User = {
         isVerified
         photoId
         workspaces {
-          id
-          name
-          photoURL
+          ...workspacesAttributes
         }
       }
+      ${Workspace.fragments.attributes}
     `
   }
 };

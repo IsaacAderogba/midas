@@ -6,10 +6,11 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { Landing } from "./views/marketing/Landing";
 import ProtectedRoute from "./components/organisms/ProtectedRoute";
 import { Sidebar } from "./components/~layout/Sidebar";
+import { AppProvider } from "./~reusables/contexts/AppProvider";
+import { Workspace } from "./views/app/Workspace";
 
 // helpers
 import { styled } from "./~reusables/contexts/ThemeProvider";
-import { Workspace } from "./views/app/Workspace";
 import { SIDEBAR_WIDTH } from "./~reusables/constants/dimensions";
 
 export const AppRouter = () => {
@@ -29,37 +30,39 @@ export const AppRouter = () => {
 const ProtectedAppRouter: React.FC = () => {
   // provider for deciding which app?
   return (
-    <Switch>
-      <Route
-        exact
-        path={["/app"]}
-        render={() => {
-          return (
-            <StyledProtectedApp>
-              <Sidebar />
-              <main className="main-app">
-                <Route
-                  exact
-                  path="/app"
-                  render={routeProps => <Workspace {...routeProps} />}
-                />
-              </main>
-            </StyledProtectedApp>
-          );
-        }}
-      />
-      <Route
-        exact
-        path="/app/canvas/:canvasId"
-        render={routeProps => {
-          // TODO - investigate whether hashing makes sense for security
-          // TODO - CanvasProvider
-          // TODO - ProtectedCanvas
-          return <div>Canvas</div>;
-        }}
-      />
-      <Redirect to="/app" />
-    </Switch>
+    <AppProvider>
+      <Switch>
+        <Route
+          exact
+          path={["/app"]}
+          render={() => {
+            return (
+              <StyledProtectedApp>
+                <Sidebar />
+                <main className="main-app">
+                  <Route
+                    exact
+                    path="/app"
+                    render={routeProps => <Workspace {...routeProps} />}
+                  />
+                </main>
+              </StyledProtectedApp>
+            );
+          }}
+        />
+        <Route
+          exact
+          path="/app/canvas/:canvasId"
+          render={routeProps => {
+            // TODO - investigate whether hashing makes sense for security
+            // TODO - CanvasProvider
+            // TODO - ProtectedCanvas
+            return <div>Canvas</div>;
+          }}
+        />
+        <Redirect to="/app" />
+      </Switch>
+    </AppProvider>
   );
 };
 
