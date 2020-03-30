@@ -8,7 +8,7 @@ import { ApolloProvider } from "./~reusables/contexts/ApolloProvider";
 import { BrowserRouter as RouterProvider } from "react-router-dom";
 
 // components
-import App from "./App";
+import { AppRouter } from "./AppRouter";
 
 // helpers
 import * as serviceWorker from "./serviceWorker";
@@ -22,7 +22,7 @@ ReactDOM.render(
       <ThemeProvider>
         <RouterProvider>
           <UIProvider>
-            <App />
+            <AppRouter />
           </UIProvider>
         </RouterProvider>
       </ThemeProvider>
