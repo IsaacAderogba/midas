@@ -10,6 +10,7 @@ import { Sidebar } from "./components/~layout/Sidebar";
 // helpers
 import { styled } from "./~reusables/contexts/ThemeProvider";
 import { Workspace } from "./views/app/Workspace";
+import { SIDEBAR_WIDTH } from "./~reusables/constants/dimensions";
 
 export const AppRouter = () => {
   return (
@@ -37,7 +38,7 @@ const ProtectedAppRouter: React.FC = () => {
             <StyledProtectedApp>
               <Sidebar />
               <main className="main-app">
-                <Route 
+                <Route
                   exact
                   path="/app"
                   render={routeProps => <Workspace {...routeProps} />}
@@ -66,9 +67,11 @@ const StyledProtectedApp = styled.div`
   display: flex;
 
   .main-app {
-    max-width: calc(100vw - 260px);
-    width: calc(100vw - 260px);
-    border: 1px solid red;
+    max-width: calc(100vw - ${SIDEBAR_WIDTH}px);
+    width: calc(100vw - ${SIDEBAR_WIDTH}px);
+    overflow-y: auto;
+    height: 100vh;
+    background: ${p => p.theme.colors.lightBackground};
   }
 
   @media only screen and (max-width: ${p => p.theme.breakpoints[1]}) {
