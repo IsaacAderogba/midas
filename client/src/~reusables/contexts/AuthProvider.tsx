@@ -5,7 +5,6 @@ import gql from "graphql-tag";
 
 // helpers
 import { useGetUserQuery, GetUserQuery } from "../../generated/graphql";
-import { LOCAL_STORAGE_TOKEN_KEY } from "../constants/constants";
 import { useStoreState } from "../hooks/useStoreState";
 import { User } from "../utils/fragments";
 
@@ -21,14 +20,12 @@ export const getUser = gql`
 export interface IAuthStore {
   user: GetUserQuery["user"];
   isLoading: boolean;
-  setToken: (token: string, workspaceId: string) => void;
   setUser: (user: GetUserQuery["user"]) => void;
 }
 
 export const AuthContext = createContext<IAuthStore>({
   user: null,
   isLoading: true,
-  setToken: () => {},
   setUser: () => {}
 });
 
@@ -42,10 +39,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     setUser: user => {
       store.user = user;
     },
-    isLoading: true,
-    setToken: (token, workspaceId) => {
-      localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, `${workspaceId} ${token}`);
-    }
+    isLoading: true
   }));
 
   useEffect(() => {

@@ -20,6 +20,7 @@ import {
   useAuthStore,
   IAuthStore
 } from "../../~reusables/contexts/AuthProvider";
+import { setLocalStorageTokenKey, setLocalStorageWorkspaceKey } from "../../~reusables/utils/localStorage";
 
 enum AuthModalTabs {
   Signup = "Signup",
@@ -81,8 +82,7 @@ export const registerUser = gql`
 export const RegisterFields: React.FC = () => {
   const { space } = useTheme();
   const resetModalState = useUIStore(state => state.resetModalState);
-  const { setToken, setUser } = useAuthStore(state => ({
-    setToken: state.setToken,
+  const { setUser } = useAuthStore(state => ({
     setUser: state.setUser
   }));
 
@@ -91,7 +91,6 @@ export const RegisterFields: React.FC = () => {
       if (data) {
         setUserAndToken(data.registerUser, {
           resetModalState,
-          setToken,
           setUser
         });
       }
@@ -206,8 +205,7 @@ export const loginUser = gql`
 export const LoginFields: React.FC = () => {
   const { space } = useTheme();
   const resetModalState = useUIStore(state => state.resetModalState);
-  const { setToken, setUser } = useAuthStore(state => ({
-    setToken: state.setToken,
+  const { setUser } = useAuthStore(state => ({
     setUser: state.setUser
   }));
 
@@ -216,7 +214,6 @@ export const LoginFields: React.FC = () => {
       if (data) {
         setUserAndToken(data.loginUser, {
           resetModalState,
-          setToken,
           setUser
         });
       }
@@ -274,18 +271,18 @@ function setUserAndToken(
     | RegisterUserMutation["registerUser"]
     | LoginUserMutation["loginUser"],
   functions: {
-    setToken: IAuthStore["setToken"];
     setUser: IAuthStore["setUser"];
     resetModalState: IUIStore["resetModalState"];
   }
 ) {
-  const { setToken, setUser, resetModalState } = functions;
+  const { setUser, resetModalState } = functions;
   const { token, user } = authUser;
 
   const workspaceId =
     user.workspaces && user.workspaces.length > 0 ? user.workspaces[0].id : "0";
 
-  setToken(token, workspaceId);
+  setLocalStorageTokenKey(token);
+  setLocalStorageWorkspaceKey(workspaceId);
   setUser(user);
   resetModalState();
 }

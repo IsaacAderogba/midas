@@ -9,14 +9,23 @@ import { setContext } from "apollo-link-context";
 import { ApolloProvider as ApolloContextProvider } from "@apollo/react-hooks";
 
 // helpers
-import { LOCAL_STORAGE_TOKEN_KEY } from "../constants/constants";
+import {
+  LOCAL_STORAGE_WORKSPACE_KEY,
+  LOCAL_STORAGE_TOKEN_KEY
+} from "../constants/constants";
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
+  const workspaceId = localStorage.getItem(LOCAL_STORAGE_WORKSPACE_KEY);
+  const jwt = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
+  let token = "";
+  if (workspaceId && jwt) {
+    token = `${workspaceId} ${jwt}`;
+  }
+
   return {
     headers: {
       ...headers,
-      authorization: token ? token : ""
+      authorization: token
     }
   };
 });
