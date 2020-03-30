@@ -40,7 +40,7 @@ const Mutation = extendType({
     });
     t.field(userResolverKeys.registerUser, {
       type: AuthUser,
-      nullable: true,
+      nullable: false,
       args: {
         registerInput: arg({ type: RegisterInput })
       },

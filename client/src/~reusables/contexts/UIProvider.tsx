@@ -12,7 +12,7 @@ import {
 import { useStoreState } from "../hooks/useStoreState";
 
 type IModalTypes = IAuthModalAction | null;
-interface IUIStore {
+export interface IUIStore {
   modalState: IModalTypes;
   setModalState: (modal: IModalTypes) => void;
   resetModalState: () => void;

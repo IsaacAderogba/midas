@@ -7,11 +7,19 @@ import gql from "graphql-tag";
 import { Modal, Tabs, Input, Form, Button, Alert } from "antd";
 
 // helpers
-import { useUIStore } from "../../~reusables/contexts/UIProvider";
+import { useUIStore, IUIStore } from "../../~reusables/contexts/UIProvider";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 import { User } from "../../~reusables/utils/fragments";
-import { useLoginUserMutation } from "../../generated/graphql";
-import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
+import {
+  useLoginUserMutation,
+  useRegisterUserMutation,
+  LoginUserMutation,
+  RegisterUserMutation
+} from "../../generated/graphql";
+import {
+  useAuthStore,
+  IAuthStore
+} from "../../~reusables/contexts/AuthProvider";
 
 enum AuthModalTabs {
   Signup = "Signup",
@@ -72,9 +80,30 @@ export const registerUser = gql`
 
 export const RegisterFields: React.FC = () => {
   const { space } = useTheme();
+  const resetModalState = useUIStore(state => state.resetModalState);
+  const { setToken, setUser } = useAuthStore(state => ({
+    setToken: state.setToken,
+    setUser: state.setUser
+  }));
+
+  const [registerUser, { loading, error }] = useRegisterUserMutation({
+    update(_, { data }) {
+      if (data) {
+        setUserAndToken(data.registerUser, {
+          resetModalState,
+          setToken,
+          setUser
+        });
+      }
+    },
+    onError() {}
+  });
+
+  const onFinish = (values: any) =>
+    registerUser({ variables: { registerInput: { ...values } } });
 
   return (
-    <Form layout="vertical">
+    <Form layout="vertical" onFinish={onFinish}>
       <section
         css={css`
           display: flex;
@@ -87,7 +116,17 @@ export const RegisterFields: React.FC = () => {
             width: 100%;
           `}
         >
-          <Form.Item label="First name">
+          <Form.Item
+            label="First name"
+            name="firstName"
+            rules={[
+              {
+                required: true,
+                type: "string",
+                message: "Please input your first name"
+              }
+            ]}
+          >
             <Input placeholder="John" />
           </Form.Item>
         </div>
@@ -97,19 +136,46 @@ export const RegisterFields: React.FC = () => {
             width: 100%;
           `}
         >
-          <Form.Item label="Last name">
+          <Form.Item
+            label="Last name"
+            name="lastName"
+            rules={[
+              {
+                required: true,
+                type: "string",
+                message: "Please input your last name"
+              }
+            ]}
+          >
             <Input placeholder="Doe" />
           </Form.Item>
         </div>
       </section>
-      <Form.Item label="Email">
+      <Form.Item
+        label="Email"
+        name="email"
+        rules={[
+          { required: true, type: "email", message: "Please input your email" }
+        ]}
+      >
         <Input placeholder="johndoe@gmail.com" />
       </Form.Item>
-      <Form.Item label="Password">
+      <Form.Item
+        label="Password"
+        name="password"
+        rules={[
+          {
+            required: true,
+            type: "string",
+            message: "Please input your password"
+          }
+        ]}
+      >
         <Input.Password placeholder="password" />
       </Form.Item>
       <Form.Item>
         <Button
+          loading={loading}
           type="primary"
           htmlType="submit"
           style={{ width: "100%", marginTop: `${space[5]}px` }}
@@ -117,6 +183,10 @@ export const RegisterFields: React.FC = () => {
           Sign up
         </Button>
       </Form.Item>
+      {error &&
+        error.graphQLErrors.map(({ message }, i) => (
+          <Alert closable key={i} message={message} type="error" showIcon />
+        ))}
     </Form>
   );
 };
@@ -144,15 +214,11 @@ export const LoginFields: React.FC = () => {
   const [loginUser, { loading, error }] = useLoginUserMutation({
     update(_, { data }) {
       if (data) {
-        const { token, user } = data.loginUser;
-        const workspaceId =
-          user.workspaces && user.workspaces.length > 0
-            ? user.workspaces[0].id
-            : "0";
-            
-        setToken(token, workspaceId);
-        setUser(user);
-        resetModalState();
+        setUserAndToken(data.loginUser, {
+          resetModalState,
+          setToken,
+          setUser
+        });
       }
     },
     onError() {}
@@ -162,11 +228,7 @@ export const LoginFields: React.FC = () => {
     loginUser({ variables: { loginInput: { ...values } } });
 
   return (
-    <Form
-      layout="vertical"
-      onFinish={onFinish}
-      initialValues={{ email: "", password: "" }}
-    >
+    <Form layout="vertical" onFinish={onFinish}>
       <Form.Item
         label="Email"
         name="email"
@@ -206,3 +268,24 @@ export const LoginFields: React.FC = () => {
     </Form>
   );
 };
+
+function setUserAndToken(
+  authUser:
+    | RegisterUserMutation["registerUser"]
+    | LoginUserMutation["loginUser"],
+  functions: {
+    setToken: IAuthStore["setToken"];
+    setUser: IAuthStore["setUser"];
+    resetModalState: IUIStore["resetModalState"];
+  }
+) {
+  const { setToken, setUser, resetModalState } = functions;
+  const { token, user } = authUser;
+
+  const workspaceId =
+    user.workspaces && user.workspaces.length > 0 ? user.workspaces[0].id : "0";
+
+  setToken(token, workspaceId);
+  setUser(user);
+  resetModalState();
+}

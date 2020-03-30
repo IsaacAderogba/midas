@@ -18,7 +18,7 @@ export const getUser = gql`
   ${User.fragments.attributes}
 `;
 
-interface IAuthStore {
+export interface IAuthStore {
   user: GetUserQuery["user"];
   isLoading: boolean;
   setToken: (token: string, workspaceId: string) => void;

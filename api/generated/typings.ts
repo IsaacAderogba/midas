@@ -133,7 +133,7 @@ export interface NexusGenFieldTypes {
     deleteWorkspace: boolean; // Boolean!
     deleteWorkspaceUser: boolean; // Boolean!
     loginUser: NexusGenRootTypes['AuthUser']; // AuthUser!
-    registerUser: NexusGenRootTypes['AuthUser'] | null; // AuthUser
+    registerUser: NexusGenRootTypes['AuthUser']; // AuthUser!
     updateUser: NexusGenRootTypes['User'] | null; // User
     updateWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     updateWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser

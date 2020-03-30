@@ -30,7 +30,7 @@ export type LoginInput = {
 export type Mutation = {
    __typename?: 'Mutation';
   loginUser: AuthUser;
-  registerUser?: Maybe<AuthUser>;
+  registerUser: AuthUser;
   updateUser?: Maybe<User>;
   deleteUser: Scalars['Boolean'];
   createWorkspace?: Maybe<Workspace>;
@@ -190,14 +190,14 @@ export type RegisterUserMutationVariables = {
 
 export type RegisterUserMutation = (
   { __typename?: 'Mutation' }
-  & { registerUser?: Maybe<(
+  & { registerUser: (
     { __typename?: 'AuthUser' }
     & Pick<AuthUser, 'token'>
     & { user: (
       { __typename?: 'User' }
       & UserAttributesFragment
     ) }
-  )> }
+  ) }
 );
 
 export type LoginUserMutationVariables = {
