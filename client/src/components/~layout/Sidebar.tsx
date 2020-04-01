@@ -5,7 +5,7 @@ import { css } from "styled-components/macro";
 // components
 import { Logo } from "../atoms/Logo";
 import { H6, H5 } from "../atoms/Text";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 // helpers
 import { styled, useTheme } from "../../~reusables/contexts/ThemeProvider";
@@ -15,31 +15,55 @@ import { useAppStore } from "../../~reusables/contexts/AppProvider";
 import { Avatar } from "antd";
 
 export const Sidebar = () => {
-  const { colors, fontSizes } = useTheme();
+  const { colors, fontSizes, space } = useTheme();
   const workspaces = useAppStore(state => state.workspaces);
   return (
     <StyledSidebar>
-      <Logo />
+      <section>
+        <Logo />
+        <div
+          css={css`
+            padding: ${p => p.theme.space[8]}px 0 ${p => p.theme.space[5]}px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          `}
+        >
+          <H6 color={colors.greys[4]}>WORKSPACES</H6>
+          <PlusOutlined
+            style={{
+              color: colors.greys[4],
+              cursor: "pointer",
+              fontSize: fontSizes[3]
+            }}
+          />
+        </div>
+        {workspaces.map(workspace => (
+          <WorkspaceItem key={workspace.id} workspace={workspace} />
+        ))}
+      </section>
       <section
+        onClick={() => {
+          localStorage.clear();
+          window.location.reload();
+        }}
         css={css`
-          padding: ${p => p.theme.space[8]}px 0 ${p => p.theme.space[5]}px 0;
+          margin: ${p => p.theme.space[6]}px 0;
           display: flex;
-          justify-content: space-between;
           align-items: center;
+          cursor: pointer;
         `}
       >
-        <H6 color={colors.greys[4]}>WORKSPACES</H6>
-        <PlusOutlined
+        <ArrowLeftOutlined
           style={{
-            color: colors.greys[4],
+            color: colors.primary,
             cursor: "pointer",
-            fontSize: fontSizes[3]
+            fontSize: fontSizes[3],
+            marginRight: space[5]
           }}
         />
+        <H5 color={colors.greys[4]}>Log out</H5>
       </section>
-      {workspaces.map(workspace => (
-        <WorkspaceItem key={workspace.id} workspace={workspace} />
-      ))}
     </StyledSidebar>
   );
 };
@@ -49,6 +73,7 @@ const StyledSidebar = styled.aside`
   overflow-y: scroll;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   background: ${p => p.theme.colors.background};
   width: ${SIDEBAR_WIDTH}px;
   padding: ${p =>
@@ -79,7 +104,7 @@ const WorkspaceItem: React.FC<{ workspace: TWorkspaceItem }> = ({
         cursor: pointer;
         background: ${isCurrentWorkspace ? colors.secondary : "auto"};
         border-radius: ${radii[2]}px;
-        margin: ${p => p.theme.space[4]}px 0;
+        margin: ${p => p.theme.space[5]}px 0;
         padding: ${p => p.theme.space[3]}px ${p => p.theme.space[5]}px;
         &:hover {
           transition: 120ms ease-in-out;
