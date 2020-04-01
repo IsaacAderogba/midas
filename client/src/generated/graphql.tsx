@@ -218,14 +218,13 @@ export type LoginUserMutation = (
   ) }
 );
 
-export type GetWorkspace_WorkspacesQueryVariables = {};
+export type GetWorkspaceAndWorkspacesQueryVariables = {};
 
 
-export type GetWorkspace_WorkspacesQuery = (
+export type GetWorkspaceAndWorkspacesQuery = (
   { __typename?: 'Query' }
   & { workspace?: Maybe<(
     { __typename?: 'Workspace' }
-    & Pick<Workspace, 'id' | 'name' | 'url' | 'photoURL' | 'photoId' | 'trialStartedAt' | 'seats'>
     & { workspaceUsers: Array<(
       { __typename?: 'WorkspaceUser' }
       & Pick<WorkspaceUser, 'role'>
@@ -234,6 +233,7 @@ export type GetWorkspace_WorkspacesQuery = (
         & Pick<User, 'id' | 'firstName' | 'lastName' | 'avatarURL' | 'email'>
       ) }
     )> }
+    & WorkspaceAttributesFragment
   )>, workspaces: Array<(
     { __typename?: 'Workspace' }
     & WorkspacesAttributesFragment
@@ -251,6 +251,11 @@ export type GetUserQuery = (
   )> }
 );
 
+export type WorkspaceAttributesFragment = (
+  { __typename?: 'Workspace' }
+  & Pick<Workspace, 'id' | 'name' | 'url' | 'photoURL' | 'photoId' | 'trialStartedAt' | 'seats'>
+);
+
 export type WorkspacesAttributesFragment = (
   { __typename?: 'Workspace' }
   & Pick<Workspace, 'id' | 'name' | 'url' | 'photoURL'>
@@ -265,6 +270,17 @@ export type UserAttributesFragment = (
   )>> }
 );
 
+export const WorkspaceAttributesFragmentDoc = gql`
+    fragment workspaceAttributes on Workspace {
+  id
+  name
+  url
+  photoURL
+  photoId
+  trialStartedAt
+  seats
+}
+    `;
 export const WorkspacesAttributesFragmentDoc = gql`
     fragment workspacesAttributes on Workspace {
   id
@@ -357,16 +373,10 @@ export function useLoginUserMutation(baseOptions?: ApolloReactHooks.MutationHook
 export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
 export type LoginUserMutationResult = ApolloReactCommon.MutationResult<LoginUserMutation>;
 export type LoginUserMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
-export const GetWorkspace_WorkspacesDocument = gql`
-    query getWorkspace_Workspaces {
+export const GetWorkspaceAndWorkspacesDocument = gql`
+    query getWorkspaceAndWorkspaces {
   workspace {
-    id
-    name
-    url
-    photoURL
-    photoId
-    trialStartedAt
-    seats
+    ...workspaceAttributes
     workspaceUsers {
       role
       user {
@@ -382,32 +392,33 @@ export const GetWorkspace_WorkspacesDocument = gql`
     ...workspacesAttributes
   }
 }
-    ${WorkspacesAttributesFragmentDoc}`;
+    ${WorkspaceAttributesFragmentDoc}
+${WorkspacesAttributesFragmentDoc}`;
 
 /**
- * __useGetWorkspace_WorkspacesQuery__
+ * __useGetWorkspaceAndWorkspacesQuery__
  *
- * To run a query within a React component, call `useGetWorkspace_WorkspacesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetWorkspace_WorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * To run a query within a React component, call `useGetWorkspaceAndWorkspacesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceAndWorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetWorkspace_WorkspacesQuery({
+ * const { data, loading, error } = useGetWorkspaceAndWorkspacesQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetWorkspace_WorkspacesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspace_WorkspacesQuery, GetWorkspace_WorkspacesQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetWorkspace_WorkspacesQuery, GetWorkspace_WorkspacesQueryVariables>(GetWorkspace_WorkspacesDocument, baseOptions);
+export function useGetWorkspaceAndWorkspacesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>(GetWorkspaceAndWorkspacesDocument, baseOptions);
       }
-export function useGetWorkspace_WorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspace_WorkspacesQuery, GetWorkspace_WorkspacesQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetWorkspace_WorkspacesQuery, GetWorkspace_WorkspacesQueryVariables>(GetWorkspace_WorkspacesDocument, baseOptions);
+export function useGetWorkspaceAndWorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>(GetWorkspaceAndWorkspacesDocument, baseOptions);
         }
-export type GetWorkspace_WorkspacesQueryHookResult = ReturnType<typeof useGetWorkspace_WorkspacesQuery>;
-export type GetWorkspace_WorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspace_WorkspacesLazyQuery>;
-export type GetWorkspace_WorkspacesQueryResult = ApolloReactCommon.QueryResult<GetWorkspace_WorkspacesQuery, GetWorkspace_WorkspacesQueryVariables>;
+export type GetWorkspaceAndWorkspacesQueryHookResult = ReturnType<typeof useGetWorkspaceAndWorkspacesQuery>;
+export type GetWorkspaceAndWorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspaceAndWorkspacesLazyQuery>;
+export type GetWorkspaceAndWorkspacesQueryResult = ApolloReactCommon.QueryResult<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>;
 export const GetUserDocument = gql`
     query getUser {
   user {

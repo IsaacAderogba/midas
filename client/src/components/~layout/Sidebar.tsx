@@ -61,11 +61,18 @@ const WorkspaceItem: React.FC<{ workspace: TWorkspaceItem }> = ({
   workspace: { id, name, photoURL }
 }) => {
   const { fontSizes, colors, radii } = useTheme();
-  const workspace = useAppStore(state => state.workspace);
+  const { workspace, setWorkspace } = useAppStore(state => ({
+    workspace: state.workspace,
+    setWorkspace: state.setWorkspace
+  }));
   const isCurrentWorkspace = workspace?.id === id;
 
   return (
     <section
+      onClick={() => {
+        if (isCurrentWorkspace) return;
+        setWorkspace(id);
+      }}
       css={css`
         display: flex;
         align-items: center;
@@ -77,7 +84,9 @@ const WorkspaceItem: React.FC<{ workspace: TWorkspaceItem }> = ({
         &:hover {
           transition: 120ms ease-in-out;
           opacity: ${isCurrentWorkspace ? 0.8 : 1};
-          background: ${!isCurrentWorkspace ? 'rgba(115, 138, 165, 0.3)' : 'auto'};
+          background: ${!isCurrentWorkspace
+            ? "rgba(115, 138, 165, 0.3)"
+            : "auto"};
         }
       `}
     >
@@ -97,7 +106,7 @@ const WorkspaceItem: React.FC<{ workspace: TWorkspaceItem }> = ({
           <Avatar
             style={{
               background: isCurrentWorkspace ? colors.white : colors.greys[4],
-              color: colors.text 
+              color: colors.text
             }}
             size={fontSizes[4]}
             shape="square"

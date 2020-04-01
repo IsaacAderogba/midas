@@ -3,6 +3,17 @@ import gql from "graphql-tag";
 export const Workspace = {
   fragments: {
     attributes: gql`
+      fragment workspaceAttributes on Workspace {
+        id
+        name
+        url
+        photoURL
+        photoId
+        trialStartedAt
+        seats
+      }
+    `,
+    workspacesAttributes: gql`
       fragment workspacesAttributes on Workspace {
         id
         name
@@ -28,7 +39,7 @@ export const User = {
           ...workspacesAttributes
         }
       }
-      ${Workspace.fragments.attributes}
+      ${Workspace.fragments.workspacesAttributes}
     `
   }
 };
