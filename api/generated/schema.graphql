@@ -94,6 +94,7 @@ input WorkspaceInput {
 }
 
 type WorkspaceUser {
+  id: ID!
   lastSeen: String
   role: WorkspaceUserRoles!
   status: WorkspaceUserStatus!

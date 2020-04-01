@@ -90,6 +90,7 @@ export interface NexusGenRootTypes {
     url: string; // String!
   }
   WorkspaceUser: { // root type
+    id: string; // ID!
     lastSeen?: string | null; // String
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
     status: NexusGenEnums['WorkspaceUserStatus']; // WorkspaceUserStatus!
@@ -166,6 +167,7 @@ export interface NexusGenFieldTypes {
     workspaceUsers: NexusGenRootTypes['WorkspaceUser'][]; // [WorkspaceUser!]!
   }
   WorkspaceUser: { // field return type
+    id: string; // ID!
     lastSeen: string | null; // String
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
     status: NexusGenEnums['WorkspaceUserStatus']; // WorkspaceUserStatus!

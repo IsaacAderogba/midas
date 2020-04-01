@@ -1,6 +1,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable("Workspace_User", Workspace_User => {
-    Workspace_User.primary(["workspaceId", "userId"]);
+    Workspace_User.increments();
+    Workspace_User.unique(["workspaceId", "userId"]);
     Workspace_User.integer("workspaceId")
       .unsigned()
       .notNullable()

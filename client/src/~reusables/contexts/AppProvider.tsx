@@ -12,6 +12,8 @@ import gql from "graphql-tag";
 import { useStoreState } from "../hooks/useStoreState";
 import { Workspace } from "../utils/fragments";
 import { setLocalStorageWorkspaceKey } from "../utils/localStorage";
+import { useUIStore } from "./UIProvider";
+import { CreateWorkspaceModal } from "../../components/~modals/CreateWorkspaceModal";
 
 /**
  * Heavy duty
@@ -64,6 +66,7 @@ export const useAppStore = <S,>(dataSelector: (store: IAppStore) => S) =>
   useStoreState(AppContext, contextData => contextData!, dataSelector);
 
 export const AppProvider: React.FC = ({ children }) => {
+  const modalState = useUIStore(state => state.modalState);
   const { data, loading, refetch } = useGetWorkspaceAndWorkspacesQuery();
   const store = useLocalStore<IAppStore>(() => ({
     workspace: null,
@@ -71,7 +74,7 @@ export const AppProvider: React.FC = ({ children }) => {
     isWorkspaceLoading: true,
     setWorkspace: workspaceId => {
       /**
-       * for security reasons, we pass the workspace ID in the header
+       * for security reasons, we pass the workspace ID in the auth header
        * itself. So in order to chose a set up a new workspace as currently
        * selected, we just need to update the id being used in our local storage
        */
@@ -96,5 +99,12 @@ export const AppProvider: React.FC = ({ children }) => {
     store.workspaces
   ]);
 
-  return <AppContext.Provider value={store}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={store}>
+      {modalState && modalState.modal === "create-workspace-modal" ? (
+        <CreateWorkspaceModal />
+      ) : null}
+      {children}
+    </AppContext.Provider>
+  );
 };

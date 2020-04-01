@@ -13,10 +13,13 @@ import { SIDEBAR_WIDTH } from "../../~reusables/constants/dimensions";
 import { Workspace } from "../../generated/graphql";
 import { useAppStore } from "../../~reusables/contexts/AppProvider";
 import { Avatar } from "antd";
+import { useUIStore } from "../../~reusables/contexts/UIProvider";
 
 export const Sidebar = () => {
   const { colors, fontSizes, space } = useTheme();
   const workspaces = useAppStore(state => state.workspaces);
+  const setModalState = useUIStore(state => state.setModalState);
+
   return (
     <StyledSidebar>
       <section>
@@ -31,6 +34,9 @@ export const Sidebar = () => {
         >
           <H6 color={colors.greys[4]}>WORKSPACES</H6>
           <PlusOutlined
+            onClick={() =>
+              setModalState({ modal: "create-workspace-modal", props: {} })
+            }
             style={{
               color: colors.greys[4],
               cursor: "pointer",

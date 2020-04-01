@@ -16,6 +16,7 @@ const WorkspaceUserStatus = enumType({
 const WorkspaceUser = objectType({
   name: "WorkspaceUser",
   definition(t) {
+    t.id("id", { nullable: false });
     t.int("workspaceId", { nullable: false });
     t.int("userId", { nullable: false });
     t.field("role", { type: WorkspaceUserRoles, nullable: false });

@@ -10,8 +10,9 @@ import {
 
 // helpers
 import { useStoreState } from "../hooks/useStoreState";
+import { ICreateWorkspaceModalAction } from "../../components/~modals/CreateWorkspaceModal";
 
-type IModalTypes = IAuthModalAction | null;
+type IModalTypes = IAuthModalAction | ICreateWorkspaceModalAction | null;
 export interface IUIStore {
   modalState: IModalTypes;
   setModalState: (modal: IModalTypes) => void;
@@ -45,6 +46,7 @@ export const UIProvider: React.FC = ({ children }) => {
           const { modalState } = store;
           return (
             <>
+              {/* Global level modals - not dependent on any other provider */}
               {modalState && modalState.modal === "auth-modal" ? (
                 <AuthModal {...modalState.props} />
               ) : null}

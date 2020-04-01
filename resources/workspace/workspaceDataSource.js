@@ -95,7 +95,7 @@ class WorkspaceAPI extends SQLDataSource {
         `${WORKSPACE_USER_TABLE}.workspaceId`
       )
       .select(
-        "id",
+        `${WORKSPACE_TABLE}.id`,
         "name",
         "url",
         "photoURL",
