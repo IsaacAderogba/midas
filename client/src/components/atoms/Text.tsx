@@ -98,4 +98,7 @@ export const H6 = styled("h6")<IText>`
   font-size: ${p => p.theme.fontSizes[1]}px;
   font-weight: ${p => p.theme.fontWeights[4]};
   letter-spacing: ${p => p.theme.letterSpacing.tight};
+  @media only screen and (max-width: ${p => p.theme.breakpoints[0]}) {
+    font-size: ${p => p.theme.fontSizes[0]}px;
+  }
 `;

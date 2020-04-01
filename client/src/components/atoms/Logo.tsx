@@ -2,7 +2,7 @@
 import React from "react";
 
 // components
-import { H3 } from "./Text";
+import { H4 } from "./Text";
 
 // helpers
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
@@ -10,5 +10,5 @@ import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 export const Logo: React.FC = () => {
   const { colors } = useTheme();
 
-  return <H3 color={colors.white}>Midas</H3>;
+  return <H4 color={colors.white}>MIDAS</H4>;
 };
