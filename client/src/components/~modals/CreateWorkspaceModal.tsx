@@ -21,13 +21,13 @@ export interface ICreateWorkspaceModalAction {
 
 export const CreateWorkspaceModal = () => {
   const { space } = useTheme();
-  const setWorkspace = useAppStore(state => state.setWorkspace);
+  const createNewWorkspace = useAppStore(state => state.createWorkspace);
   const [isModalVisible, setModalVisibility] = useState(true);
   const resetModalState = useUIStore(state => state.resetModalState);
   const [createWorkspace, { loading, error }] = useCreateWorkspaceMutation({
     update(_, { data }) {
       if (data && data.createWorkspace) {
-        setWorkspace(data.createWorkspace.id);
+        createNewWorkspace(data.createWorkspace.id);
         setModalVisibility(false);
       }
     },

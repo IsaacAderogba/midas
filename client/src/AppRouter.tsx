@@ -34,15 +34,19 @@ const ProtectedAppRouter: React.FC = () => {
       <Switch>
         <Route
           exact
-          path={["/app"]}
+          path={[
+            "/app/workspace",
+            "/app/workspace/wireframes",
+            "/app/workspace/members",
+            "/app/workspace/settings"
+          ]}
           render={() => {
             return (
               <StyledProtectedApp>
                 <Sidebar />
                 <main className="main-app">
                   <Route
-                    exact
-                    path="/app"
+                    path="/app/workspace"
                     render={routeProps => <Workspace {...routeProps} />}
                   />
                 </main>
@@ -60,7 +64,7 @@ const ProtectedAppRouter: React.FC = () => {
             return <div>Canvas</div>;
           }}
         />
-        <Redirect to="/app" />
+        <Redirect to="/app/workspace" />
       </Switch>
     </AppProvider>
   );

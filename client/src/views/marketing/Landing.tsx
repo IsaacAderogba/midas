@@ -19,7 +19,7 @@ export const Landing: React.FC<RouteComponentProps> = () => {
   }));
     
   if (isUserLoading && isToken) return <FullPageSpinner />;
-  if (user) return <Redirect to="/app" />;
+  if (user) return <Redirect to="/app/workspace" />;
 
   return (
     <StyledLanding>

@@ -2,9 +2,11 @@
 import React, { createContext, useEffect } from "react";
 import { useLocalStore } from "mobx-react";
 import {
-  GetWorkspaceAndWorkspacesQuery,
-  useGetWorkspaceAndWorkspacesQuery,
-  Workspace as WorkspaceType
+  GetWorkspaceQuery,
+  useGetWorkspaceQuery,
+  Workspace as WorkspaceType,
+  useGetWorkspacesQuery,
+  GetWorkspacesQuery
 } from "../../generated/graphql";
 import gql from "graphql-tag";
 
@@ -25,8 +27,80 @@ import { CreateWorkspaceModal } from "../../components/~modals/CreateWorkspaceMo
  * else set it to null
  */
 
-export const getWorkspaceAndWorkspaces = gql`
-  query getWorkspaceAndWorkspaces {
+export interface IAppStore {
+  workspace: GetWorkspaceQuery["workspace"];
+  workspaces: GetWorkspacesQuery["workspaces"];
+  isWorkspaceLoading: boolean;
+  setWorkspace: (workspaceId: WorkspaceType["id"]) => void;
+  createWorkspace: (createdWorkspaceId: WorkspaceType["id"]) => void;
+}
+
+export const AppContext = createContext<IAppStore>({
+  workspace: null,
+  workspaces: [],
+  isWorkspaceLoading: false,
+  setWorkspace: () => {},
+  createWorkspace: () => {}
+});
+
+export const useAppStore = <S,>(dataSelector: (store: IAppStore) => S) =>
+  useStoreState(AppContext, contextData => contextData!, dataSelector);
+
+export const AppProvider: React.FC = ({ children }) => {
+  const modalState = useUIStore(state => state.modalState);
+  const workspace = useGetWorkspaceQuery();
+  const workspaces = useGetWorkspacesQuery();
+  const store = useLocalStore<IAppStore>(() => ({
+    workspace: null,
+    workspaces: [],
+    isWorkspaceLoading: true,
+    setWorkspace: workspaceId => {
+      /**
+       * for security reasons, we pass the workspace ID in the auth header
+       * itself. So in order to chose a set up a new workspace as currently
+       * selected, we just need to update the id being used in our local storage
+       */
+      setLocalStorageWorkspaceKey(workspaceId);
+      workspace.refetch();
+    },
+    createWorkspace: createdWorkspaceId => {
+      workspaces.refetch();
+      store.setWorkspace(createdWorkspaceId);
+    }
+  }));
+
+  useEffect(() => {
+    if (workspace.data) {
+      store.workspace = workspace.data["workspace"];
+      store.isWorkspaceLoading = workspace.loading;
+    } else {
+      store.isWorkspaceLoading = workspace.loading;
+    }
+  }, [
+    workspace.loading,
+    workspace.data,
+    store.isWorkspaceLoading,
+    store.workspace
+  ]);
+
+  useEffect(() => {
+    if (workspaces.data) {
+      store.workspaces = workspaces.data["workspaces"];
+    }
+  }, [store.workspaces, workspaces.loading, workspaces.data]);
+
+  return (
+    <AppContext.Provider value={store}>
+      {modalState && modalState.modal === "create-workspace-modal" ? (
+        <CreateWorkspaceModal />
+      ) : null}
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const getWorkspace = gql`
+  query getWorkspace {
     workspace {
       ...workspaceAttributes
       workspaceUsers {
@@ -40,71 +114,15 @@ export const getWorkspaceAndWorkspaces = gql`
         }
       }
     }
+  }
+  ${Workspace.fragments.attributes}
+`;
+
+export const getWorkspaces = gql`
+  query getWorkspaces {
     workspaces {
       ...workspacesAttributes
     }
   }
-  ${Workspace.fragments.attributes}
   ${Workspace.fragments.workspacesAttributes}
 `;
-
-export interface IAppStore {
-  workspace: GetWorkspaceAndWorkspacesQuery["workspace"];
-  workspaces: GetWorkspaceAndWorkspacesQuery["workspaces"];
-  isWorkspaceLoading: boolean;
-  setWorkspace: (workspaceId: WorkspaceType["id"]) => void;
-}
-
-export const AppContext = createContext<IAppStore>({
-  workspace: null,
-  workspaces: [],
-  isWorkspaceLoading: false,
-  setWorkspace: () => {}
-});
-
-export const useAppStore = <S,>(dataSelector: (store: IAppStore) => S) =>
-  useStoreState(AppContext, contextData => contextData!, dataSelector);
-
-export const AppProvider: React.FC = ({ children }) => {
-  const modalState = useUIStore(state => state.modalState);
-  const { data, loading, refetch } = useGetWorkspaceAndWorkspacesQuery();
-  const store = useLocalStore<IAppStore>(() => ({
-    workspace: null,
-    workspaces: [],
-    isWorkspaceLoading: true,
-    setWorkspace: workspaceId => {
-      /**
-       * for security reasons, we pass the workspace ID in the auth header
-       * itself. So in order to chose a set up a new workspace as currently
-       * selected, we just need to update the id being used in our local storage
-       */
-      setLocalStorageWorkspaceKey(workspaceId);
-      refetch();
-    }
-  }));
-
-  useEffect(() => {
-    if (data) {
-      store.workspace = data["workspace"];
-      store.workspaces = data["workspaces"];
-      store.isWorkspaceLoading = loading;
-    } else {
-      store.isWorkspaceLoading = loading;
-    }
-  }, [
-    loading,
-    data,
-    store.isWorkspaceLoading,
-    store.workspace,
-    store.workspaces
-  ]);
-
-  return (
-    <AppContext.Provider value={store}>
-      {modalState && modalState.modal === "create-workspace-modal" ? (
-        <CreateWorkspaceModal />
-      ) : null}
-      {children}
-    </AppContext.Provider>
-  );
-};

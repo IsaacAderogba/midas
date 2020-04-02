@@ -232,10 +232,10 @@ export type CreateWorkspaceMutation = (
   )> }
 );
 
-export type GetWorkspaceAndWorkspacesQueryVariables = {};
+export type GetWorkspaceQueryVariables = {};
 
 
-export type GetWorkspaceAndWorkspacesQuery = (
+export type GetWorkspaceQuery = (
   { __typename?: 'Query' }
   & { workspace?: Maybe<(
     { __typename?: 'Workspace' }
@@ -248,7 +248,15 @@ export type GetWorkspaceAndWorkspacesQuery = (
       ) }
     )> }
     & WorkspaceAttributesFragment
-  )>, workspaces: Array<(
+  )> }
+);
+
+export type GetWorkspacesQueryVariables = {};
+
+
+export type GetWorkspacesQuery = (
+  { __typename?: 'Query' }
+  & { workspaces: Array<(
     { __typename?: 'Workspace' }
     & WorkspacesAttributesFragment
   )> }
@@ -419,8 +427,8 @@ export function useCreateWorkspaceMutation(baseOptions?: ApolloReactHooks.Mutati
 export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
 export type CreateWorkspaceMutationResult = ApolloReactCommon.MutationResult<CreateWorkspaceMutation>;
 export type CreateWorkspaceMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
-export const GetWorkspaceAndWorkspacesDocument = gql`
-    query getWorkspaceAndWorkspaces {
+export const GetWorkspaceDocument = gql`
+    query getWorkspace {
   workspace {
     ...workspaceAttributes
     workspaceUsers {
@@ -434,37 +442,65 @@ export const GetWorkspaceAndWorkspacesDocument = gql`
       }
     }
   }
-  workspaces {
-    ...workspacesAttributes
-  }
 }
-    ${WorkspaceAttributesFragmentDoc}
-${WorkspacesAttributesFragmentDoc}`;
+    ${WorkspaceAttributesFragmentDoc}`;
 
 /**
- * __useGetWorkspaceAndWorkspacesQuery__
+ * __useGetWorkspaceQuery__
  *
- * To run a query within a React component, call `useGetWorkspaceAndWorkspacesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetWorkspaceAndWorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * To run a query within a React component, call `useGetWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties 
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetWorkspaceAndWorkspacesQuery({
+ * const { data, loading, error } = useGetWorkspaceQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetWorkspaceAndWorkspacesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>(GetWorkspaceAndWorkspacesDocument, baseOptions);
+export function useGetWorkspaceQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspaceQuery, GetWorkspaceQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, baseOptions);
       }
-export function useGetWorkspaceAndWorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>(GetWorkspaceAndWorkspacesDocument, baseOptions);
+export function useGetWorkspaceLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspaceQuery, GetWorkspaceQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, baseOptions);
         }
-export type GetWorkspaceAndWorkspacesQueryHookResult = ReturnType<typeof useGetWorkspaceAndWorkspacesQuery>;
-export type GetWorkspaceAndWorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspaceAndWorkspacesLazyQuery>;
-export type GetWorkspaceAndWorkspacesQueryResult = ApolloReactCommon.QueryResult<GetWorkspaceAndWorkspacesQuery, GetWorkspaceAndWorkspacesQueryVariables>;
+export type GetWorkspaceQueryHookResult = ReturnType<typeof useGetWorkspaceQuery>;
+export type GetWorkspaceLazyQueryHookResult = ReturnType<typeof useGetWorkspaceLazyQuery>;
+export type GetWorkspaceQueryResult = ApolloReactCommon.QueryResult<GetWorkspaceQuery, GetWorkspaceQueryVariables>;
+export const GetWorkspacesDocument = gql`
+    query getWorkspaces {
+  workspaces {
+    ...workspacesAttributes
+  }
+}
+    ${WorkspacesAttributesFragmentDoc}`;
+
+/**
+ * __useGetWorkspacesQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspacesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspacesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetWorkspacesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspacesQuery, GetWorkspacesQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetWorkspacesQuery, GetWorkspacesQueryVariables>(GetWorkspacesDocument, baseOptions);
+      }
+export function useGetWorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspacesQuery, GetWorkspacesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetWorkspacesQuery, GetWorkspacesQueryVariables>(GetWorkspacesDocument, baseOptions);
+        }
+export type GetWorkspacesQueryHookResult = ReturnType<typeof useGetWorkspacesQuery>;
+export type GetWorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspacesLazyQuery>;
+export type GetWorkspacesQueryResult = ApolloReactCommon.QueryResult<GetWorkspacesQuery, GetWorkspacesQueryVariables>;
 export const GetUserDocument = gql`
     query getUser {
   user {
