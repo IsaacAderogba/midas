@@ -18,16 +18,29 @@ input LoginInput {
 }
 
 type Mutation {
+  createProject(newProjectInput: NewProjectInput): Project
   createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace
   createWorkspaceUser(newWorkspaceUserInput: NewWorkspaceUserInput): WorkspaceUser
+  deleteProject(projectId: ID!): Project
   deleteUser: Boolean!
   deleteWorkspace: Boolean!
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   loginUser(loginInput: LoginInput): AuthUser!
   registerUser(registerInput: RegisterInput): AuthUser!
+  updateProject(projectInput: ProjectInput, where: ProjectWhere): Project
   updateUser(userInput: UserInput): User
   updateWorkspace(workspaceInput: WorkspaceInput): Workspace
   updateWorkspaceUser(where: WorkspaceUserWhere, workspaceUserInput: WorkspaceUserInput): WorkspaceUser
+}
+
+input NewProjectInput {
+  inviteSharePrivileges: ProjectInviteSharePrivileges
+  inviteShareStatus: ProjectInviteShareStatus
+  thumbnailPhotoID: String
+  thumbnailPhotoURL: String
+  title: String!
+  workspaceId: String!
+  workspaceUserId: String!
 }
 
 input NewWorkspaceInput {
@@ -42,7 +55,47 @@ input NewWorkspaceUserInput {
   workspaceId: Int!
 }
 
+type Project {
+  createdAt: String!
+  id: ID!
+  inviteSharePrivileges: ProjectInviteSharePrivileges!
+  inviteShareStatus: ProjectInviteShareStatus!
+  thumbnailPhotoID: String
+  thumbnailPhotoURL: String
+  title: String!
+  updatedAt: String!
+  workspace: Workspace!
+  workspaceId: ID!
+  workspaceUser: WorkspaceUser!
+  workspaceUserId: ID!
+}
+
+input ProjectInput {
+  inviteSharePrivileges: ProjectInviteSharePrivileges
+  inviteShareStatus: ProjectInviteShareStatus
+  thumbnailPhotoID: String
+  thumbnailPhotoURL: String
+  title: String
+  workspaceId: String
+  workspaceUserId: String
+}
+
+enum ProjectInviteSharePrivileges {
+  can_view
+}
+
+enum ProjectInviteShareStatus {
+  people_invited
+}
+
+input ProjectWhere {
+  id: ID
+  workspaceUserId: ID
+}
+
 type Query {
+  project(where: ProjectWhere): Project
+  projects: [Project!]
   user: User
   workspace: Workspace
   workspaces: [Workspace!]!

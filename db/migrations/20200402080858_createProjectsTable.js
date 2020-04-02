@@ -19,10 +19,10 @@ exports.up = function(knex) {
     Project.string("thumbnailPhotoID", 256);
     Project.string("inviteShareStatus", 128)
       .notNullable()
-      .defaultTo("people-invited");
+      .defaultTo("people_invited");
     Project.string("inviteSharePrivileges", 128)
       .notNullable()
-      .defaultTo("can-view");
+      .defaultTo("can_view");
     Project.datetime("createdAt").notNullable();
     Project.datetime("updatedAt").notNullable();
   });

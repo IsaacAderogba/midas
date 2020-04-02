@@ -16,10 +16,16 @@ const {
   WorkspaceUserQuery,
   WorkspaceUserMutation
 } = require("./workspace_user/workspaceUserResolvers");
+const { ProjectQuery, ProjectMutation } = require("./project/projectResolvers");
 
 module.exports = {
-  Query: [UserQuery, WorkspaceQuery, WorkspaceUserQuery],
-  Mutation: [UserMutation, WorkspaceMutation, WorkspaceUserMutation],
+  Query: [UserQuery, WorkspaceQuery, WorkspaceUserQuery, ProjectQuery],
+  Mutation: [
+    UserMutation,
+    WorkspaceMutation,
+    WorkspaceUserMutation,
+    ProjectMutation
+  ],
   Middleware: [
     UserPermissions,
     UserMiddleware,

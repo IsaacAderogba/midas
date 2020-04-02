@@ -4,12 +4,12 @@ const { WorkspaceUser } = require("../workspace_user/workspaceUserTypes");
 
 const ProjectInviteShareStatus = enumType({
   name: "ProjectInviteShareStatus",
-  members: ["people-invited"]
+  members: ["people_invited"]
 });
 
 const ProjectInviteSharePrivileges = enumType({
   name: "ProjectInviteSharePrivileges",
-  members: ["can-view"]
+  members: ["can_view"]
 });
 
 const Project = objectType({
@@ -55,11 +55,11 @@ const NewProjectInput = inputObjectType({
   name: "NewProjectInput",
   definition(t) {
     // workspaceId and workspaceUserId will be passed in through the context
-    t.string("workspaceId", { required: true })
-    t.string("workspaceUserId", { required: true })
-    t.string("title", { required: true })
-    t.string("thumbnailPhotoURL", { required: false })
-    t.string("thumbnailPhotoID", { required: false })
+    t.string("workspaceId", { required: true });
+    t.string("workspaceUserId", { required: true });
+    t.string("title", { required: true });
+    t.string("thumbnailPhotoURL", { required: false });
+    t.string("thumbnailPhotoID", { required: false });
     t.field("inviteShareStatus", {
       type: ProjectInviteShareStatus,
       required: false
@@ -75,11 +75,11 @@ const ProjectInput = inputObjectType({
   name: "ProjectInput",
   definition(t) {
     // middleware to check if it's completely empty
-    t.string("workspaceId", { required: false })
-    t.string("workspaceUserId", { required: false })
-    t.string("title", { required: false })
-    t.string("thumbnailPhotoURL", { required: false })
-    t.string("thumbnailPhotoID", { required: false })
+    t.string("workspaceId", { required: false });
+    t.string("workspaceUserId", { required: false });
+    t.string("title", { required: false });
+    t.string("thumbnailPhotoURL", { required: false });
+    t.string("thumbnailPhotoID", { required: false });
     t.field("inviteShareStatus", {
       type: ProjectInviteShareStatus,
       required: false
@@ -89,10 +89,19 @@ const ProjectInput = inputObjectType({
       required: false
     });
   }
-})
+});
+
+const ProjectWhere = inputObjectType({
+  name: "ProjectWhere",
+  definition(t) {
+    t.id("id", { required: false });
+    t.id("workspaceUserId", { required: false });
+  }
+});
 
 module.exports = {
   Project,
   ProjectInput,
-  NewProjectInput
+  NewProjectInput,
+  ProjectWhere
 };

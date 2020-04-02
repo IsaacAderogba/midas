@@ -6,6 +6,8 @@ const PROJECT_TABLE = "Project";
 class ProjectAPI extends SQLDataSource {
   async createProject(project) {
     try {
+      // TODO - update what's passed in with an updated at and created at
+
       return this._createProject(project);
     } catch (err) {
       console.log(err);
@@ -22,8 +24,18 @@ class ProjectAPI extends SQLDataSource {
     }
   }
 
+  async readProjects(whereObj) {
+    try {
+      return this._readProjects(whereObj);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
+
   async updateProject(whereObj, project) {
     try {
+      // TODO - update what's passed in with an updated at and created at
       return this._updateProject(whereObj, project);
     } catch (err) {
       console.log(err);
@@ -47,6 +59,10 @@ class ProjectAPI extends SQLDataSource {
       .insert(project)
       .returning("*")
       .then(([project]) => project);
+  }
+
+  _readProjects(whereObj) {
+    return this.knex(PROJECT_TABLE).where(whereObj);
   }
 
   _readProject(whereObj) {
