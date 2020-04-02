@@ -14,6 +14,8 @@ const server = express();
 const UserAPI = require("../resources/user/userDataSource");
 const WorkspaceAPI = require("../resources/workspace/workspaceDataSource");
 const WorkspaceUserAPI = require("../resources/workspace_user/workspaceUserDataSource");
+const ProjectAPI = require("../resources/project/projectDataSource");
+
 const { Query, Mutation, Middleware } = require("../resources");
 
 // schema setup
@@ -42,7 +44,8 @@ const apolloServer = new ApolloServer({
   dataSources: () => ({
     userAPI: UserAPI,
     workspaceAPI: WorkspaceAPI,
-    workspaceUserAPI: WorkspaceUserAPI
+    workspaceUserAPI: WorkspaceUserAPI,
+    projectAPI: ProjectAPI
   }),
   engine: {
     debugPrintReports: true,

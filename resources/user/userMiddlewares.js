@@ -1,5 +1,5 @@
 const { shield } = require("graphql-shield");
-const { userQueryKeys, userResolverKeys, userErrors } = require("./userUtils");
+const { userQueryKeys, userMutationKeys, userErrors } = require("./userUtils");
 const UserAPI = require("./userDataSource");
 const { isAuthenticated } = require("../permissions");
 
@@ -24,8 +24,8 @@ const UserPermissions = shield(
       [userQueryKeys.user]: isAuthenticated
     },
     Mutation: {
-      [userResolverKeys.updateUser]: isAuthenticated,
-      [userResolverKeys.deleteUser]: isAuthenticated
+      [userMutationKeys.updateUser]: isAuthenticated,
+      [userMutationKeys.deleteUser]: isAuthenticated
     }
   },
   {
@@ -38,9 +38,9 @@ const UserMiddleware = {
     [userQueryKeys.user]: validUserMiddleware
   },
   Mutation: {
-    [userResolverKeys.updateUser]: validUserMiddleware,
-    [userResolverKeys.deleteUser]: validUserMiddleware,
-    [userResolverKeys.registerUser]: emailExistsMiddleware
+    [userMutationKeys.updateUser]: validUserMiddleware,
+    [userMutationKeys.deleteUser]: validUserMiddleware,
+    [userMutationKeys.registerUser]: emailExistsMiddleware
   }
 };
 

@@ -1,4 +1,4 @@
-const { userQueryKeys, userResolverKeys, userErrors } = require("./userUtils");
+const { userQueryKeys, userMutationKeys, userErrors } = require("./userUtils");
 const { extendType, arg } = require("nexus");
 const {
   AuthUser,
@@ -24,7 +24,7 @@ const Query = extendType({
 const Mutation = extendType({
   type: "Mutation",
   definition(t) {
-    t.field(userResolverKeys.loginUser, {
+    t.field(userMutationKeys.loginUser, {
       type: AuthUser,
       nullable: false,
       args: {
@@ -38,7 +38,7 @@ const Mutation = extendType({
         return user;
       }
     });
-    t.field(userResolverKeys.registerUser, {
+    t.field(userMutationKeys.registerUser, {
       type: AuthUser,
       nullable: false,
       args: {
@@ -48,7 +48,7 @@ const Mutation = extendType({
         return dataSources.userAPI.registerUser(args.registerInput);
       }
     });
-    t.field(userResolverKeys.updateUser, {
+    t.field(userMutationKeys.updateUser, {
       type: User,
       nullable: true,
       args: {
@@ -61,7 +61,7 @@ const Mutation = extendType({
         );
       }
     });
-    t.field(userResolverKeys.deleteUser, {
+    t.field(userMutationKeys.deleteUser, {
       type: "Boolean",
       nullable: false,
       resolve: (parent, args, { dataSources, user }) => {

@@ -3,7 +3,7 @@
 const { extendType, arg } = require("nexus");
 const {
   workspaceQueryKeys,
-  workspaceResolverKeys
+  workspaceMutationKeys
 } = require("./workspaceUtils");
 const {
   NewWorkspaceInput,
@@ -37,7 +37,7 @@ const Query = extendType({
 const Mutation = extendType({
   type: "Mutation",
   definition(t) {
-    t.field(workspaceResolverKeys.createWorkspace, {
+    t.field(workspaceMutationKeys.createWorkspace, {
       type: Workspace,
       nullable: true,
       args: {
@@ -51,7 +51,7 @@ const Mutation = extendType({
       }
     });
 
-    t.field(workspaceResolverKeys.updateWorkspace, {
+    t.field(workspaceMutationKeys.updateWorkspace, {
       type: Workspace,
       nullable: true,
       args: {
@@ -65,7 +65,7 @@ const Mutation = extendType({
       }
     });
 
-    t.field(workspaceResolverKeys.deleteWorkspace, {
+    t.field(workspaceMutationKeys.deleteWorkspace, {
       type: "Boolean",
       nullable: false,
 

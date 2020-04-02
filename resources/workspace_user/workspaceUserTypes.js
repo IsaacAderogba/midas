@@ -17,8 +17,8 @@ const WorkspaceUser = objectType({
   name: "WorkspaceUser",
   definition(t) {
     t.id("id", { nullable: false });
-    t.int("workspaceId", { nullable: false });
-    t.int("userId", { nullable: false });
+    t.id("workspaceId", { nullable: false });
+    t.id("userId", { nullable: false });
     t.field("role", { type: WorkspaceUserRoles, nullable: false });
     t.string("lastSeen", { nullable: true });
     t.field("status", { type: WorkspaceUserStatus, nullable: false });

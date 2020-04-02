@@ -1,7 +1,7 @@
 const { shield, and } = require("graphql-shield");
 const {
   workspaceUserQueryKeys,
-  workspaceUserResolverKeys
+  workspaceUserMutationKeys
 } = require("./workspaceUserUtils");
 const {
   isAuthenticated,
@@ -25,17 +25,17 @@ const WorkspaceUserPermissions = shield(
       )
     },
     Mutation: {
-      [workspaceUserResolverKeys.createWorkspaceUser]: and(
+      [workspaceUserMutationKeys.createWorkspaceUser]: and(
         isAuthenticated,
         hasWorkspacePrivileges,
         hasAdminPrivileges
       ),
-      [workspaceUserResolverKeys.updateWorkspaceUser]: and(
+      [workspaceUserMutationKeys.updateWorkspaceUser]: and(
         isAuthenticated,
         hasWorkspacePrivileges,
         hasAdminPrivileges
       ),
-      [workspaceUserResolverKeys.deleteWorkspaceUser]: and(
+      [workspaceUserMutationKeys.deleteWorkspaceUser]: and(
         isAuthenticated,
         hasWorkspacePrivileges,
         hasAdminPrivileges

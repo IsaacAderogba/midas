@@ -94,8 +94,8 @@ export interface NexusGenRootTypes {
     lastSeen?: string | null; // String
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
     status: NexusGenEnums['WorkspaceUserStatus']; // WorkspaceUserStatus!
-    userId: number; // Int!
-    workspaceId: number; // Int!
+    userId: string; // ID!
+    workspaceId: string; // ID!
   }
   String: string;
   Int: number;
@@ -172,9 +172,9 @@ export interface NexusGenFieldTypes {
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
     status: NexusGenEnums['WorkspaceUserStatus']; // WorkspaceUserStatus!
     user: NexusGenRootTypes['User']; // User!
-    userId: number; // Int!
+    userId: string; // ID!
     workspace: NexusGenRootTypes['Workspace']; // Workspace!
-    workspaceId: number; // Int!
+    workspaceId: string; // ID!
   }
 }
 

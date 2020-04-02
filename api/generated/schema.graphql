@@ -99,9 +99,9 @@ type WorkspaceUser {
   role: WorkspaceUserRoles!
   status: WorkspaceUserStatus!
   user: User!
-  userId: Int!
+  userId: ID!
   workspace: Workspace!
-  workspaceId: Int!
+  workspaceId: ID!
 }
 
 input WorkspaceUserInput {

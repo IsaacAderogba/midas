@@ -5,7 +5,7 @@ const userQueryKeys = {
   user: "user",
 };
 
-const userResolverKeys = {
+const userMutationKeys = {
   loginUser: "loginUser",
   registerUser: "registerUser",
   updateUser: "updateUser",
@@ -34,7 +34,7 @@ const generateToken = ({ id, firstName, lastName }) => {
 
 module.exports = {
   userQueryKeys,
-  userResolverKeys,
+  userMutationKeys,
   userErrors,
   generateToken
 };

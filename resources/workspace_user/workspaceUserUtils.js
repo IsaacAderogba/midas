@@ -5,7 +5,7 @@ const workspaceUserQueryKeys = {
   workspaceUsers: "workspaceUsers",
 };
 
-const workspaceUserResolverKeys = {
+const workspaceUserMutationKeys = {
   createWorkspaceUser: "createWorkspaceUser",
   updateWorkspaceUser: "updateWorkspaceUser",
   deleteWorkspaceUser: "deleteWorkspaceUser"
@@ -17,6 +17,6 @@ const workspaceUserErrors = {
 
 module.exports = {
   workspaceUserQueryKeys,
-  workspaceUserResolverKeys,
+  workspaceUserMutationKeys,
   workspaceUserErrors
 };

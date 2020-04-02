@@ -5,7 +5,7 @@ const workspaceQueryKeys = {
   workspaces: "workspaces"
 }
 
-const workspaceResolverKeys = {
+const workspaceMutationKeys = {
   createWorkspace: "createWorkspace",
   updateWorkspace: "updateWorkspace",
   deleteWorkspace: 'deleteWorkspace'
@@ -18,6 +18,6 @@ const workspaceErrors = {
 
 module.exports = {
   workspaceQueryKeys,
-  workspaceResolverKeys,
+  workspaceMutationKeys,
   workspaceErrors
 }
