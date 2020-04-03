@@ -24,7 +24,6 @@ export interface NexusGenInputs {
     thumbnailPhotoID?: string | null; // String
     thumbnailPhotoURL?: string | null; // String
     title: string; // String!
-    workspaceId: string; // String!
     workspaceUserId: string; // String!
   }
   NewWorkspaceInput: { // input type
@@ -43,11 +42,11 @@ export interface NexusGenInputs {
     thumbnailPhotoID?: string | null; // String
     thumbnailPhotoURL?: string | null; // String
     title?: string | null; // String
-    workspaceId?: string | null; // String
     workspaceUserId?: string | null; // String
   }
   ProjectWhere: { // input type
     id?: string | null; // ID
+    workspaceId?: string | null; // ID
     workspaceUserId?: string | null; // ID
   }
   RegisterInput: { // input type
@@ -172,7 +171,7 @@ export interface NexusGenFieldTypes {
     createProject: NexusGenRootTypes['Project'] | null; // Project
     createWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     createWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
-    deleteProject: NexusGenRootTypes['Project'] | null; // Project
+    deleteProject: boolean | null; // Boolean
     deleteUser: boolean; // Boolean!
     deleteWorkspace: boolean; // Boolean!
     deleteWorkspaceUser: boolean; // Boolean!
@@ -241,7 +240,7 @@ export interface NexusGenFieldTypes {
 export interface NexusGenArgTypes {
   Mutation: {
     createProject: { // args
-      newProjectInput?: NexusGenInputs['NewProjectInput'] | null; // NewProjectInput
+      newProjectInput: NexusGenInputs['NewProjectInput']; // NewProjectInput!
     }
     createWorkspace: { // args
       newWorkspaceInput?: NexusGenInputs['NewWorkspaceInput'] | null; // NewWorkspaceInput
@@ -262,8 +261,8 @@ export interface NexusGenArgTypes {
       registerInput?: NexusGenInputs['RegisterInput'] | null; // RegisterInput
     }
     updateProject: { // args
-      projectInput?: NexusGenInputs['ProjectInput'] | null; // ProjectInput
-      where?: NexusGenInputs['ProjectWhere'] | null; // ProjectWhere
+      projectInput: NexusGenInputs['ProjectInput']; // ProjectInput!
+      where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
     }
     updateUser: { // args
       userInput?: NexusGenInputs['UserInput'] | null; // UserInput
@@ -278,7 +277,10 @@ export interface NexusGenArgTypes {
   }
   Query: {
     project: { // args
-      where?: NexusGenInputs['ProjectWhere'] | null; // ProjectWhere
+      where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
+    }
+    projects: { // args
+      where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
     }
     workspaceUser: { // args
       where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere

@@ -39,6 +39,9 @@ export type Mutation = {
   createWorkspaceUser?: Maybe<WorkspaceUser>;
   updateWorkspaceUser?: Maybe<WorkspaceUser>;
   deleteWorkspaceUser: Scalars['Boolean'];
+  createProject?: Maybe<Project>;
+  updateProject?: Maybe<Project>;
+  deleteProject?: Maybe<Project>;
 };
 
 
@@ -82,6 +85,32 @@ export type MutationDeleteWorkspaceUserArgs = {
   where?: Maybe<WorkspaceUserWhere>;
 };
 
+
+export type MutationCreateProjectArgs = {
+  newProjectInput?: Maybe<NewProjectInput>;
+};
+
+
+export type MutationUpdateProjectArgs = {
+  projectInput?: Maybe<ProjectInput>;
+  where?: Maybe<ProjectWhere>;
+};
+
+
+export type MutationDeleteProjectArgs = {
+  projectId: Scalars['ID'];
+};
+
+export type NewProjectInput = {
+  workspaceId: Scalars['String'];
+  workspaceUserId: Scalars['String'];
+  title: Scalars['String'];
+  thumbnailPhotoURL?: Maybe<Scalars['String']>;
+  thumbnailPhotoID?: Maybe<Scalars['String']>;
+  inviteShareStatus?: Maybe<ProjectInviteShareStatus>;
+  inviteSharePrivileges?: Maybe<ProjectInviteSharePrivileges>;
+};
+
 export type NewWorkspaceInput = {
   name?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
@@ -94,6 +123,45 @@ export type NewWorkspaceUserInput = {
   role: WorkspaceUserRoles;
 };
 
+export type Project = {
+   __typename?: 'Project';
+  id: Scalars['ID'];
+  workspaceId: Scalars['ID'];
+  workspaceUserId: Scalars['ID'];
+  title: Scalars['String'];
+  thumbnailPhotoURL?: Maybe<Scalars['String']>;
+  thumbnailPhotoID?: Maybe<Scalars['String']>;
+  inviteShareStatus: ProjectInviteShareStatus;
+  inviteSharePrivileges: ProjectInviteSharePrivileges;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  workspace: Workspace;
+  workspaceUser: WorkspaceUser;
+};
+
+export type ProjectInput = {
+  workspaceId?: Maybe<Scalars['String']>;
+  workspaceUserId?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  thumbnailPhotoURL?: Maybe<Scalars['String']>;
+  thumbnailPhotoID?: Maybe<Scalars['String']>;
+  inviteShareStatus?: Maybe<ProjectInviteShareStatus>;
+  inviteSharePrivileges?: Maybe<ProjectInviteSharePrivileges>;
+};
+
+export enum ProjectInviteSharePrivileges {
+  CanView = 'can_view'
+}
+
+export enum ProjectInviteShareStatus {
+  PeopleInvited = 'people_invited'
+}
+
+export type ProjectWhere = {
+  id?: Maybe<Scalars['ID']>;
+  workspaceUserId?: Maybe<Scalars['ID']>;
+};
+
 export type Query = {
    __typename?: 'Query';
   user?: Maybe<User>;
@@ -101,11 +169,18 @@ export type Query = {
   workspaces: Array<Workspace>;
   workspaceUser?: Maybe<WorkspaceUser>;
   workspaceUsers?: Maybe<Array<WorkspaceUser>>;
+  project?: Maybe<Project>;
+  projects?: Maybe<Array<Project>>;
 };
 
 
 export type QueryWorkspaceUserArgs = {
   where?: Maybe<WorkspaceUserWhere>;
+};
+
+
+export type QueryProjectArgs = {
+  where?: Maybe<ProjectWhere>;
 };
 
 export type RegisterInput = {
@@ -156,8 +231,8 @@ export type WorkspaceInput = {
 export type WorkspaceUser = {
    __typename?: 'WorkspaceUser';
   id: Scalars['ID'];
-  workspaceId: Scalars['Int'];
-  userId: Scalars['Int'];
+  workspaceId: Scalars['ID'];
+  userId: Scalars['ID'];
   role: WorkspaceUserRoles;
   lastSeen?: Maybe<Scalars['String']>;
   status: WorkspaceUserStatus;

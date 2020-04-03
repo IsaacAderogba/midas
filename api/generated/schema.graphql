@@ -18,16 +18,16 @@ input LoginInput {
 }
 
 type Mutation {
-  createProject(newProjectInput: NewProjectInput): Project
+  createProject(newProjectInput: NewProjectInput!): Project
   createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace
   createWorkspaceUser(newWorkspaceUserInput: NewWorkspaceUserInput): WorkspaceUser
-  deleteProject(projectId: ID!): Project
+  deleteProject(projectId: ID!): Boolean
   deleteUser: Boolean!
   deleteWorkspace: Boolean!
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   loginUser(loginInput: LoginInput): AuthUser!
   registerUser(registerInput: RegisterInput): AuthUser!
-  updateProject(projectInput: ProjectInput, where: ProjectWhere): Project
+  updateProject(projectInput: ProjectInput!, where: ProjectWhere!): Project
   updateUser(userInput: UserInput): User
   updateWorkspace(workspaceInput: WorkspaceInput): Workspace
   updateWorkspaceUser(where: WorkspaceUserWhere, workspaceUserInput: WorkspaceUserInput): WorkspaceUser
@@ -39,7 +39,6 @@ input NewProjectInput {
   thumbnailPhotoID: String
   thumbnailPhotoURL: String
   title: String!
-  workspaceId: String!
   workspaceUserId: String!
 }
 
@@ -76,7 +75,6 @@ input ProjectInput {
   thumbnailPhotoID: String
   thumbnailPhotoURL: String
   title: String
-  workspaceId: String
   workspaceUserId: String
 }
 
@@ -90,12 +88,13 @@ enum ProjectInviteShareStatus {
 
 input ProjectWhere {
   id: ID
+  workspaceId: ID
   workspaceUserId: ID
 }
 
 type Query {
-  project(where: ProjectWhere): Project
-  projects: [Project!]
+  project(where: ProjectWhere!): Project
+  projects(where: ProjectWhere!): [Project!]
   user: User
   workspace: Workspace
   workspaces: [Workspace!]!

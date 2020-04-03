@@ -1,14 +1,14 @@
-const { extendType, idArg } = require("nexus");
+const { extendType, idArg, arg } = require("nexus");
 const {
   projectMutationKeys,
   projectQueryKeys,
-  projectSubscriptionKeys
+  projectSubscriptionKeys,
 } = require("./projectUtils");
 const {
   NewProjectInput,
   Project,
   ProjectInput,
-  ProjectWhere
+  ProjectWhere,
 } = require("./projectTypes");
 
 const Query = extendType({
@@ -18,20 +18,23 @@ const Query = extendType({
       type: Project,
       nullable: true,
       args: {
-        where: ProjectWhere
+        where: arg({ type: ProjectWhere, required: true }),
       },
       resolve: (parent, { where }, { dataSources }) => {
         return dataSources.projectAPI.readProject(where);
-      }
+      },
     });
     t.list.field(projectQueryKeys.projects, {
       type: Project,
       nullable: true,
+      args: {
+        where: arg({ type: ProjectWhere, required: true })
+      },
       resolve: (parent, { where }, { dataSources }) => {
         return dataSources.projectAPI.readProjects(where);
-      }
+      },
     });
-  }
+  },
 });
 
 const Mutation = extendType({
@@ -41,37 +44,40 @@ const Mutation = extendType({
       type: Project,
       nullable: true,
       args: {
-        newProjectInput: NewProjectInput
+        newProjectInput: arg({ type: NewProjectInput, required: true }),
       },
-      resolve: (parent, { newProjectInput }, { dataSources }) => {
-        return dataSources.projectAPI.createProject(newProjectInput);
-      }
+      resolve: (parent, { newProjectInput }, { dataSources, user }) => {
+        return dataSources.projectAPI.createProject({
+          workspaceId: user.workspaceId,
+          ...newProjectInput,
+        });
+      },
     });
     t.field(projectMutationKeys.updateProject, {
       type: Project,
       nullable: true,
       args: {
-        projectInput: ProjectInput,
-        where: ProjectWhere
+        projectInput: arg({ type: ProjectInput, required: true }),
+        where: arg({ type: ProjectWhere, required: true }),
       },
       resolve: (parent, { projectInput, where }, { dataSources }) => {
         return dataSources.projectAPI.updateProject(where, projectInput);
-      }
+      },
     });
     t.field(projectMutationKeys.deleteProject, {
-      type: Project,
+      type: "Boolean",
       nullable: true,
       args: {
-        projectId: idArg({ required: true })
+        projectId: idArg({ required: true }),
       },
       resolve: (parent, { projectId }, { dataSources }) => {
         return dataSources.projectAPI.deleteProject({ id: projectId });
-      }
+      },
     });
-  }
+  },
 });
 
 module.exports = {
   ProjectQuery: Query,
-  ProjectMutation: Mutation
+  ProjectMutation: Mutation,
 };

@@ -4,12 +4,12 @@ const { WorkspaceUser } = require("../workspace_user/workspaceUserTypes");
 
 const ProjectInviteShareStatus = enumType({
   name: "ProjectInviteShareStatus",
-  members: ["people_invited"]
+  members: ["people_invited"],
 });
 
 const ProjectInviteSharePrivileges = enumType({
   name: "ProjectInviteSharePrivileges",
-  members: ["can_view"]
+  members: ["can_view"],
 });
 
 const Project = objectType({
@@ -23,11 +23,11 @@ const Project = objectType({
     t.string("thumbnailPhotoID", { nullable: true });
     t.field("inviteShareStatus", {
       type: ProjectInviteShareStatus,
-      nullable: false
+      nullable: false,
     });
     t.field("inviteSharePrivileges", {
       type: ProjectInviteSharePrivileges,
-      nullable: false
+      nullable: false,
     });
     t.string("createdAt", { nullable: false });
     t.string("updatedAt", { nullable: false });
@@ -35,60 +35,57 @@ const Project = objectType({
       type: Workspace,
       resolve: async (project, args, { dataSources }) => {
         return dataSources.workspaceAPI.readWorkspace({
-          id: project.workspaceId
+          id: project.workspaceId,
         });
-      }
+      },
     });
     t.field("workspaceUser", {
       type: WorkspaceUser,
       resolve: async (project, args, { dataSources }) => {
         return dataSources.workspaceUserAPI.readWorkspaceUser({
-          workspaceId: project.workspaceId,
-          userId: project.workspaceUserId
+          id: project.workspaceUserId,
         });
-      }
+      },
     });
-  }
+  },
 });
 
 const NewProjectInput = inputObjectType({
   name: "NewProjectInput",
   definition(t) {
     // workspaceId and workspaceUserId will be passed in through the context
-    t.string("workspaceId", { required: true });
     t.string("workspaceUserId", { required: true });
     t.string("title", { required: true });
     t.string("thumbnailPhotoURL", { required: false });
     t.string("thumbnailPhotoID", { required: false });
     t.field("inviteShareStatus", {
       type: ProjectInviteShareStatus,
-      required: false
+      required: false,
     });
     t.field("inviteSharePrivileges", {
       type: ProjectInviteSharePrivileges,
-      required: false
+      required: false,
     });
-  }
+  },
 });
 
 const ProjectInput = inputObjectType({
   name: "ProjectInput",
   definition(t) {
     // middleware to check if it's completely empty
-    t.string("workspaceId", { required: false });
     t.string("workspaceUserId", { required: false });
     t.string("title", { required: false });
     t.string("thumbnailPhotoURL", { required: false });
     t.string("thumbnailPhotoID", { required: false });
     t.field("inviteShareStatus", {
       type: ProjectInviteShareStatus,
-      required: false
+      required: false,
     });
     t.field("inviteSharePrivileges", {
       type: ProjectInviteSharePrivileges,
-      required: false
+      required: false,
     });
-  }
+  },
 });
 
 const ProjectWhere = inputObjectType({
@@ -96,12 +93,13 @@ const ProjectWhere = inputObjectType({
   definition(t) {
     t.id("id", { required: false });
     t.id("workspaceUserId", { required: false });
-  }
+    t.id("workspaceId", { required: false });
+  },
 });
 
 module.exports = {
   Project,
   ProjectInput,
   NewProjectInput,
-  ProjectWhere
+  ProjectWhere,
 };

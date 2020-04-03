@@ -7,8 +7,11 @@ class ProjectAPI extends SQLDataSource {
   async createProject(project) {
     try {
       // TODO - update what's passed in with an updated at and created at
-
-      return this._createProject(project);
+      return this._createProject({
+        ...project,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
     } catch (err) {
       console.log(err);
       throw err;
@@ -36,7 +39,11 @@ class ProjectAPI extends SQLDataSource {
   async updateProject(whereObj, project) {
     try {
       // TODO - update what's passed in with an updated at and created at
-      return this._updateProject(whereObj, project);
+      return this._updateProject(whereObj, {
+        ...project,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
     } catch (err) {
       console.log(err);
       throw err;
@@ -66,9 +73,7 @@ class ProjectAPI extends SQLDataSource {
   }
 
   _readProject(whereObj) {
-    return this.knex(PROJECT_TABLE)
-      .where(whereObj)
-      .first();
+    return this.knex(PROJECT_TABLE).where(whereObj).first();
   }
 
   async _updateProject(whereObj, project) {
@@ -80,9 +85,7 @@ class ProjectAPI extends SQLDataSource {
   }
 
   _deleteProject(whereObj) {
-    return this.knex(PROJECT_TABLE)
-      .where(whereObj)
-      .del();
+    return this.knex(PROJECT_TABLE).where(whereObj).del();
   }
 }
 
