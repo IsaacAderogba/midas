@@ -3,13 +3,16 @@ const {
   projectMutationKeys,
   projectQueryKeys,
   projectSubscriptionKeys,
+  projectSubscriptionChannels,
 } = require("./projectUtils");
 const {
   NewProjectInput,
   Project,
   ProjectInput,
   ProjectWhere,
+  ProjectSubscriptionPayload,
 } = require("./projectTypes");
+const { MutationEnum } = require("../types");
 
 const Query = extendType({
   type: "Query",
@@ -28,7 +31,7 @@ const Query = extendType({
       type: Project,
       nullable: true,
       args: {
-        where: arg({ type: ProjectWhere, required: true })
+        where: arg({ type: ProjectWhere, required: true }),
       },
       resolve: (parent, { where }, { dataSources }) => {
         return dataSources.projectAPI.readProjects(where);
@@ -46,11 +49,24 @@ const Mutation = extendType({
       args: {
         newProjectInput: arg({ type: NewProjectInput, required: true }),
       },
-      resolve: (parent, { newProjectInput }, { dataSources, user }) => {
-        return dataSources.projectAPI.createProject({
+      resolve: async (
+        parent,
+        { newProjectInput },
+        { dataSources, user, pubsub }
+      ) => {
+        const createdProject = await dataSources.projectAPI.createProject({
           workspaceId: user.workspaceId,
           ...newProjectInput,
         });
+
+        pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
+          [projectSubscriptionKeys.projects]: {
+            mutation: MutationEnum.CREATED,
+            data: createdProject,
+          },
+        });
+
+        return createdProject;
       },
     });
     t.field(projectMutationKeys.updateProject, {
@@ -77,7 +93,28 @@ const Mutation = extendType({
   },
 });
 
+const Subscription = extendType({
+  type: "Subscription",
+  definition(t) {
+    t.field(projectSubscriptionKeys.projects, {
+      type: ProjectSubscriptionPayload,
+      nullable: false,
+      subscribe: (parent, args, { context }) => {
+        const { user, pubsub } = context;
+        return pubsub.asyncIterator(
+          projectSubscriptionChannels.projects(user.workspaceId)
+        );
+      },
+      resolve: (payload) => {
+        console.log(payload);
+        return payload;
+      },
+    });
+  },
+});
+
 module.exports = {
   ProjectQuery: Query,
   ProjectMutation: Mutation,
+  ProjectSubscription: Subscription,
 };

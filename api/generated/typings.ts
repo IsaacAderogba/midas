@@ -77,6 +77,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  MutationType: "CREATED" | "DELETED" | "UPDATED"
   ProjectInviteSharePrivileges: "can_view"
   ProjectInviteShareStatus: "people_invited"
   WorkspaceUserRoles: "admin" | "editor" | "owner" | "viewer"
@@ -105,7 +106,12 @@ export interface NexusGenRootTypes {
     workspaceId: string; // ID!
     workspaceUserId: string; // ID!
   }
+  ProjectSubscriptionPayload: { // root type
+    data: NexusGenRootTypes['Project']; // Project!
+    mutation: NexusGenEnums['MutationType']; // MutationType!
+  }
   Query: {};
+  Subscription: {};
   User: { // root type
     avatarURL?: string | null; // String
     email: string; // String!
@@ -151,6 +157,7 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   WorkspaceInput: NexusGenInputs['WorkspaceInput'];
   WorkspaceUserInput: NexusGenInputs['WorkspaceUserInput'];
   WorkspaceUserWhere: NexusGenInputs['WorkspaceUserWhere'];
+  MutationType: NexusGenEnums['MutationType'];
   ProjectInviteSharePrivileges: NexusGenEnums['ProjectInviteSharePrivileges'];
   ProjectInviteShareStatus: NexusGenEnums['ProjectInviteShareStatus'];
   WorkspaceUserRoles: NexusGenEnums['WorkspaceUserRoles'];
@@ -196,6 +203,10 @@ export interface NexusGenFieldTypes {
     workspaceUser: NexusGenRootTypes['WorkspaceUser']; // WorkspaceUser!
     workspaceUserId: string; // ID!
   }
+  ProjectSubscriptionPayload: { // field return type
+    data: NexusGenRootTypes['Project']; // Project!
+    mutation: NexusGenEnums['MutationType']; // MutationType!
+  }
   Query: { // field return type
     project: NexusGenRootTypes['Project'] | null; // Project
     projects: NexusGenRootTypes['Project'][] | null; // [Project!]
@@ -204,6 +215,9 @@ export interface NexusGenFieldTypes {
     workspaces: NexusGenRootTypes['Workspace'][]; // [Workspace!]!
     workspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
     workspaceUsers: NexusGenRootTypes['WorkspaceUser'][] | null; // [WorkspaceUser!]
+  }
+  Subscription: { // field return type
+    projects: NexusGenRootTypes['ProjectSubscriptionPayload']; // ProjectSubscriptionPayload!
   }
   User: { // field return type
     avatarURL: string | null; // String
@@ -293,11 +307,11 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Project" | "Query" | "User" | "Workspace" | "WorkspaceUser";
+export type NexusGenObjectNames = "AuthUser" | "Mutation" | "Project" | "ProjectSubscriptionPayload" | "Query" | "Subscription" | "User" | "Workspace" | "WorkspaceUser";
 
 export type NexusGenInputNames = "LoginInput" | "NewProjectInput" | "NewWorkspaceInput" | "NewWorkspaceUserInput" | "ProjectInput" | "ProjectWhere" | "RegisterInput" | "UserInput" | "WorkspaceInput" | "WorkspaceUserInput" | "WorkspaceUserWhere";
 
-export type NexusGenEnumNames = "ProjectInviteSharePrivileges" | "ProjectInviteShareStatus" | "WorkspaceUserRoles" | "WorkspaceUserStatus";
+export type NexusGenEnumNames = "MutationType" | "ProjectInviteSharePrivileges" | "ProjectInviteShareStatus" | "WorkspaceUserRoles" | "WorkspaceUserStatus";
 
 export type NexusGenInterfaceNames = never;
 

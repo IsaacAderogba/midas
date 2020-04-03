@@ -92,9 +92,9 @@ class UserAPI extends SQLDataSource {
    *
    * Parses authorization header for workspaceId and jwtToken
    */
-  async authenticateUser(req) {
+  async authenticateUser(authorization) {
     // authheader looks like: 'workspaceId-jwtToken'
-    const authHeader = req.headers.authorization;
+    const authHeader = authorization;
     const [workspaceId, token] = authHeader
       ? authHeader.split(" ")
       : [false, false];

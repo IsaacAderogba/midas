@@ -1,6 +1,7 @@
 const { objectType, inputObjectType, enumType } = require("nexus");
 const { Workspace } = require("../workspace/workspaceTypes");
 const { WorkspaceUser } = require("../workspace_user/workspaceUserTypes");
+const { MutationType } = require("../types");
 
 const ProjectInviteShareStatus = enumType({
   name: "ProjectInviteShareStatus",
@@ -47,6 +48,14 @@ const Project = objectType({
         });
       },
     });
+  },
+});
+
+const ProjectSubscriptionPayload = objectType({
+  name: "ProjectSubscriptionPayload",
+  definition(t) {
+    t.field("mutation", { type: MutationType, nullable: false });
+    t.field("data", { type: Project, nullable: false });
   },
 });
 
@@ -102,4 +111,5 @@ module.exports = {
   ProjectInput,
   NewProjectInput,
   ProjectWhere,
+  ProjectSubscriptionPayload
 };
