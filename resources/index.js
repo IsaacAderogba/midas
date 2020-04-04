@@ -17,6 +17,10 @@ const {
   WorkspaceUserMutation,
 } = require("./workspace_user/workspaceUserResolvers");
 const {
+  ProjectMiddleware,
+  ProjectPermissions,
+} = require("./project/projectMiddleware");
+const {
   ProjectQuery,
   ProjectMutation,
   ProjectSubscription,
@@ -38,5 +42,7 @@ module.exports = {
     WorkspaceMiddleware,
     WorkspaceUserPermissions,
     WorkspaceUserMiddleware,
+    ProjectPermissions,
+    ProjectMiddleware,
   ],
 };
