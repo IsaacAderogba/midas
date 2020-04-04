@@ -52,9 +52,12 @@ class ProjectAPI extends SQLDataSource {
 
   async deleteProject(whereObj) {
     try {
+      const deletedProject = await this._readProject(whereObj);
       const isSuccess = await this._deleteProject(whereObj);
-      if (isSuccess) return true;
-      return false;
+
+      if (!isSuccess) throw new Error("Project doesn't exist");
+
+      return deletedProject;
     } catch (err) {
       console.log(err);
       throw err;

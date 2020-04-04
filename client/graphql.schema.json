@@ -6,7 +6,9 @@
     "mutationType": {
       "name": "Mutation"
     },
-    "subscriptionType": null,
+    "subscriptionType": {
+      "name": "Subscription"
+    },
     "types": [
       {
         "kind": "OBJECT",
@@ -112,9 +114,13 @@
                 "name": "where",
                 "description": "",
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "ProjectWhere",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ProjectWhere",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
@@ -130,7 +136,22 @@
           {
             "name": "projects",
             "description": "",
-            "args": [],
+            "args": [
+              {
+                "name": "where",
+                "description": "",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ProjectWhere",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
             "type": {
               "kind": "LIST",
               "name": null,
@@ -696,6 +717,16 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "workspaceId",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -1182,9 +1213,13 @@
                 "name": "newProjectInput",
                 "description": "",
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "NewProjectInput",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "NewProjectInput",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
@@ -1205,9 +1240,13 @@
                 "name": "projectInput",
                 "description": "",
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "ProjectInput",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ProjectInput",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               },
@@ -1215,9 +1254,13 @@
                 "name": "where",
                 "description": "",
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "ProjectWhere",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ProjectWhere",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
@@ -1250,8 +1293,8 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "Project",
+              "kind": "SCALAR",
+              "name": "Boolean",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1722,20 +1765,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "workspaceId",
-            "description": "",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
             "name": "workspaceUserId",
             "description": "",
             "type": {
@@ -1815,16 +1844,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "workspaceId",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
             "name": "workspaceUserId",
             "description": "",
             "type": {
@@ -1887,6 +1906,105 @@
         ],
         "interfaces": null,
         "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Subscription",
+        "description": "",
+        "fields": [
+          {
+            "name": "projects",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ProjectSubscriptionPayload",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ProjectSubscriptionPayload",
+        "description": "",
+        "fields": [
+          {
+            "name": "mutation",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "MutationType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "data",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Project",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "MutationType",
+        "description": "",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "CREATED",
+            "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UPDATED",
+            "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "DELETED",
+            "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
         "possibleTypes": null
       },
       {

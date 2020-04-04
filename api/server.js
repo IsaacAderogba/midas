@@ -5,7 +5,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const { makeSchema } = require("nexus");
 const express = require("express");
-const { ApolloServer, PubSub } = require("apollo-server-express");
+const { ApolloServer } = require("apollo-server-express");
+const { RedisPubSub } = require("graphql-redis-subscriptions");
 const { applyMiddleware } = require("graphql-middleware");
 const { RedisCache } = require("apollo-server-cache-redis");
 const path = require("path");
@@ -33,40 +34,44 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+const PubSub = new RedisPubSub(process.env.REDIS_URL);
 const schemaWithMiddleware = applyMiddleware(schema, ...Middleware);
 const apolloServer = new ApolloServer({
   schema: schemaWithMiddleware,
   context: async ({ req, connection }) => {
-    // console.log(connection.context.authorization);
-    const authorization = connection
-      ? connection.context.authorization
-      : req.headers.authorization;
-
-    let context = {
-      req,
-      pubsub: new PubSub(),
-      user: await UserAPI.authenticateUser(authorization),
-    };
-
     if (connection) {
-      context = {
-        context,
+      return {
         ...connection.context,
+        pubsub: PubSub,
+        user: connection.context.user,
+        dataSources: {
+          userAPI: UserAPI,
+          workspaceAPI: WorkspaceAPI,
+          workspaceUserAPI: WorkspaceUserAPI,
+          projectAPI: ProjectAPI,
+        },
       };
     }
 
-    return context;
+    return {
+      req,
+      pubsub: PubSub,
+      user: await UserAPI.authenticateUser(req.headers.authorization),
+    };
   },
   subscriptions: {
     onConnect: async (connectionParams, webSocket) => {
       console.log("Subscription client connected");
-      return {
-        authorization: connectionParams.authorization,
-      };
+      const user = await UserAPI.authenticateUser(
+        connectionParams.authorization
+      );
+      if (!user) throw new Error("User unauthenticated");
+      return { user };
     },
     onDisconnect: async (webSocket, context) => {
       console.log("Subscription client disconnected.");
     },
+    path: "/subscriptions",
   },
   cache: new RedisCache(process.env.REDIS_URL),
   dataSources: () => ({

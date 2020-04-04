@@ -63,6 +63,7 @@ const Mutation = extendType({
           [projectSubscriptionKeys.projects]: {
             mutation: MutationEnum.CREATED,
             data: createdProject,
+            updatedFields: [],
           },
         });
 
@@ -76,18 +77,47 @@ const Mutation = extendType({
         projectInput: arg({ type: ProjectInput, required: true }),
         where: arg({ type: ProjectWhere, required: true }),
       },
-      resolve: (parent, { projectInput, where }, { dataSources }) => {
-        return dataSources.projectAPI.updateProject(where, projectInput);
+      resolve: async (
+        parent,
+        { projectInput, where },
+        { dataSources, user, pubsub }
+      ) => {
+        const updatedProject = await dataSources.projectAPI.updateProject(
+          where,
+          projectInput
+        );
+
+        pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
+          [projectSubscriptionKeys.projects]: {
+            mutation: MutationEnum.UPDATED,
+            data: updatedProject,
+            updatedFields: [],
+          },
+        });
+
+        return updatedProject;
       },
     });
     t.field(projectMutationKeys.deleteProject, {
-      type: "Boolean",
+      type: Project,
       nullable: true,
       args: {
         projectId: idArg({ required: true }),
       },
-      resolve: (parent, { projectId }, { dataSources }) => {
-        return dataSources.projectAPI.deleteProject({ id: projectId });
+      resolve: async (parent, { projectId }, { dataSources, pubsub, user }) => {
+        const deletedProject = await dataSources.projectAPI.deleteProject({
+          id: projectId,
+        });
+
+        pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
+          [projectSubscriptionKeys.projects]: {
+            mutation: MutationEnum.DELETED,
+            data: deletedProject,
+            updatedFields: [],
+          },
+        });
+
+        return deletedProject;
       },
     });
   },
@@ -99,15 +129,14 @@ const Subscription = extendType({
     t.field(projectSubscriptionKeys.projects, {
       type: ProjectSubscriptionPayload,
       nullable: false,
-      subscribe: (parent, args, { context }) => {
+      subscribe: (parent, args, context) => {
         const { user, pubsub } = context;
         return pubsub.asyncIterator(
           projectSubscriptionChannels.projects(user.workspaceId)
         );
       },
-      resolve: (payload) => {
-        console.log(payload);
-        return payload;
+      resolve: ({ projects }) => {
+        return projects;
       },
     });
   },

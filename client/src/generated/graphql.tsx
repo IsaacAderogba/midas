@@ -41,7 +41,7 @@ export type Mutation = {
   deleteWorkspaceUser: Scalars['Boolean'];
   createProject?: Maybe<Project>;
   updateProject?: Maybe<Project>;
-  deleteProject?: Maybe<Project>;
+  deleteProject?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -87,13 +87,13 @@ export type MutationDeleteWorkspaceUserArgs = {
 
 
 export type MutationCreateProjectArgs = {
-  newProjectInput?: Maybe<NewProjectInput>;
+  newProjectInput: NewProjectInput;
 };
 
 
 export type MutationUpdateProjectArgs = {
-  projectInput?: Maybe<ProjectInput>;
-  where?: Maybe<ProjectWhere>;
+  projectInput: ProjectInput;
+  where: ProjectWhere;
 };
 
 
@@ -101,8 +101,13 @@ export type MutationDeleteProjectArgs = {
   projectId: Scalars['ID'];
 };
 
+export enum MutationType {
+  Created = 'CREATED',
+  Updated = 'UPDATED',
+  Deleted = 'DELETED'
+}
+
 export type NewProjectInput = {
-  workspaceId: Scalars['String'];
   workspaceUserId: Scalars['String'];
   title: Scalars['String'];
   thumbnailPhotoURL?: Maybe<Scalars['String']>;
@@ -140,7 +145,6 @@ export type Project = {
 };
 
 export type ProjectInput = {
-  workspaceId?: Maybe<Scalars['String']>;
   workspaceUserId?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
   thumbnailPhotoURL?: Maybe<Scalars['String']>;
@@ -157,9 +161,16 @@ export enum ProjectInviteShareStatus {
   PeopleInvited = 'people_invited'
 }
 
+export type ProjectSubscriptionPayload = {
+   __typename?: 'ProjectSubscriptionPayload';
+  mutation: MutationType;
+  data: Project;
+};
+
 export type ProjectWhere = {
   id?: Maybe<Scalars['ID']>;
   workspaceUserId?: Maybe<Scalars['ID']>;
+  workspaceId?: Maybe<Scalars['ID']>;
 };
 
 export type Query = {
@@ -180,7 +191,12 @@ export type QueryWorkspaceUserArgs = {
 
 
 export type QueryProjectArgs = {
-  where?: Maybe<ProjectWhere>;
+  where: ProjectWhere;
+};
+
+
+export type QueryProjectsArgs = {
+  where: ProjectWhere;
 };
 
 export type RegisterInput = {
@@ -189,6 +205,11 @@ export type RegisterInput = {
   email: Scalars['String'];
   password: Scalars['String'];
   avatarURL?: Maybe<Scalars['String']>;
+};
+
+export type Subscription = {
+   __typename?: 'Subscription';
+  projects: ProjectSubscriptionPayload;
 };
 
 export type User = {

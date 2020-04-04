@@ -109,6 +109,7 @@ export interface NexusGenRootTypes {
   ProjectSubscriptionPayload: { // root type
     data: NexusGenRootTypes['Project']; // Project!
     mutation: NexusGenEnums['MutationType']; // MutationType!
+    updatedFields: string[]; // [String!]!
   }
   Query: {};
   Subscription: {};
@@ -178,7 +179,7 @@ export interface NexusGenFieldTypes {
     createProject: NexusGenRootTypes['Project'] | null; // Project
     createWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     createWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
-    deleteProject: boolean | null; // Boolean
+    deleteProject: NexusGenRootTypes['Project'] | null; // Project
     deleteUser: boolean; // Boolean!
     deleteWorkspace: boolean; // Boolean!
     deleteWorkspaceUser: boolean; // Boolean!
@@ -206,6 +207,7 @@ export interface NexusGenFieldTypes {
   ProjectSubscriptionPayload: { // field return type
     data: NexusGenRootTypes['Project']; // Project!
     mutation: NexusGenEnums['MutationType']; // MutationType!
+    updatedFields: string[]; // [String!]!
   }
   Query: { // field return type
     project: NexusGenRootTypes['Project'] | null; // Project

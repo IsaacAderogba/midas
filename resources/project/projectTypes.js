@@ -56,6 +56,7 @@ const ProjectSubscriptionPayload = objectType({
   definition(t) {
     t.field("mutation", { type: MutationType, nullable: false });
     t.field("data", { type: Project, nullable: false });
+    t.list.string("updatedFields", { nullable: false });
   },
 });
 
@@ -111,5 +112,5 @@ module.exports = {
   ProjectInput,
   NewProjectInput,
   ProjectWhere,
-  ProjectSubscriptionPayload
+  ProjectSubscriptionPayload,
 };

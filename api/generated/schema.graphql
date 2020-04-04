@@ -21,7 +21,7 @@ type Mutation {
   createProject(newProjectInput: NewProjectInput!): Project
   createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace
   createWorkspaceUser(newWorkspaceUserInput: NewWorkspaceUserInput): WorkspaceUser
-  deleteProject(projectId: ID!): Boolean
+  deleteProject(projectId: ID!): Project
   deleteUser: Boolean!
   deleteWorkspace: Boolean!
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
@@ -95,6 +95,7 @@ enum ProjectInviteShareStatus {
 type ProjectSubscriptionPayload {
   data: Project!
   mutation: MutationType!
+  updatedFields: [String!]!
 }
 
 input ProjectWhere {
