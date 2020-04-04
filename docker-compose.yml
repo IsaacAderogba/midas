@@ -1,0 +1,33 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+  redis:
+    image: 'redis:latest'
+  server:
+    depends_on: 
+      - postgres
+      - redis
+    image: midas-server
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - /app/node_modules
+      - .:/app
+  client:
+    depends_on: 
+      - server
+    image: midas-client
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - ./client:/app

@@ -30,6 +30,7 @@
     "apollo-link-ws": "^1.0.19",
     "babel-plugin-import": "^1.13.0",
     "babel-plugin-styled-components": "^1.10.7",
+    "concurrently": "^5.1.0",
     "customize-cra": "^0.9.1",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
@@ -47,7 +48,7 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "concurrently \"react-app-rewired start\" \"npm run gen-types\"",
     "build": "react-app-rewired build && mv build ../public",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",

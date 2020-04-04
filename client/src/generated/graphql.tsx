@@ -41,7 +41,7 @@ export type Mutation = {
   deleteWorkspaceUser: Scalars['Boolean'];
   createProject?: Maybe<Project>;
   updateProject?: Maybe<Project>;
-  deleteProject?: Maybe<Scalars['Boolean']>;
+  deleteProject?: Maybe<Project>;
 };
 
 
@@ -165,6 +165,7 @@ export type ProjectSubscriptionPayload = {
    __typename?: 'ProjectSubscriptionPayload';
   mutation: MutationType;
   data: Project;
+  updatedFields: Array<Scalars['String']>;
 };
 
 export type ProjectWhere = {
