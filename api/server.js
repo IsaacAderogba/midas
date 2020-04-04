@@ -39,6 +39,7 @@ const schemaWithMiddleware = applyMiddleware(schema, ...Middleware);
 const apolloServer = new ApolloServer({
   schema: schemaWithMiddleware,
   context: async ({ req, connection }) => {
+    console.log("exec")
     if (connection) {
       return {
         ...connection.context,
@@ -65,7 +66,7 @@ const apolloServer = new ApolloServer({
       const user = await UserAPI.authenticateUser(
         connectionParams.authorization
       );
-      if (!user) throw new Error("User unauthenticated");
+      
       return { user };
     },
     onDisconnect: async (webSocket, context) => {
