@@ -6,19 +6,19 @@ import { css } from "styled-components/macro";
 import { Logo } from "../atoms/Logo";
 import { H6, H5 } from "../atoms/Text";
 import { PlusOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Avatar } from "antd";
 
 // helpers
 import { styled, useTheme } from "../../~reusables/contexts/ThemeProvider";
 import { SIDEBAR_WIDTH } from "../../~reusables/constants/dimensions";
-import { Workspace } from "../../generated/graphql";
+import { GetWorkspacesQuery } from "../../generated/graphql";
 import { useAppStore } from "../../~reusables/contexts/AppProvider";
-import { Avatar } from "antd";
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
 
 export const Sidebar = () => {
   const { colors, fontSizes, space } = useTheme();
-  const workspaces = useAppStore(state => state.workspaces);
-  const setModalState = useUIStore(state => state.setModalState);
+  const workspaces = useAppStore((state) => state.workspaces);
+  const setModalState = useUIStore((state) => state.setModalState);
 
   return (
     <StyledSidebar>
@@ -26,7 +26,8 @@ export const Sidebar = () => {
         <Logo />
         <div
           css={css`
-            padding: ${p => p.theme.space[8]}px 0 ${p => p.theme.space[5]}px 0;
+            padding: ${(p) => p.theme.space[8]}px 0 ${(p) => p.theme.space[5]}px
+              0;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -40,11 +41,11 @@ export const Sidebar = () => {
             style={{
               color: colors.greys[4],
               cursor: "pointer",
-              fontSize: fontSizes[3]
+              fontSize: fontSizes[3],
             }}
           />
         </div>
-        {workspaces.map(workspace => (
+        {workspaces.map((workspace) => (
           <WorkspaceItem key={workspace.id} workspace={workspace} />
         ))}
       </section>
@@ -54,7 +55,7 @@ export const Sidebar = () => {
           window.location.reload();
         }}
         css={css`
-          margin: ${p => p.theme.space[6]}px 0;
+          margin: ${(p) => p.theme.space[6]}px 0;
           display: flex;
           align-items: center;
           cursor: pointer;
@@ -65,7 +66,7 @@ export const Sidebar = () => {
             color: colors.primary,
             cursor: "pointer",
             fontSize: fontSizes[3],
-            marginRight: space[5]
+            marginRight: space[5],
           }}
         />
         <H5 color={colors.greys[4]}>Log out</H5>
@@ -80,21 +81,19 @@ const StyledSidebar = styled.aside`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: ${p => p.theme.colors.background};
+  background: ${(p) => p.theme.colors.background};
   width: ${SIDEBAR_WIDTH}px;
-  padding: ${p =>
+  padding: ${(p) =>
     `${p.theme.space[8]}px ${p.theme.space[7]}px 0 ${p.theme.space[7]}px`};
 `;
 
-type TWorkspaceItem = Pick<Workspace, "id" | "name" | "photoURL">;
-
-const WorkspaceItem: React.FC<{ workspace: TWorkspaceItem }> = ({
-  workspace: { id, name, photoURL }
-}) => {
+const WorkspaceItem: React.FC<{
+  workspace: GetWorkspacesQuery["workspaces"][0];
+}> = ({ workspace: { id, name, photoURL } }) => {
   const { fontSizes, colors, radii } = useTheme();
-  const { workspace, setWorkspace } = useAppStore(state => ({
+  const { workspace, setWorkspace } = useAppStore((state) => ({
     workspace: state.workspace,
-    setWorkspace: state.setWorkspace
+    setWorkspace: state.setWorkspace,
   }));
   const isCurrentWorkspace = workspace?.id === id;
 
@@ -110,8 +109,8 @@ const WorkspaceItem: React.FC<{ workspace: TWorkspaceItem }> = ({
         cursor: pointer;
         background: ${isCurrentWorkspace ? colors.secondary : "auto"};
         border-radius: ${radii[2]}px;
-        margin: ${p => p.theme.space[5]}px 0;
-        padding: ${p => p.theme.space[3]}px ${p => p.theme.space[5]}px;
+        margin: ${(p) => p.theme.space[5]}px 0;
+        padding: ${(p) => p.theme.space[3]}px ${(p) => p.theme.space[5]}px;
         &:hover {
           transition: 120ms ease-in-out;
           opacity: ${isCurrentWorkspace ? 0.8 : 1};
@@ -123,7 +122,7 @@ const WorkspaceItem: React.FC<{ workspace: TWorkspaceItem }> = ({
     >
       <div
         css={css`
-          margin-right: ${p => p.theme.space[5]}px;
+          margin-right: ${(p) => p.theme.space[5]}px;
         `}
       >
         {photoURL ? (
@@ -137,7 +136,7 @@ const WorkspaceItem: React.FC<{ workspace: TWorkspaceItem }> = ({
           <Avatar
             style={{
               background: isCurrentWorkspace ? colors.white : colors.greys[4],
-              color: colors.text
+              color: colors.text,
             }}
             size={fontSizes[4]}
             shape="square"

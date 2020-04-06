@@ -14,7 +14,6 @@ import { styled } from "../../~reusables/contexts/ThemeProvider";
 import { H2 } from "../../components/atoms/Text";
 import { useAppStore } from "../../~reusables/contexts/AppProvider";
 import { useCreateProjectMutation } from "../../generated/graphql";
-import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
 
 export const Workspace: React.FC<RouteComponentProps> = () => {
   const { workspace, isWorkspaceLoading } = useAppStore((state) => ({
@@ -75,7 +74,7 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
       </header>
       <section
         css={css`
-          padding: ${(p) => `${p.theme.space[7]}px ${p.theme.space[8]}px 0`};
+          padding: ${(p) => `${p.theme.space[7]}px 0 0 ${p.theme.space[8]}px`};
         `}
       >
         <Switch>
