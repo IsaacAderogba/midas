@@ -12,9 +12,9 @@ import { ApolloProvider as ApolloContextProvider } from "@apollo/react-hooks";
 
 // helpers
 import {
-  LOCAL_STORAGE_WORKSPACE_KEY,
-  LOCAL_STORAGE_TOKEN_KEY,
-} from "../constants/constants";
+  getLocalStorageTokenKey,
+  getAuthorizationToken,
+} from "../utils/localStorage";
 
 const wsLink = new WebSocketLink({
   uri:
@@ -22,8 +22,22 @@ const wsLink = new WebSocketLink({
     "ws://localhost:5000/subscriptions",
   options: {
     reconnect: true,
+    connectionParams: {
+      authorization: getLocalStorageTokenKey() ? getAuthorizationToken() : "",
+    },
   },
 });
+
+const subscriptionMiddleware = {
+  applyMiddleware: async (options: any, next: any) => {
+    options.authorization = getAuthorizationToken()
+    next()
+  },
+}
+
+// add the middleware to the web socket link via the Subscription Transport client
+// @ts-ignore - https://github.com/apollographql/apollo-link/issues/197
+wsLink.subscriptionClient.use([subscriptionMiddleware])
 
 const httpLink = new HttpLink({
   uri: "/graphql",
@@ -32,17 +46,10 @@ const httpLink = new HttpLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-  const workspaceId = localStorage.getItem(LOCAL_STORAGE_WORKSPACE_KEY);
-  const jwt = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
-  let token = "";
-  if (workspaceId && jwt) {
-    token = `${workspaceId} ${jwt}`;
-  }
-
   return {
     headers: {
       ...headers,
-      authorization: token,
+      authorization: getLocalStorageTokenKey() ? getAuthorizationToken() : "",
     },
   };
 });

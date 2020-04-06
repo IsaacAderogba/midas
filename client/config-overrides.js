@@ -14,7 +14,8 @@ module.exports = override(
       "@font-size-base": "16px",
       "@heading-color": "#1A202C",
       "@text-color": "#4A5568",
-      "@text-color-secondary": "#A0AEC0"
+      "@text-color-secondary": "#A0AEC0",
+      "@border-radius-base": "4px"
     }
   })
 );

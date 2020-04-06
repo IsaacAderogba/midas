@@ -20,8 +20,8 @@ export const Workspace = {
         url
         photoURL
       }
-    `
-  }
+    `,
+  },
 };
 
 export const User = {
@@ -40,6 +40,25 @@ export const User = {
         }
       }
       ${Workspace.fragments.workspacesAttributes}
-    `
-  }
+    `,
+  },
+};
+
+export const Project = {
+  fragments: {
+    projectsAttributes: gql`
+      fragment projectsAttributes on Project {
+        id
+        workspaceId
+        workspaceUserId
+        title
+        thumbnailPhotoURL
+        thumbnailPhotoID
+        inviteShareStatus
+        inviteSharePrivileges
+        createdAt
+        updatedAt
+      }
+    `,
+  },
 };

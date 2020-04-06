@@ -106,7 +106,7 @@ input ProjectWhere {
 
 type Query {
   project(where: ProjectWhere!): Project
-  projects(where: ProjectWhere!): [Project!]
+  projects(where: ProjectWhere): [Project!]!
   user: User
   workspace: Workspace
   workspaces: [Workspace!]!

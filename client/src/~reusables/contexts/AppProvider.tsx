@@ -6,7 +6,7 @@ import {
   useGetWorkspaceQuery,
   Workspace as WorkspaceType,
   useGetWorkspacesQuery,
-  GetWorkspacesQuery
+  GetWorkspacesQuery,
 } from "../../generated/graphql";
 import gql from "graphql-tag";
 
@@ -40,21 +40,21 @@ export const AppContext = createContext<IAppStore>({
   workspaces: [],
   isWorkspaceLoading: false,
   setWorkspace: () => {},
-  createWorkspace: () => {}
+  createWorkspace: () => {},
 });
 
 export const useAppStore = <S,>(dataSelector: (store: IAppStore) => S) =>
-  useStoreState(AppContext, contextData => contextData!, dataSelector);
+  useStoreState(AppContext, (contextData) => contextData!, dataSelector);
 
 export const AppProvider: React.FC = ({ children }) => {
-  const modalState = useUIStore(state => state.modalState);
+  const modalState = useUIStore((state) => state.modalState);
   const workspace = useGetWorkspaceQuery();
   const workspaces = useGetWorkspacesQuery();
   const store = useLocalStore<IAppStore>(() => ({
     workspace: null,
     workspaces: [],
     isWorkspaceLoading: true,
-    setWorkspace: workspaceId => {
+    setWorkspace: (workspaceId) => {
       /**
        * for security reasons, we pass the workspace ID in the auth header
        * itself. So in order to chose a set up a new workspace as currently
@@ -63,10 +63,10 @@ export const AppProvider: React.FC = ({ children }) => {
       setLocalStorageWorkspaceKey(workspaceId);
       workspace.refetch();
     },
-    createWorkspace: createdWorkspaceId => {
+    createWorkspace: (createdWorkspaceId) => {
       workspaces.refetch();
       store.setWorkspace(createdWorkspaceId);
-    }
+    },
   }));
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const AppProvider: React.FC = ({ children }) => {
     workspace.loading,
     workspace.data,
     store.isWorkspaceLoading,
-    store.workspace
+    store.workspace,
   ]);
 
   useEffect(() => {

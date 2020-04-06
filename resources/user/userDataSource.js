@@ -29,7 +29,7 @@ class UserAPI extends SQLDataSource {
           lastName: userDetails.lastName,
           avatarURL: userDetails.avatarURL,
           isVerified: userDetails.isVerified,
-          token: generateToken(userDetails)
+          token: generateToken(userDetails),
         };
       }
     } catch (err) {
@@ -50,7 +50,7 @@ class UserAPI extends SQLDataSource {
           lastName: userDetails.lastName,
           avatarURL: userDetails.avatarURL,
           isVerified: userDetails.isVerified,
-          token: generateToken(userDetails)
+          token: generateToken(userDetails),
         };
       }
       return null;
@@ -107,7 +107,7 @@ class UserAPI extends SQLDataSource {
           const authUser = { id: user.id };
           const workspaceUser = await WorkspaceUserAPI._readWorkspaceUser({
             userId: user.id,
-            workspaceId
+            workspaceId,
           });
 
           if (workspaceUser) {
@@ -134,9 +134,7 @@ class UserAPI extends SQLDataSource {
   }
 
   _readUser(whereObj) {
-    return this.knex(USER_TABLE)
-      .where(whereObj)
-      .first();
+    return this.knex(USER_TABLE).where(whereObj).first();
   }
 
   async _updateUser(whereObj, user) {
@@ -148,9 +146,7 @@ class UserAPI extends SQLDataSource {
   }
 
   _deleteUser(whereObj) {
-    return this.knex(USER_TABLE)
-      .where(whereObj)
-      .del();
+    return this.knex(USER_TABLE).where(whereObj).del();
   }
 }
 

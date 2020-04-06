@@ -5,14 +5,18 @@ import { useLocalStore, Observer } from "mobx-react";
 // components
 import {
   AuthModal,
-  IAuthModalAction
+  IAuthModalAction,
 } from "../../components/~modals/AuthModal";
 
 // helpers
 import { useStoreState } from "../hooks/useStoreState";
 import { ICreateWorkspaceModalAction } from "../../components/~modals/CreateWorkspaceModal";
 
-type IModalTypes = IAuthModalAction | ICreateWorkspaceModalAction | null;
+type IModalTypes =
+  | IAuthModalAction
+  | ICreateWorkspaceModalAction
+  | null;
+
 export interface IUIStore {
   modalState: IModalTypes;
   setModalState: (modal: IModalTypes) => void;
@@ -22,11 +26,11 @@ export interface IUIStore {
 export const UIContext = createContext<IUIStore>({
   modalState: null,
   setModalState: () => {},
-  resetModalState: () => {}
+  resetModalState: () => {},
 });
 
 export const useUIStore = <S,>(dataSelector: (store: IUIStore) => S) =>
-  useStoreState(UIContext, contextData => contextData!, dataSelector);
+  useStoreState(UIContext, (contextData) => contextData!, dataSelector);
 
 export const UIProvider: React.FC = ({ children }) => {
   const store = useLocalStore<IUIStore>(() => ({
@@ -36,7 +40,7 @@ export const UIProvider: React.FC = ({ children }) => {
     },
     resetModalState: () => {
       store.modalState = null;
-    }
+    },
   }));
 
   return (

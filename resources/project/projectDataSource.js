@@ -41,7 +41,6 @@ class ProjectAPI extends SQLDataSource {
       // TODO - update what's passed in with an updated at and created at
       return this._updateProject(whereObj, {
         ...project,
-        createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
     } catch (err) {
@@ -72,7 +71,7 @@ class ProjectAPI extends SQLDataSource {
   }
 
   _readProjects(whereObj) {
-    return this.knex(PROJECT_TABLE).where(whereObj);
+    return this.knex(PROJECT_TABLE).where(whereObj).orderBy("updatedAt", "desc");
   }
 
   _readProject(whereObj) {

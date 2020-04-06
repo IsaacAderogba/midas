@@ -7,8 +7,9 @@ const { makeSchema } = require("nexus");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const { RedisPubSub } = require("graphql-redis-subscriptions");
-const { applyMiddleware } = require("graphql-middleware");
 const { RedisCache } = require("apollo-server-cache-redis");
+const Redis = require("ioredis");
+const { applyMiddleware } = require("graphql-middleware");
 const path = require("path");
 const app = express();
 const httpServer = require("http").createServer(app);
@@ -34,17 +35,23 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-const PubSub = new RedisPubSub(process.env.REDIS_URL);
+const redisCache = new RedisCache(process.env.REDIS_URL);
+const redisPubSub = new RedisPubSub({
+  publisher: new Redis(process.env.REDIS_URL),
+  subscriber: new Redis(process.env.REDIS_URL),
+});
+
 const schemaWithMiddleware = applyMiddleware(schema, ...Middleware);
 const apolloServer = new ApolloServer({
   schema: schemaWithMiddleware,
-  context: async ({ req, connection }) => {
-    console.log("exec")
+  context: async ({ req, payload, connection }) => {
     if (connection) {
       return {
         ...connection.context,
-        pubsub: PubSub,
-        user: connection.context.user,
+        pubsub: redisPubSub,
+        user: payload
+          ? await UserAPI.authenticateUser(payload.authorization)
+          : connection.context.user,
         dataSources: {
           userAPI: UserAPI,
           workspaceAPI: WorkspaceAPI,
@@ -56,7 +63,7 @@ const apolloServer = new ApolloServer({
 
     return {
       req,
-      pubsub: PubSub,
+      pubsub: redisPubSub,
       user: await UserAPI.authenticateUser(req.headers.authorization),
     };
   },
@@ -66,7 +73,7 @@ const apolloServer = new ApolloServer({
       const user = await UserAPI.authenticateUser(
         connectionParams.authorization
       );
-      
+
       return { user };
     },
     onDisconnect: async (webSocket, context) => {
@@ -74,7 +81,7 @@ const apolloServer = new ApolloServer({
     },
     path: "/subscriptions",
   },
-  cache: new RedisCache(process.env.REDIS_URL),
+  cache: redisCache,
   dataSources: () => ({
     userAPI: UserAPI,
     workspaceAPI: WorkspaceAPI,

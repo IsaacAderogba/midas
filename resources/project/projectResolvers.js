@@ -29,12 +29,15 @@ const Query = extendType({
     });
     t.list.field(projectQueryKeys.projects, {
       type: Project,
-      nullable: true,
+      nullable: false,
       args: {
-        where: arg({ type: ProjectWhere, required: true }),
+        where: arg({ type: ProjectWhere, required: false }),
       },
-      resolve: (parent, { where }, { dataSources }) => {
-        return dataSources.projectAPI.readProjects(where);
+      resolve: (parent, { where = {} }, { dataSources, user }) => {
+        return dataSources.projectAPI.readProjects({
+          ...where,
+          workspaceId: user.workspaceId,
+        });
       },
     });
   },
@@ -59,6 +62,7 @@ const Mutation = extendType({
           ...newProjectInput,
         });
 
+        console.log("MUTATION-CHANNEl", projectSubscriptionChannels.projects(user.workspaceId))
         pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
           [projectSubscriptionKeys.projects]: {
             mutation: MutationEnum.CREATED,
@@ -129,13 +133,14 @@ const Subscription = extendType({
     t.field(projectSubscriptionKeys.projects, {
       type: ProjectSubscriptionPayload,
       nullable: false,
-      subscribe: (parent, args, context) => {
-        const { user, pubsub } = context;
+      subscribe: (parent, args, { user, pubsub }) => {
+        console.log("SUBSCRIPTION CHANNEL", projectSubscriptionChannels.projects(user.workspaceId))
         return pubsub.asyncIterator(
           projectSubscriptionChannels.projects(user.workspaceId)
         );
       },
       resolve: ({ projects }) => {
+        console.log("PROJECTS", projects)
         return projects;
       },
     });

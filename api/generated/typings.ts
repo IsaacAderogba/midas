@@ -211,7 +211,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     project: NexusGenRootTypes['Project'] | null; // Project
-    projects: NexusGenRootTypes['Project'][] | null; // [Project!]
+    projects: NexusGenRootTypes['Project'][]; // [Project!]!
     user: NexusGenRootTypes['User'] | null; // User
     workspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     workspaces: NexusGenRootTypes['Workspace'][]; // [Workspace!]!
@@ -296,7 +296,7 @@ export interface NexusGenArgTypes {
       where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
     }
     projects: { // args
-      where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
+      where?: NexusGenInputs['ProjectWhere'] | null; // ProjectWhere
     }
     workspaceUser: { // args
       where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere
