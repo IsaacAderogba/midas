@@ -17,6 +17,7 @@ const Project = objectType({
   name: "Project",
   definition(t) {
     t.id("id", { nullable: false });
+    t.string("uuid", { nullable: false });
     t.id("workspaceId", { nullable: false });
     t.id("workspaceUserId", { nullable: false });
     t.string("title", { nullable: false });
@@ -102,6 +103,7 @@ const ProjectWhere = inputObjectType({
   name: "ProjectWhere",
   definition(t) {
     t.id("id", { required: false });
+    t.string("uuid", { nullable: false });
     t.id("workspaceUserId", { required: false });
     t.id("workspaceId", { required: false });
   },

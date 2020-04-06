@@ -46,6 +46,7 @@ export interface NexusGenInputs {
   }
   ProjectWhere: { // input type
     id?: string | null; // ID
+    uuid: string; // String!
     workspaceId?: string | null; // ID
     workspaceUserId?: string | null; // ID
   }
@@ -103,6 +104,7 @@ export interface NexusGenRootTypes {
     thumbnailPhotoURL?: string | null; // String
     title: string; // String!
     updatedAt: string; // String!
+    uuid: string; // String!
     workspaceId: string; // ID!
     workspaceUserId: string; // ID!
   }
@@ -199,6 +201,7 @@ export interface NexusGenFieldTypes {
     thumbnailPhotoURL: string | null; // String
     title: string; // String!
     updatedAt: string; // String!
+    uuid: string; // String!
     workspace: NexusGenRootTypes['Workspace']; // Workspace!
     workspaceId: string; // ID!
     workspaceUser: NexusGenRootTypes['WorkspaceUser']; // WorkspaceUser!

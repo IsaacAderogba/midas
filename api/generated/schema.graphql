@@ -69,6 +69,7 @@ type Project {
   thumbnailPhotoURL: String
   title: String!
   updatedAt: String!
+  uuid: String!
   workspace: Workspace!
   workspaceId: ID!
   workspaceUser: WorkspaceUser!
@@ -100,6 +101,7 @@ type ProjectSubscriptionPayload {
 
 input ProjectWhere {
   id: ID
+  uuid: String!
   workspaceId: ID
   workspaceUserId: ID
 }

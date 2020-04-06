@@ -1,6 +1,7 @@
-exports.up = function(knex) {
-  return knex.schema.createTable("Project", Project => {
+exports.up = function (knex) {
+  return knex.schema.createTable("Project", (Project) => {
     Project.increments();
+    Project.string("uuid", 255).notNullable().unique();
     Project.integer("workspaceId")
       .unsigned()
       .notNullable()
@@ -28,6 +29,6 @@ exports.up = function(knex) {
   });
 };
 
-exports.down = function(knex) {
+exports.down = function (knex) {
   return knex.schema.dropTableIfExists("Project");
 };

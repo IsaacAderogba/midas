@@ -131,6 +131,7 @@ export type NewWorkspaceUserInput = {
 export type Project = {
    __typename?: 'Project';
   id: Scalars['ID'];
+  uuid: Scalars['String'];
   workspaceId: Scalars['ID'];
   workspaceUserId: Scalars['ID'];
   title: Scalars['String'];
@@ -170,6 +171,7 @@ export type ProjectSubscriptionPayload = {
 
 export type ProjectWhere = {
   id?: Maybe<Scalars['ID']>;
+  uuid: Scalars['String'];
   workspaceUserId?: Maybe<Scalars['ID']>;
   workspaceId?: Maybe<Scalars['ID']>;
 };
@@ -432,7 +434,7 @@ export type UserAttributesFragment = (
 
 export type ProjectsAttributesFragment = (
   { __typename?: 'Project' }
-  & Pick<Project, 'id' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'createdAt' | 'updatedAt'>
+  & Pick<Project, 'id' | 'uuid' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'createdAt' | 'updatedAt'>
 );
 
 export const WorkspaceAttributesFragmentDoc = gql`
@@ -471,6 +473,7 @@ export const UserAttributesFragmentDoc = gql`
 export const ProjectsAttributesFragmentDoc = gql`
     fragment projectsAttributes on Project {
   id
+  uuid
   workspaceId
   workspaceUserId
   title

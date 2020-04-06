@@ -7,6 +7,7 @@ import { css } from "styled-components/macro";
 import { H5, P3 } from "../../components/atoms/Text";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { Card } from "antd";
+import { Link } from "react-router-dom";
 
 // helpers
 import { Project } from "../../~reusables/utils/fragments";
@@ -96,7 +97,7 @@ export const Projects = () => {
 };
 
 const ProjectItem: React.FC<{ project: GetProjectsQuery["projects"][0] }> = ({
-  project: { title, updatedAt },
+  project: { title, updatedAt, uuid },
 }) => {
   const { fontSizes, colors } = useTheme();
 
@@ -117,41 +118,43 @@ const ProjectItem: React.FC<{ project: GetProjectsQuery["projects"][0] }> = ({
         }
       `}
     >
-      <section
-        css={css`
-          width: 100%;
-          height: 160px;
-        `}
-      >
-        <img
+      <Link to={`/app/canvas/${uuid}`}>
+        <section
           css={css`
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-          `}
-          alt="dummy"
-          src={"https://via.placeholder.com/150"}
-        />
-      </section>
-      <section
-        css={css`
-          padding: ${(p) => `${p.theme.space[5]}px ${p.theme.space[5]}px`};
-        `}
-      >
-        <div>
-          <H5>{title}</H5>
-        </div>
-        <div
-          css={css`
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            height: 160px;
           `}
         >
-          <P3 color={colors.lightText}>{updatedAt}</P3>
-          <EllipsisOutlined style={{ fontSize: fontSizes[4] }} rotate={90} />
-        </div>
-      </section>
+          <img
+            css={css`
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            `}
+            alt="dummy"
+            src={"https://via.placeholder.com/150"}
+          />
+        </section>
+        <section
+          css={css`
+            padding: ${(p) => `${p.theme.space[5]}px ${p.theme.space[5]}px`};
+          `}
+        >
+          <div>
+            <H5>{title}</H5>
+          </div>
+          <div
+            css={css`
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            `}
+          >
+            <P3 color={colors.lightText}>{updatedAt}</P3>
+            <EllipsisOutlined style={{ fontSize: fontSizes[4] }} rotate={90} />
+          </div>
+        </section>
+      </Link>
     </Card>
   );
 };

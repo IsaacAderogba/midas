@@ -49,6 +49,7 @@ export const Project = {
     projectsAttributes: gql`
       fragment projectsAttributes on Project {
         id
+        uuid
         workspaceId
         workspaceUserId
         title
