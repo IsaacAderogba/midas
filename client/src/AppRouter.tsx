@@ -7,6 +7,7 @@ import { Landing } from "./views/marketing/Landing";
 import ProtectedRoute from "./components/organisms/ProtectedRoute";
 import { Sidebar } from "./components/~layout/Sidebar";
 import { AppProvider } from "./~reusables/contexts/AppProvider";
+import { CanvasProvider } from "./~reusables/contexts/CanvasProvider";
 import { Workspace } from "./views/app/Workspace";
 
 // helpers
@@ -19,7 +20,7 @@ export const AppRouter = () => {
       <Route
         exact
         path="/"
-        render={routeProps => <Landing {...routeProps} />}
+        render={(routeProps) => <Landing {...routeProps} />}
       />
       <ProtectedRoute path="/app" component={ProtectedAppRouter} />
       <Redirect to="/" />
@@ -38,7 +39,7 @@ const ProtectedAppRouter: React.FC = () => {
             "/app/workspace",
             "/app/workspace/wireframes",
             "/app/workspace/members",
-            "/app/workspace/settings"
+            "/app/workspace/settings",
           ]}
           render={() => {
             return (
@@ -47,7 +48,7 @@ const ProtectedAppRouter: React.FC = () => {
                 <main className="main-app">
                   <Route
                     path="/app/workspace"
-                    render={routeProps => <Workspace {...routeProps} />}
+                    render={(routeProps) => <Workspace {...routeProps} />}
                   />
                 </main>
               </StyledProtectedApp>
@@ -57,11 +58,8 @@ const ProtectedAppRouter: React.FC = () => {
         <Route
           exact
           path="/app/canvas/:canvasId"
-          render={routeProps => {
-            // TODO - investigate whether hashing makes sense for security
-            // TODO - CanvasProvider
-            // TODO - ProtectedCanvas
-            return <div>Canvas</div>;
+          render={(routeProps) => {
+            return <CanvasProvider {...routeProps}>Canvas</CanvasProvider>;
           }}
         />
         <Redirect to="/app/workspace" />
@@ -78,10 +76,10 @@ const StyledProtectedApp = styled.div`
     width: calc(100vw - ${SIDEBAR_WIDTH}px);
     overflow-y: auto;
     height: 100vh;
-    background: ${p => p.theme.colors.lightBackground};
+    background: ${(p) => p.theme.colors.lightBackground};
   }
 
-  @media only screen and (max-width: ${p => p.theme.breakpoints[1]}) {
+  @media only screen and (max-width: ${(p) => p.theme.breakpoints[1]}) {
     .main-app {
       max-width: 100vw;
       width: 100vw;
