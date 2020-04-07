@@ -1,6 +1,9 @@
-// modules 
-import React from 'react';
+// modules
+import React from "react";
+
+// components
+import { CanvasSidebar } from "../../components/~layout/CanvasSidebar";
 
 export const CustomizeSidebar: React.FC = () => {
-  return <div>CustomizeSidebar</div>
-}
+  return <CanvasSidebar align="right">CustomizeSidebar</CanvasSidebar>;
+};

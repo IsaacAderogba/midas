@@ -1,6 +1,9 @@
 // modules 
 import React from 'react';
 
+// components
+import { CanvasSidebar } from '../../components/~layout/CanvasSidebar';
+
 export const AssetsSidebar: React.FC = () => {
-  return <div>AssetsSidebar</div>
+  return <CanvasSidebar align="left">AssetsSidebar</CanvasSidebar>
 }

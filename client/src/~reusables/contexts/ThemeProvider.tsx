@@ -95,7 +95,7 @@ export const theme = {
     lightTitle: "#F7F8F8",
     lightText: "#A0AEC0",
     background: "#252E50",
-    lightBackground: "#F8F8F8",
+    lightBackground: "#F4F4F4",
     grey: "#d1ddeb",
     primaries: [
       "#002081",

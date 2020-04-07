@@ -13,6 +13,7 @@ import { Workspace } from "./views/app/Workspace";
 // helpers
 import { styled } from "./~reusables/contexts/ThemeProvider";
 import { SIDEBAR_WIDTH } from "./~reusables/constants/dimensions";
+import { CanvasWrapper } from "./views/canvas/Canvas";
 
 export const AppRouter = () => {
   return (
@@ -59,7 +60,11 @@ const ProtectedAppRouter: React.FC = () => {
           exact
           path="/app/canvas/:canvasId"
           render={(routeProps) => {
-            return <CanvasProvider {...routeProps}>Canvas</CanvasProvider>;
+            return (
+              <CanvasProvider {...routeProps}>
+                <CanvasWrapper />
+              </CanvasProvider>
+            );
           }}
         />
         <Redirect to="/app/workspace" />
