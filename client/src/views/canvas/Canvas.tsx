@@ -1,6 +1,10 @@
 // modules
 import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
+
+/**
+ * Imports for creating a canvas with a sketched feel to it
+ */
 import rough from "roughjs/bin/wrappers/rough";
 import { RoughCanvas } from "roughjs/bin/canvas";
 
@@ -8,27 +12,18 @@ import { RoughCanvas } from "roughjs/bin/canvas";
 import { CanvasTopbar } from "./CanvasTopbar";
 import { AssetsSidebar } from "./AssetsSidebar";
 import { CustomizeSidebar } from "./CustomizeSidebar";
+import { Maybe } from "../../~reusables/utils/types";
 
 let canvas: HTMLCanvasElement;
 let rc: RoughCanvas;
 let context: CanvasRenderingContext2D;
 
 export const CanvasWrapper: React.FC = () => {
-  useEffect(() => {
-    ReactDOM.render(<Canvas />, document.getElementById("canvas-root"), () => {
-      canvas = document.getElementById("canvas") as HTMLCanvasElement;
-      rc = rough.canvas(canvas);
-      context = canvas.getContext("2d")!;
-      context.translate(0.5, 0.5);
-      drawScene();
-    });
-  }, []);
-
   return (
     <section>
       {/* <CanvasTopbar />
       <AssetsSidebar /> */}
-      <div id="canvas-root" />
+      <Canvas />
       {/* <CustomizeSidebar /> */}
     </section>
   );
@@ -72,10 +67,12 @@ function exportAsPNG({
   exportBackground,
   exportVisibleOnly,
   exportPadding = 10,
+  drawScene,
 }: {
   exportBackground: boolean;
   exportVisibleOnly: boolean;
   exportPadding?: number;
+  drawScene: any;
 }) {
   if (!elements.length) return window.alert("Cannot export empty canvas.");
 
@@ -296,6 +293,11 @@ type AppState = {
 class Canvas extends React.Component<{}, AppState> {
   public componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
+    canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    rc = rough.canvas(canvas);
+    context = canvas.getContext("2d")!;
+    context.translate(0.5, 0.5);
+    this.drawScene();
   }
 
   public componentWillUnmount() {
@@ -320,7 +322,7 @@ class Canvas extends React.Component<{}, AppState> {
           elements.splice(i, 1);
         }
       }
-      drawScene();
+      this.drawScene();
       event.preventDefault();
     } else if (
       event.key === "ArrowLeft" ||
@@ -337,7 +339,7 @@ class Canvas extends React.Component<{}, AppState> {
           else if (event.key === "ArrowDown") element.y += step;
         }
       });
-      drawScene();
+      this.drawScene();
       event.preventDefault();
     }
   };
@@ -357,12 +359,39 @@ class Canvas extends React.Component<{}, AppState> {
           onChange={() => {
             this.setState({ elementType: type });
             clearSelection();
-            drawScene();
+            this.drawScene();
           }}
         />
         {children}
       </label>
     );
+  }
+
+  drawScene() {
+    this.forceUpdate();
+
+    context.clearRect(-0.5, -0.5, canvas.width, canvas.height);
+
+    elements.forEach((element) => {
+      element.draw(rc, context);
+      if (element.isSelected) {
+        const margin = 4;
+
+        const elementX1 = getElementAbsoluteX1(element);
+        const elementX2 = getElementAbsoluteX2(element);
+        const elementY1 = getElementAbsoluteY1(element);
+        const elementY2 = getElementAbsoluteY2(element);
+        const lineDash = context.getLineDash();
+        context.setLineDash([8, 4]);
+        context.strokeRect(
+          elementX1 - margin,
+          elementY1 - margin,
+          elementX2 - elementX1 + margin * 2,
+          elementY2 - elementY1 + margin * 2
+        );
+        context.setLineDash(lineDash);
+      }
+    });
   }
 
   public render() {
@@ -375,6 +404,7 @@ class Canvas extends React.Component<{}, AppState> {
                 exportBackground: this.state.exportBackground,
                 exportVisibleOnly: this.state.exportVisibleOnly,
                 exportPadding: this.state.exportPadding,
+                drawScene: this.drawScene,
               });
             }}
           >
@@ -506,7 +536,7 @@ class Canvas extends React.Component<{}, AppState> {
                     });
                     lastX = x;
                     lastY = y;
-                    drawScene();
+                    this.drawScene();
                     return;
                   }
                 }
@@ -526,7 +556,7 @@ class Canvas extends React.Component<{}, AppState> {
                 if (this.state.elementType === "selection") {
                   setSelection(draggingElement);
                 }
-                drawScene();
+                this.drawScene();
               };
 
               const onMouseUp = (e: MouseEvent) => {
@@ -540,7 +570,7 @@ class Canvas extends React.Component<{}, AppState> {
                 // if no element is clicked, clear the selection and redraw
                 if (draggingElement === null) {
                   clearSelection();
-                  drawScene();
+                  this.drawScene();
                   return;
                 }
 
@@ -557,13 +587,13 @@ class Canvas extends React.Component<{}, AppState> {
                   draggingElement: null,
                   elementType: "selection",
                 });
-                drawScene();
+                this.drawScene();
               };
 
               window.addEventListener("mousemove", onMouseMove);
               window.addEventListener("mouseup", onMouseUp);
 
-              drawScene();
+              this.drawScene();
             }}
           />
         </div>
@@ -571,31 +601,3 @@ class Canvas extends React.Component<{}, AppState> {
     );
   }
 }
-
-function drawScene() {
-  ReactDOM.render(<Canvas />, document.getElementById("canvas-root"));
-
-  context.clearRect(-0.5, -0.5, canvas.width, canvas.height);
-
-  elements.forEach((element) => {
-    element.draw(rc, context);
-    if (element.isSelected) {
-      const margin = 4;
-
-      const elementX1 = getElementAbsoluteX1(element);
-      const elementX2 = getElementAbsoluteX2(element);
-      const elementY1 = getElementAbsoluteY1(element);
-      const elementY2 = getElementAbsoluteY2(element);
-      const lineDash = context.getLineDash();
-      context.setLineDash([8, 4]);
-      context.strokeRect(
-        elementX1 - margin,
-        elementY1 - margin,
-        elementX2 - elementX1 + margin * 2,
-        elementY2 - elementY1 + margin * 2
-      );
-      context.setLineDash(lineDash);
-    }
-  });
-}
-
