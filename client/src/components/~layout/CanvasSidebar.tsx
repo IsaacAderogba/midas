@@ -22,10 +22,10 @@ export const CanvasSidebar: React.FC<ICanvasSidebar> = ({ children, align }) => 
         overflow-y: scroll;
         left: ${(p) => (align === "left" ? "0px" : "auto")};
         border-right: ${(p) =>
-          align === "left" ? `1px solid ${p.theme.colors.greys[9]}` : 0};
+          align === "left" ? `1px solid ${p.theme.colors.greys[8]}` : 0};
         right: ${(p) => (align === "right" ? "0px" : "auto")};
         border-left: ${(p) =>
-          align === "right" ? `1px solid ${p.theme.colors.greys[9]}` : 0};
+          align === "right" ? `1px solid ${p.theme.colors.greys[8]}` : 0};
         bottom: 0px;
       `}
     >

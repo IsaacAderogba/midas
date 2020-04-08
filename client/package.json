@@ -43,6 +43,7 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
+    "roughjs": "3.1.0",
     "styled-components": "^5.0.1",
     "subscriptions-transport-ws": "^0.9.16",
     "typescript": "~3.7.2"
