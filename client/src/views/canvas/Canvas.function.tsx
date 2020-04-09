@@ -1,6 +1,10 @@
 // modules
 import React, { useEffect, useRef, useReducer, useState } from "react";
 import ReactDOM from "react-dom";
+
+/**
+ * Imports for creating a canvas with a sketched feel to it
+ */
 import rough from "roughjs/bin/wrappers/rough";
 import { RoughCanvas } from "roughjs/bin/canvas";
 
@@ -288,7 +292,6 @@ type AppState = {
 
 const Canvas = () => {
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
-  const canvasRef = useRef<Maybe<HTMLCanvasElement>>(null);
   const [state, setState] = useState<AppState>({
     draggingElement: null,
     elementType: "selection",
@@ -299,20 +302,15 @@ const Canvas = () => {
 
   useEffect(() => {
     document.addEventListener("keydown", onKeyDown, false);
+    canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    rc = rough.canvas(canvas);
+    context = canvas.getContext("2d")!;
+    context.translate(0.5, 0.5);
+    drawScene();
     return () => {
       document.removeEventListener("keydown", onKeyDown, false);
     };
   }, []);
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      canvas = canvasRef.current;
-      rc = rough.canvas(canvas);
-      context = canvas.getContext("2d")!;
-      context.translate(0.5, 0.5);
-      drawScene();
-    }
-  }, [canvasRef]);
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (
@@ -359,7 +357,7 @@ const Canvas = () => {
           type="radio"
           checked={state.elementType === type}
           onChange={() => {
-            setState({ ...state, elementType: type });
+            setState((prevState) => ({ ...prevState, elementType: type }));
             clearSelection();
             drawScene();
           }}
@@ -405,7 +403,7 @@ const Canvas = () => {
               exportBackground: state.exportBackground,
               exportVisibleOnly: state.exportVisibleOnly,
               exportPadding: state.exportPadding,
-              drawScene,
+              drawScene: drawScene,
             });
           }}
         >
@@ -416,7 +414,10 @@ const Canvas = () => {
             type="checkbox"
             checked={state.exportBackground}
             onChange={(e) => {
-              setState({ ...state, exportBackground: e.target.checked });
+              setState((prevState) => ({
+                ...prevState,
+                exportBackground: e.target.checked,
+              }));
             }}
           />{" "}
           background
@@ -426,7 +427,10 @@ const Canvas = () => {
             type="checkbox"
             checked={state.exportVisibleOnly}
             onChange={(e) => {
-              setState({ ...state, exportVisibleOnly: e.target.checked });
+              setState((prevState) => ({
+                ...prevState,
+                exportVisibleOnly: e.target.checked,
+              }));
             }}
           />
           visible area only
@@ -436,7 +440,10 @@ const Canvas = () => {
           type="number"
           value={state.exportPadding}
           onChange={(e) => {
-            setState({ ...state, exportPadding: Number(e.target.value) });
+            setState((prevState) => ({
+              ...prevState,
+              exportPadding: Number(e.target.value),
+            }));
           }}
           disabled={!state.exportVisibleOnly}
         />
@@ -449,7 +456,6 @@ const Canvas = () => {
         {renderOption({ type: "text", children: "Text" })}
         {renderOption({ type: "selection", children: "Selection" })}
         <canvas
-          ref={canvasRef}
           id="canvas"
           width={window.innerWidth}
           height={window.innerHeight}
@@ -469,7 +475,10 @@ const Canvas = () => {
               });
 
               if (selectedElement) {
-                setState({ ...state, draggingElement: selectedElement });
+                setState((prevState) => ({
+                  ...prevState,
+                  draggingElement: selectedElement,
+                }));
               } else {
                 clearSelection();
               }
@@ -507,13 +516,18 @@ const Canvas = () => {
             generateDraw(element);
             elements.push(element);
             if (state.elementType === "text") {
-              setState({ ...state,
+              setState((prevState) => ({
+                ...prevState,
                 draggingElement: null,
                 elementType: "selection",
-              });
+              }));
+
               element.isSelected = true;
             } else {
-              setState({ ...state, draggingElement: element });
+              setState((prevState) => ({
+                ...prevState,
+                draggingElement: element,
+              }));
             }
 
             let lastX = x;
@@ -583,10 +597,11 @@ const Canvas = () => {
                 draggingElement.isSelected = true;
               }
 
-              setState({ ...state,
+              setState((prevState) => ({
+                ...prevState,
                 draggingElement: null,
                 elementType: "selection",
-              });
+              }));
               drawScene();
             };
 

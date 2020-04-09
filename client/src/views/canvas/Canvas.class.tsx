@@ -63,6 +63,88 @@ function newElement(type: string, x: number, y: number, width = 0, height = 0) {
   return element;
 }
 
+function exportAsPNG({
+  exportBackground,
+  exportVisibleOnly,
+  exportPadding = 10,
+  drawScene,
+}: {
+  exportBackground: boolean;
+  exportVisibleOnly: boolean;
+  exportPadding?: number;
+  drawScene: any;
+}) {
+  if (!elements.length) return window.alert("Cannot export empty canvas.");
+
+  // deselect & rerender
+
+  clearSelection();
+  drawScene();
+
+  // calculate visible-area coords
+
+  let subCanvasX1 = Infinity;
+  let subCanvasX2 = 0;
+  let subCanvasY1 = Infinity;
+  let subCanvasY2 = 0;
+
+  elements.forEach((element) => {
+    subCanvasX1 = Math.min(subCanvasX1, getElementAbsoluteX1(element));
+    subCanvasX2 = Math.max(subCanvasX2, getElementAbsoluteX2(element));
+    subCanvasY1 = Math.min(subCanvasY1, getElementAbsoluteY1(element));
+    subCanvasY2 = Math.max(subCanvasY2, getElementAbsoluteY2(element));
+  });
+
+  // create temporary canvas from which we'll export
+
+  const tempCanvas = document.createElement("canvas");
+  const tempCanvasCtx = tempCanvas.getContext("2d")!;
+  tempCanvas.style.display = "none";
+  document.body.appendChild(tempCanvas);
+  tempCanvas.width = exportVisibleOnly
+    ? subCanvasX2 - subCanvasX1 + exportPadding * 2
+    : canvas.width;
+  tempCanvas.height = exportVisibleOnly
+    ? subCanvasY2 - subCanvasY1 + exportPadding * 2
+    : canvas.height;
+
+  if (exportBackground) {
+    tempCanvasCtx.fillStyle = "#FFF";
+    tempCanvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // copy our original canvas onto the temp canvas
+  tempCanvasCtx.drawImage(
+    canvas, // source
+    exportVisibleOnly // sx
+      ? subCanvasX1 - exportPadding
+      : 0,
+    exportVisibleOnly // sy
+      ? subCanvasY1 - exportPadding
+      : 0,
+    exportVisibleOnly // sWidth
+      ? subCanvasX2 - subCanvasX1 + exportPadding * 2
+      : canvas.width,
+    exportVisibleOnly // sHeight
+      ? subCanvasY2 - subCanvasY1 + exportPadding * 2
+      : canvas.height,
+    0, // dx
+    0, // dy
+    exportVisibleOnly ? tempCanvas.width : canvas.width, // dWidth
+    exportVisibleOnly ? tempCanvas.height : canvas.height // dHeight
+  );
+
+  // create a temporary <a> elem which we'll use to download the image
+  const link = document.createElement("a");
+  link.setAttribute("download", "excalibur.png");
+  link.setAttribute("href", tempCanvas.toDataURL("image/png"));
+  link.click();
+
+  // clean up the DOM
+  link.remove();
+  if (tempCanvas !== canvas) tempCanvas.remove();
+}
+
 function rotate(x1: number, y1: number, x2: number, y2: number, angle: number) {
   // 𝑎′𝑥=(𝑎𝑥−𝑐𝑥)cos𝜃−(𝑎𝑦−𝑐𝑦)sin𝜃+𝑐𝑥
   // 𝑎′𝑦=(𝑎𝑥−𝑐𝑥)sin𝜃+(𝑎𝑦−𝑐𝑦)cos𝜃+𝑐𝑦.
@@ -312,96 +394,17 @@ class Canvas extends React.Component<{}, AppState> {
     });
   }
 
-  exportAsPNG({
-    exportBackground,
-    exportVisibleOnly,
-    exportPadding = 10,
-  }: {
-    exportBackground: boolean;
-    exportVisibleOnly: boolean;
-    exportPadding?: number;
-  }) {
-    if (!elements.length) return window.alert("Cannot export empty canvas.");
-  
-    // deselect & rerender
-  
-    clearSelection();
-    this.drawScene();
-  
-    // calculate visible-area coords
-  
-    let subCanvasX1 = Infinity;
-    let subCanvasX2 = 0;
-    let subCanvasY1 = Infinity;
-    let subCanvasY2 = 0;
-  
-    elements.forEach((element) => {
-      subCanvasX1 = Math.min(subCanvasX1, getElementAbsoluteX1(element));
-      subCanvasX2 = Math.max(subCanvasX2, getElementAbsoluteX2(element));
-      subCanvasY1 = Math.min(subCanvasY1, getElementAbsoluteY1(element));
-      subCanvasY2 = Math.max(subCanvasY2, getElementAbsoluteY2(element));
-    });
-  
-    // create temporary canvas from which we'll export
-  
-    const tempCanvas = document.createElement("canvas");
-    const tempCanvasCtx = tempCanvas.getContext("2d")!;
-    tempCanvas.style.display = "none";
-    document.body.appendChild(tempCanvas);
-    tempCanvas.width = exportVisibleOnly
-      ? subCanvasX2 - subCanvasX1 + exportPadding * 2
-      : canvas.width;
-    tempCanvas.height = exportVisibleOnly
-      ? subCanvasY2 - subCanvasY1 + exportPadding * 2
-      : canvas.height;
-  
-    if (exportBackground) {
-      tempCanvasCtx.fillStyle = "#FFF";
-      tempCanvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-  
-    // copy our original canvas onto the temp canvas
-    tempCanvasCtx.drawImage(
-      canvas, // source
-      exportVisibleOnly // sx
-        ? subCanvasX1 - exportPadding
-        : 0,
-      exportVisibleOnly // sy
-        ? subCanvasY1 - exportPadding
-        : 0,
-      exportVisibleOnly // sWidth
-        ? subCanvasX2 - subCanvasX1 + exportPadding * 2
-        : canvas.width,
-      exportVisibleOnly // sHeight
-        ? subCanvasY2 - subCanvasY1 + exportPadding * 2
-        : canvas.height,
-      0, // dx
-      0, // dy
-      exportVisibleOnly ? tempCanvas.width : canvas.width, // dWidth
-      exportVisibleOnly ? tempCanvas.height : canvas.height // dHeight
-    );
-  
-    // create a temporary <a> elem which we'll use to download the image
-    const link = document.createElement("a");
-    link.setAttribute("download", "excalibur.png");
-    link.setAttribute("href", tempCanvas.toDataURL("image/png"));
-    link.click();
-  
-    // clean up the DOM
-    link.remove();
-    if (tempCanvas !== canvas) tempCanvas.remove();
-  }
-
   public render() {
     return (
       <>
         <div className="exportWrapper">
           <button
             onClick={() => {
-              this.exportAsPNG({
+              exportAsPNG({
                 exportBackground: this.state.exportBackground,
                 exportVisibleOnly: this.state.exportVisibleOnly,
                 exportPadding: this.state.exportPadding,
+                drawScene: this.drawScene,
               });
             }}
           >
