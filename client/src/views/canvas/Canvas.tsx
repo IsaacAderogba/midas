@@ -29,28 +29,118 @@ export const CanvasWrapper: React.FC = () => {
   );
 };
 
-type ExcaliburElement = ReturnType<typeof newElement>;
-type ExcaliburTextElement = ExcaliburElement & {
+type MidasElement = ReturnType<typeof newElement>;
+type MidasTextElement = MidasElement & {
   type: "text";
   font: string;
   text: string;
-  measure: TextMetrics;
+  actualBoundingBoxAscent: number;
 };
 
-var elements = Array.of<ExcaliburElement>();
+const LOCAL_STORAGE_KEY = "midas";
+const LOCAL_STORAGE_KEY_STATE = "midas-state";
 
-function isInsideAnElement(x: number, y: number) {
-  return (element: ExcaliburElement) => {
+var elements = Array.of<MidasElement>();
+
+// https://stackoverflow.com/a/6853926/232122
+function distanceBetweenPointAndSegment(
+  x: number,
+  y: number,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) {
+  const A = x - x1;
+  const B = y - y1;
+  const C = x2 - x1;
+  const D = y2 - y1;
+
+  const dot = A * C + B * D;
+  const lenSquare = C * C + D * D;
+  let param = -1;
+  if (lenSquare !== 0) {
+    // in case of 0 length line
+    param = dot / lenSquare;
+  }
+
+  let xx, yy;
+  if (param < 0) {
+    xx = x1;
+    yy = y1;
+  } else if (param > 1) {
+    xx = x2;
+    yy = y2;
+  } else {
+    xx = x1 + param * C;
+    yy = y1 + param * D;
+  }
+
+  const dx = x - xx;
+  const dy = y - yy;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function hitTest(element: MidasElement, x: number, y: number): boolean {
+  // For shapes that are composed of lines, we only enable point-selection when the distance
+  // of the click is less than x pixels of any of the lines that the shape is composed of
+  const lineThreshold = 10;
+
+  if (
+    element.type === "rectangle" ||
+    // There doesn't seem to be a closed form solution for the distance between
+    // a point and an ellipse, let's assume it's a rectangle for now...
+    element.type === "ellipse"
+  ) {
+    const x1 = getElementAbsoluteX1(element);
+    const x2 = getElementAbsoluteX2(element);
+    const y1 = getElementAbsoluteY1(element);
+    const y2 = getElementAbsoluteY2(element);
+
+    // (x1, y1) --A-- (x2, y1)
+    //    |D             |B
+    // (x1, y2) --C-- (x2, y2)
+    return (
+      distanceBetweenPointAndSegment(x, y, x1, y1, x2, y1) < lineThreshold || // A
+      distanceBetweenPointAndSegment(x, y, x2, y1, x2, y2) < lineThreshold || // B
+      distanceBetweenPointAndSegment(x, y, x2, y2, x1, y2) < lineThreshold || // C
+      distanceBetweenPointAndSegment(x, y, x1, y2, x1, y1) < lineThreshold // D
+    );
+  } else if (element.type === "arrow") {
+    let [x1, y1, x2, y2, x3, y3, x4, y4] = getArrowPoints(element);
+    // The computation is done at the origin, we need to add a translation
+    x -= element.x;
+    y -= element.y;
+
+    return (
+      //    \
+      distanceBetweenPointAndSegment(x, y, x3, y3, x2, y2) < lineThreshold ||
+      // -----
+      distanceBetweenPointAndSegment(x, y, x1, y1, x2, y2) < lineThreshold ||
+      //    /
+      distanceBetweenPointAndSegment(x, y, x4, y4, x2, y2) < lineThreshold
+    );
+  } else if (element.type === "text") {
     const x1 = getElementAbsoluteX1(element);
     const x2 = getElementAbsoluteX2(element);
     const y1 = getElementAbsoluteY1(element);
     const y2 = getElementAbsoluteY2(element);
 
     return x >= x1 && x <= x2 && y >= y1 && y <= y2;
-  };
+  } else {
+    throw new Error("Unimplemented type " + element.type);
+  }
 }
 
-function newElement(type: string, x: number, y: number, width = 0, height = 0) {
+function newElement(
+  type: string,
+  x: number,
+  y: number,
+  strokeColor: string,
+  backgroundColor: string,
+  width = 0,
+  height = 0
+) {
   const element = {
     type: type,
     x: x,
@@ -58,9 +148,50 @@ function newElement(type: string, x: number, y: number, width = 0, height = 0) {
     width: width,
     height: height,
     isSelected: false,
+    strokeColor: strokeColor,
+    backgroundColor: backgroundColor,
     draw(rc: RoughCanvas, context: CanvasRenderingContext2D) {},
   };
   return element;
+}
+
+function renderScene(
+  rc: RoughCanvas,
+  context: CanvasRenderingContext2D,
+  // null indicates transparent bg
+  viewBackgroundColor: string | null
+) {
+  if (!context) return;
+
+  const fillStyle = context.fillStyle;
+  if (typeof viewBackgroundColor === "string") {
+    context.fillStyle = viewBackgroundColor;
+    context.fillRect(-0.5, -0.5, canvas.width, canvas.height);
+  } else {
+    context.clearRect(-0.5, -0.5, canvas.width, canvas.height);
+  }
+  context.fillStyle = fillStyle;
+
+  elements.forEach((element) => {
+    element.draw(rc, context);
+    if (element.isSelected) {
+      const margin = 4;
+
+      const elementX1 = getElementAbsoluteX1(element);
+      const elementX2 = getElementAbsoluteX2(element);
+      const elementY1 = getElementAbsoluteY1(element);
+      const elementY2 = getElementAbsoluteY2(element);
+      const lineDash = context.getLineDash();
+      context.setLineDash([8, 4]);
+      context.strokeRect(
+        elementX1 - margin,
+        elementY1 - margin,
+        elementX2 - elementX1 + margin * 2,
+        elementY2 - elementY1 + margin * 2
+      );
+      context.setLineDash(lineDash);
+    }
+  });
 }
 
 function rotate(x1: number, y1: number, x2: number, y2: number, angle: number) {
@@ -77,13 +208,31 @@ function rotate(x1: number, y1: number, x2: number, y2: number, angle: number) {
 // because it is requred by TS definitions and not required at runtime
 var generator = rough.generator(null, null as any);
 
-function isTextElement(
-  element: ExcaliburElement
-): element is ExcaliburTextElement {
+function isTextElement(element: MidasElement): element is MidasTextElement {
   return element.type === "text";
 }
 
-function generateDraw(element: ExcaliburElement) {
+function getArrowPoints(element: MidasElement) {
+  const x1 = 0;
+  const y1 = 0;
+  const x2 = element.width;
+  const y2 = element.height;
+
+  const size = 30; // pixels
+  const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  // Scale down the arrow until we hit a certain size so that it doesn't look weird
+  const minSize = Math.min(size, distance / 2);
+  const xs = x2 - ((x2 - x1) / distance) * minSize;
+  const ys = y2 - ((y2 - y1) / distance) * minSize;
+
+  const angle = 20; // degrees
+  const [x3, y3] = rotate(xs, ys, x2, y2, (-angle * Math.PI) / 180);
+  const [x4, y4] = rotate(xs, ys, x2, y2, (angle * Math.PI) / 180);
+
+  return [x1, y1, x2, y2, x3, y3, x4, y4];
+}
+
+function generateDraw(element: MidasElement) {
   if (element.type === "selection") {
     element.draw = (rc, context) => {
       const fillStyle = context.fillStyle;
@@ -92,7 +241,10 @@ function generateDraw(element: ExcaliburElement) {
       context.fillStyle = fillStyle;
     };
   } else if (element.type === "rectangle") {
-    const shape = generator.rectangle(0, 0, element.width, element.height);
+    const shape = generator.rectangle(0, 0, element.width, element.height, {
+      stroke: element.strokeColor,
+      fill: element.backgroundColor,
+    });
     element.draw = (rc, context) => {
       context.translate(element.x, element.y);
       rc.draw(shape);
@@ -103,7 +255,8 @@ function generateDraw(element: ExcaliburElement) {
       element.width / 2,
       element.height / 2,
       element.width,
-      element.height
+      element.height,
+      { stroke: element.strokeColor, fill: element.backgroundColor }
     );
     element.draw = (rc, context) => {
       context.translate(element.x, element.y);
@@ -111,29 +264,14 @@ function generateDraw(element: ExcaliburElement) {
       context.translate(-element.x, -element.y);
     };
   } else if (element.type === "arrow") {
-    const x1 = 0;
-    const y1 = 0;
-    const x2 = element.width;
-    const y2 = element.height;
-
-    const size = 30; // pixels
-    const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    // Scale down the arrow until we hit a certain size so that it doesn't look weird
-    const minSize = Math.min(size, distance / 2);
-    const xs = x2 - ((x2 - x1) / distance) * minSize;
-    const ys = y2 - ((y2 - y1) / distance) * minSize;
-
-    const angle = 20; // degrees
-    const [x3, y3] = rotate(xs, ys, x2, y2, (-angle * Math.PI) / 180);
-    const [x4, y4] = rotate(xs, ys, x2, y2, (angle * Math.PI) / 180);
-
+    const [x1, y1, x2, y2, x3, y3, x4, y4] = getArrowPoints(element);
     const shapes = [
       //    \
-      generator.line(x3, y3, x2, y2),
+      generator.line(x3, y3, x2, y2, { stroke: element.strokeColor }),
       // -----
-      generator.line(x1, y1, x2, y2),
+      generator.line(x1, y1, x2, y2, { stroke: element.strokeColor }),
       //    /
-      generator.line(x4, y4, x2, y2),
+      generator.line(x4, y4, x2, y2, { stroke: element.strokeColor }),
     ];
 
     element.draw = (rc, context) => {
@@ -146,11 +284,14 @@ function generateDraw(element: ExcaliburElement) {
     element.draw = (rc, context) => {
       const font = context.font;
       context.font = element.font;
+      const fillStyle = context.fillStyle;
+      context.fillStyle = element.strokeColor;
       context.fillText(
         element.text,
         element.x,
-        element.y + element.measure.actualBoundingBoxAscent
+        element.y + element.actualBoundingBoxAscent
       );
+      context.fillStyle = fillStyle;
       context.font = font;
     };
   } else {
@@ -162,20 +303,20 @@ function generateDraw(element: ExcaliburElement) {
 // This set of functions retrieves the absolute position of the 4 points.
 // We can't just always normalize it since we need to remember the fact that an arrow
 // is pointing left or right.
-function getElementAbsoluteX1(element: ExcaliburElement) {
+function getElementAbsoluteX1(element: MidasElement) {
   return element.width >= 0 ? element.x : element.x + element.width;
 }
-function getElementAbsoluteX2(element: ExcaliburElement) {
+function getElementAbsoluteX2(element: MidasElement) {
   return element.width >= 0 ? element.x + element.width : element.x;
 }
-function getElementAbsoluteY1(element: ExcaliburElement) {
+function getElementAbsoluteY1(element: MidasElement) {
   return element.height >= 0 ? element.y : element.y + element.height;
 }
-function getElementAbsoluteY2(element: ExcaliburElement) {
+function getElementAbsoluteY2(element: MidasElement) {
   return element.height >= 0 ? element.y + element.height : element.y;
 }
 
-function setSelection(selection: ExcaliburElement) {
+function setSelection(selection: MidasElement) {
   const selectionX1 = getElementAbsoluteX1(selection);
   const selectionX2 = getElementAbsoluteX2(selection);
   const selectionY1 = getElementAbsoluteY1(selection);
@@ -200,13 +341,68 @@ function clearSelection() {
   });
 }
 
+function deleteSelectedElements() {
+  for (var i = elements.length - 1; i >= 0; --i) {
+    if (elements[i].isSelected) {
+      elements.splice(i, 1);
+    }
+  }
+}
+
+function save(state: AppState) {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(elements));
+  localStorage.setItem(LOCAL_STORAGE_KEY_STATE, JSON.stringify(state));
+}
+
+function restore() {
+  try {
+    const savedElements = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const savedState = localStorage.getItem(LOCAL_STORAGE_KEY_STATE);
+
+    if (savedElements) {
+      elements = JSON.parse(savedElements);
+      elements.forEach((element: MidasElement) => generateDraw(element));
+    }
+
+    return savedState ? JSON.parse(savedState) : null;
+  } catch (e) {
+    elements = [];
+    return null;
+  }
+}
+
 type AppState = {
-  draggingElement: ExcaliburElement | null;
+  draggingElement: MidasElement | null;
   elementType: string;
   exportBackground: boolean;
   exportVisibleOnly: boolean;
   exportPadding: number;
+  currentItemStrokeColor: string;
+  currentItemBackgroundColor: string;
+  viewBackgroundColor: string;
 };
+
+const KEYS = {
+  ARROW_LEFT: "ArrowLeft",
+  ARROW_RIGHT: "ArrowRight",
+  ARROW_DOWN: "ArrowDown",
+  ARROW_UP: "ArrowUp",
+  ESCAPE: "Escape",
+  DELETE: "Delete",
+  BACKSPACE: "Backspace",
+};
+
+function isArrowKey(keyCode: string) {
+  return (
+    keyCode === KEYS.ARROW_LEFT ||
+    keyCode === KEYS.ARROW_RIGHT ||
+    keyCode === KEYS.ARROW_DOWN ||
+    keyCode === KEYS.ARROW_UP
+  );
+}
+
+const ELEMENT_SHIFT_TRANSLATE_AMOUNT = 5;
+const ELEMENT_TRANSLATE_AMOUNT = 1;
 
 class Canvas extends React.Component<{}, AppState> {
   public componentDidMount() {
@@ -215,7 +411,12 @@ class Canvas extends React.Component<{}, AppState> {
     rc = rough.canvas(canvas);
     context = canvas.getContext("2d")!;
     context.translate(0.5, 0.5);
-    this.drawScene();
+    this.forceUpdate();
+    // TODO - at front or behind
+    const savedState = restore();
+    if (savedState) {
+      this.setState(savedState);
+    }
   }
 
   public componentWillUnmount() {
@@ -228,39 +429,134 @@ class Canvas extends React.Component<{}, AppState> {
     exportBackground: false,
     exportVisibleOnly: true,
     exportPadding: 10,
+    currentItemStrokeColor: "#000000",
+    currentItemBackgroundColor: "#ffffff",
+    viewBackgroundColor: "#ffffff",
   };
 
   private onKeyDown = (event: KeyboardEvent) => {
-    if (
-      event.key === "Backspace" &&
-      (event.target as HTMLElement)?.nodeName !== "INPUT"
-    ) {
-      for (var i = elements.length - 1; i >= 0; --i) {
-        if (elements[i].isSelected) {
-          elements.splice(i, 1);
-        }
-      }
-      this.drawScene();
+    if ((event.target as HTMLElement).nodeName === "INPUT") {
+      return;
+    }
+
+    if (event.key === KEYS.ESCAPE) {
+      clearSelection();
+      this.forceUpdate();
       event.preventDefault();
-    } else if (
-      event.key === "ArrowLeft" ||
-      event.key === "ArrowRight" ||
-      event.key === "ArrowUp" ||
-      event.key === "ArrowDown"
-    ) {
-      const step = event.shiftKey ? 5 : 1;
+    } else if (event.key === KEYS.BACKSPACE || event.key === KEYS.DELETE) {
+      deleteSelectedElements();
+      this.forceUpdate();
+      event.preventDefault();
+    } else if (isArrowKey(event.key)) {
+      const step = event.shiftKey
+        ? ELEMENT_SHIFT_TRANSLATE_AMOUNT
+        : ELEMENT_TRANSLATE_AMOUNT;
       elements.forEach((element) => {
         if (element.isSelected) {
-          if (event.key === "ArrowLeft") element.x -= step;
-          else if (event.key === "ArrowRight") element.x += step;
-          else if (event.key === "ArrowUp") element.y -= step;
-          else if (event.key === "ArrowDown") element.y += step;
+          if (event.key === KEYS.ARROW_LEFT) element.x -= step;
+          else if (event.key === KEYS.ARROW_RIGHT) element.x += step;
+          else if (event.key === KEYS.ARROW_UP) element.y -= step;
+          else if (event.key === KEYS.ARROW_DOWN) element.y += step;
         }
       });
-      this.drawScene();
+      this.forceUpdate();
+      event.preventDefault();
+    } else if (event.key === "a" && event.metaKey) {
+      elements.forEach((element) => {
+        element.isSelected = true;
+      });
+      this.forceUpdate();
       event.preventDefault();
     }
   };
+
+  exportAsPNG({
+    exportBackground,
+    exportVisibleOnly,
+    exportPadding = 10,
+    viewBackgroundColor,
+  }: {
+    exportBackground: boolean;
+    exportVisibleOnly: boolean;
+    exportPadding?: number;
+    viewBackgroundColor: string;
+  }) {
+    if (!elements.length) return window.alert("Cannot export empty canvas.");
+
+    // deselect & rerender
+
+    clearSelection();
+    this.forceUpdate(() => {
+      // calculate visible-area coords
+
+      let subCanvasX1 = Infinity;
+      let subCanvasX2 = 0;
+      let subCanvasY1 = Infinity;
+      let subCanvasY2 = 0;
+
+      elements.forEach((element) => {
+        subCanvasX1 = Math.min(subCanvasX1, getElementAbsoluteX1(element));
+        subCanvasX2 = Math.max(subCanvasX2, getElementAbsoluteX2(element));
+        subCanvasY1 = Math.min(subCanvasY1, getElementAbsoluteY1(element));
+        subCanvasY2 = Math.max(subCanvasY2, getElementAbsoluteY2(element));
+      });
+
+      // create temporary canvas from which we'll export
+
+      const tempCanvas = document.createElement("canvas");
+      const tempCanvasCtx = tempCanvas.getContext("2d")!;
+      tempCanvas.style.display = "none";
+      document.body.appendChild(tempCanvas);
+      tempCanvas.width = exportVisibleOnly
+        ? subCanvasX2 - subCanvasX1 + exportPadding * 2
+        : canvas.width;
+      tempCanvas.height = exportVisibleOnly
+        ? subCanvasY2 - subCanvasY1 + exportPadding * 2
+        : canvas.height;
+
+      // if we're exporting without bg, we need to rerender the scene without it
+      //  (it's reset again, below)
+      if (!exportBackground) {
+        renderScene(rc, context, null);
+      }
+
+      // copy our original canvas onto the temp canvas
+      tempCanvasCtx.drawImage(
+        canvas, // source
+        exportVisibleOnly // sx
+          ? subCanvasX1 - exportPadding
+          : 0,
+        exportVisibleOnly // sy
+          ? subCanvasY1 - exportPadding
+          : 0,
+        exportVisibleOnly // sWidth
+          ? subCanvasX2 - subCanvasX1 + exportPadding * 2
+          : canvas.width,
+        exportVisibleOnly // sHeight
+          ? subCanvasY2 - subCanvasY1 + exportPadding * 2
+          : canvas.height,
+        0, // dx
+        0, // dy
+        exportVisibleOnly ? tempCanvas.width : canvas.width, // dWidth
+        exportVisibleOnly ? tempCanvas.height : canvas.height // dHeight
+      );
+
+      // reset transparent bg back to original
+      if (!exportBackground) {
+        renderScene(rc, context, viewBackgroundColor);
+      }
+
+      // create a temporary <a> elem which we'll use to download the image
+      const link = document.createElement("a");
+      link.setAttribute("download", "midas.png");
+      link.setAttribute("href", tempCanvas.toDataURL("image/png"));
+      link.click();
+
+      // clean up the DOM
+      link.remove();
+      if (tempCanvas !== canvas) tempCanvas.remove();
+    });
+  }
 
   private renderOption({
     type,
@@ -277,7 +573,7 @@ class Canvas extends React.Component<{}, AppState> {
           onChange={() => {
             this.setState({ elementType: type });
             clearSelection();
-            this.drawScene();
+            this.forceUpdate();
           }}
         />
         {children}
@@ -285,123 +581,263 @@ class Canvas extends React.Component<{}, AppState> {
     );
   }
 
-  drawScene() {
-    this.forceUpdate();
-
-    context.clearRect(-0.5, -0.5, canvas.width, canvas.height);
-
-    elements.forEach((element) => {
-      element.draw(rc, context);
-      if (element.isSelected) {
-        const margin = 4;
-
-        const elementX1 = getElementAbsoluteX1(element);
-        const elementX2 = getElementAbsoluteX2(element);
-        const elementY1 = getElementAbsoluteY1(element);
-        const elementY2 = getElementAbsoluteY2(element);
-        const lineDash = context.getLineDash();
-        context.setLineDash([8, 4]);
-        context.strokeRect(
-          elementX1 - margin,
-          elementY1 - margin,
-          elementX2 - elementX1 + margin * 2,
-          elementY2 - elementY1 + margin * 2
-        );
-        context.setLineDash(lineDash);
-      }
-    });
-  }
-
-  exportAsPNG({
-    exportBackground,
-    exportVisibleOnly,
-    exportPadding = 10,
-  }: {
-    exportBackground: boolean;
-    exportVisibleOnly: boolean;
-    exportPadding?: number;
-  }) {
-    if (!elements.length) return window.alert("Cannot export empty canvas.");
-  
-    // deselect & rerender
-  
-    clearSelection();
-    this.drawScene();
-  
-    // calculate visible-area coords
-  
-    let subCanvasX1 = Infinity;
-    let subCanvasX2 = 0;
-    let subCanvasY1 = Infinity;
-    let subCanvasY2 = 0;
-  
-    elements.forEach((element) => {
-      subCanvasX1 = Math.min(subCanvasX1, getElementAbsoluteX1(element));
-      subCanvasX2 = Math.max(subCanvasX2, getElementAbsoluteX2(element));
-      subCanvasY1 = Math.min(subCanvasY1, getElementAbsoluteY1(element));
-      subCanvasY2 = Math.max(subCanvasY2, getElementAbsoluteY2(element));
-    });
-  
-    // create temporary canvas from which we'll export
-  
-    const tempCanvas = document.createElement("canvas");
-    const tempCanvasCtx = tempCanvas.getContext("2d")!;
-    tempCanvas.style.display = "none";
-    document.body.appendChild(tempCanvas);
-    tempCanvas.width = exportVisibleOnly
-      ? subCanvasX2 - subCanvasX1 + exportPadding * 2
-      : canvas.width;
-    tempCanvas.height = exportVisibleOnly
-      ? subCanvasY2 - subCanvasY1 + exportPadding * 2
-      : canvas.height;
-  
-    if (exportBackground) {
-      tempCanvasCtx.fillStyle = "#FFF";
-      tempCanvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-  
-    // copy our original canvas onto the temp canvas
-    tempCanvasCtx.drawImage(
-      canvas, // source
-      exportVisibleOnly // sx
-        ? subCanvasX1 - exportPadding
-        : 0,
-      exportVisibleOnly // sy
-        ? subCanvasY1 - exportPadding
-        : 0,
-      exportVisibleOnly // sWidth
-        ? subCanvasX2 - subCanvasX1 + exportPadding * 2
-        : canvas.width,
-      exportVisibleOnly // sHeight
-        ? subCanvasY2 - subCanvasY1 + exportPadding * 2
-        : canvas.height,
-      0, // dx
-      0, // dy
-      exportVisibleOnly ? tempCanvas.width : canvas.width, // dWidth
-      exportVisibleOnly ? tempCanvas.height : canvas.height // dHeight
-    );
-  
-    // create a temporary <a> elem which we'll use to download the image
-    const link = document.createElement("a");
-    link.setAttribute("download", "excalibur.png");
-    link.setAttribute("href", tempCanvas.toDataURL("image/png"));
-    link.click();
-  
-    // clean up the DOM
-    link.remove();
-    if (tempCanvas !== canvas) tempCanvas.remove();
-  }
-
   public render() {
     return (
-      <>
-        <div className="exportWrapper">
+      <div
+        onCut={(e) => {
+          e.clipboardData.setData(
+            "text/plain",
+            JSON.stringify(elements.filter((element) => element.isSelected))
+          );
+          deleteSelectedElements();
+          this.forceUpdate();
+          e.preventDefault();
+        }}
+        onCopy={(e) => {
+          e.clipboardData.setData(
+            "text/plain",
+            JSON.stringify(elements.filter((element) => element.isSelected))
+          );
+          e.preventDefault();
+        }}
+        onPaste={(e) => {
+          const paste = e.clipboardData.getData("text");
+          let parsedElements;
+          try {
+            parsedElements = JSON.parse(paste);
+          } catch (e) {}
+          if (
+            Array.isArray(parsedElements) &&
+            parsedElements.length > 0 &&
+            parsedElements[0].type // need to implement a better check here...
+          ) {
+            clearSelection();
+            parsedElements.forEach((parsedElement) => {
+              parsedElement.x += 10;
+              parsedElement.y += 10;
+              generateDraw(parsedElement);
+              elements.push(parsedElement);
+            });
+            this.forceUpdate();
+          }
+          e.preventDefault();
+        }}
+      >
+        <fieldset>
+          <legend>Shapes</legend>
+          {this.renderOption({ type: "rectangle", children: "Rectangle" })}
+          {this.renderOption({ type: "ellipse", children: "Ellipse" })}
+          {this.renderOption({ type: "arrow", children: "Arrow" })}
+          {this.renderOption({ type: "text", children: "Text" })}
+          {this.renderOption({ type: "selection", children: "Selection" })}
+        </fieldset>
+
+        <canvas
+          id="canvas"
+          width={window.innerWidth}
+          height={window.innerHeight - 200}
+          onMouseDown={(e) => {
+            const x = e.clientX - (e.target as HTMLElement).offsetLeft;
+            const y = e.clientY - (e.target as HTMLElement).offsetTop;
+            const element = newElement(
+              this.state.elementType,
+              x,
+              y,
+              this.state.currentItemStrokeColor,
+              this.state.currentItemBackgroundColor
+            );
+            let isDraggingElements = false;
+            const cursorStyle = document.documentElement.style.cursor;
+            if (this.state.elementType === "selection") {
+              const hitElement = elements.find((element) => {
+                return hitTest(element, x, y);
+              });
+
+              // If we click on something
+              if (hitElement) {
+                if (hitElement.isSelected) {
+                  // If that element is not already selected, do nothing,
+                  // we're likely going to drag it
+                } else {
+                  // We unselect every other elements unless shift is pressed
+                  if (!e.shiftKey) {
+                    clearSelection();
+                  }
+                  // No matter what, we select it
+                  hitElement.isSelected = true;
+                }
+              } else {
+                // If we don't click on anything, let's remove all the selected elements
+                clearSelection();
+              }
+
+              isDraggingElements = elements.some(
+                (element) => element.isSelected
+              );
+
+              if (isDraggingElements) {
+                document.documentElement.style.cursor = "move";
+              }
+            }
+
+            if (isTextElement(element)) {
+              const text = prompt("What text do you want?");
+              if (text === null) {
+                return;
+              }
+              element.text = text;
+              element.font = "20px Virgil";
+              const font = context.font;
+              context.font = element.font;
+              const {
+                actualBoundingBoxAscent,
+                actualBoundingBoxDescent,
+                width,
+              } = context.measureText(element.text);
+              element.actualBoundingBoxAscent = actualBoundingBoxAscent;
+              context.font = font;
+              const height = actualBoundingBoxAscent + actualBoundingBoxDescent;
+              // Center the text
+              element.x -= width / 2;
+              element.y -= actualBoundingBoxAscent;
+              element.width = width;
+              element.height = height;
+            }
+
+            generateDraw(element);
+            elements.push(element);
+            if (this.state.elementType === "text") {
+              this.setState({
+                draggingElement: null,
+                elementType: "selection",
+              });
+              element.isSelected = true;
+            } else {
+              this.setState({ draggingElement: element });
+            }
+
+            let lastX = x;
+            let lastY = y;
+
+            const onMouseMove = (e: MouseEvent) => {
+              const target = e.target;
+              if (!(target instanceof HTMLElement)) {
+                return;
+              }
+
+              if (isDraggingElements) {
+                const selectedElements = elements.filter((el) => el.isSelected);
+                if (selectedElements.length) {
+                  const x = e.clientX - target.offsetLeft;
+                  const y = e.clientY - target.offsetTop;
+                  selectedElements.forEach((element) => {
+                    element.x += x - lastX;
+                    element.y += y - lastY;
+                  });
+                  lastX = x;
+                  lastY = y;
+                  this.forceUpdate();
+                  return;
+                }
+              }
+
+              // It is very important to read this.state within each move event,
+              // otherwise we would read a stale one!
+              const draggingElement = this.state.draggingElement;
+              if (!draggingElement) return;
+              let width = e.clientX - target.offsetLeft - draggingElement.x;
+              let height = e.clientY - target.offsetTop - draggingElement.y;
+              draggingElement.width = width;
+              // Make a perfect square or circle when shift is enabled
+              draggingElement.height = e.shiftKey ? width : height;
+
+              generateDraw(draggingElement);
+
+              if (this.state.elementType === "selection") {
+                setSelection(draggingElement);
+              }
+              this.forceUpdate();
+            };
+
+            const onMouseUp = (e: MouseEvent) => {
+              const { draggingElement, elementType } = this.state;
+
+              window.removeEventListener("mousemove", onMouseMove);
+              window.removeEventListener("mouseup", onMouseUp);
+
+              document.documentElement.style.cursor = cursorStyle;
+
+              // if no element is clicked, clear the selection and redraw
+              if (draggingElement === null) {
+                clearSelection();
+                this.forceUpdate();
+                return;
+              }
+
+              if (elementType === "selection") {
+                if (isDraggingElements) {
+                  isDraggingElements = false;
+                }
+                elements.pop();
+              } else {
+                draggingElement.isSelected = true;
+              }
+
+              this.setState({
+                draggingElement: null,
+                elementType: "selection",
+              });
+              this.forceUpdate();
+            };
+
+            window.addEventListener("mousemove", onMouseMove);
+            window.addEventListener("mouseup", onMouseUp);
+
+            this.forceUpdate();
+          }}
+        />
+        <fieldset>
+          <legend>Colors</legend>
+          <label>
+            <input
+              type="color"
+              value={this.state.viewBackgroundColor}
+              onChange={(e) => {
+                this.setState({ viewBackgroundColor: e.target.value });
+              }}
+            />
+            Background
+          </label>
+          <label>
+            <input
+              type="color"
+              value={this.state.currentItemStrokeColor}
+              onChange={(e) => {
+                this.setState({ currentItemStrokeColor: e.target.value });
+              }}
+            />
+            Shape Stroke
+          </label>
+          <label>
+            <input
+              type="color"
+              value={this.state.currentItemBackgroundColor}
+              onChange={(e) => {
+                this.setState({ currentItemBackgroundColor: e.target.value });
+              }}
+            />
+            Shape Background
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Export</legend>
           <button
             onClick={() => {
               this.exportAsPNG({
                 exportBackground: this.state.exportBackground,
                 exportVisibleOnly: this.state.exportVisibleOnly,
                 exportPadding: this.state.exportPadding,
+                viewBackgroundColor: this.state.viewBackgroundColor,
               });
             }}
           >
@@ -414,7 +850,7 @@ class Canvas extends React.Component<{}, AppState> {
               onChange={(e) => {
                 this.setState({ exportBackground: e.target.checked });
               }}
-            />{" "}
+            />
             background
           </label>
           <label>
@@ -437,164 +873,13 @@ class Canvas extends React.Component<{}, AppState> {
             disabled={!this.state.exportVisibleOnly}
           />
           px)
-        </div>
-        <div>
-          {this.renderOption({ type: "rectangle", children: "Rectangle" })}
-          {this.renderOption({ type: "ellipse", children: "Ellipse" })}
-          {this.renderOption({ type: "arrow", children: "Arrow" })}
-          {this.renderOption({ type: "text", children: "Text" })}
-          {this.renderOption({ type: "selection", children: "Selection" })}
-          <canvas
-            id="canvas"
-            width={window.innerWidth}
-            height={window.innerHeight}
-            onMouseDown={(e) => {
-              const x = e.clientX - (e.target as HTMLElement).offsetLeft;
-              const y = e.clientY - (e.target as HTMLElement).offsetTop;
-              const element = newElement(this.state.elementType, x, y);
-              let isDraggingElements = false;
-              const cursorStyle = document.documentElement.style.cursor;
-              if (this.state.elementType === "selection") {
-                const selectedElement = elements.find((element) => {
-                  const isSelected = isInsideAnElement(x, y)(element);
-                  if (isSelected) {
-                    element.isSelected = true;
-                  }
-                  return isSelected;
-                });
-
-                if (selectedElement) {
-                  this.setState({ draggingElement: selectedElement });
-                } else {
-                  clearSelection();
-                }
-
-                isDraggingElements = elements.some(
-                  (element) => element.isSelected
-                );
-
-                if (isDraggingElements) {
-                  document.documentElement.style.cursor = "move";
-                }
-              }
-
-              if (isTextElement(element)) {
-                const text = prompt("What text do you want?");
-                if (text === null) {
-                  return;
-                }
-                element.text = text;
-                element.font = "20px Virgil";
-                const font = context.font;
-                context.font = element.font;
-                element.measure = context.measureText(element.text);
-                context.font = font;
-                const height =
-                  element.measure.actualBoundingBoxAscent +
-                  element.measure.actualBoundingBoxDescent;
-                // Center the text
-                element.x -= element.measure.width / 2;
-                element.y -= element.measure.actualBoundingBoxAscent;
-                element.width = element.measure.width;
-                element.height = height;
-              }
-
-              generateDraw(element);
-              elements.push(element);
-              if (this.state.elementType === "text") {
-                this.setState({
-                  draggingElement: null,
-                  elementType: "selection",
-                });
-                element.isSelected = true;
-              } else {
-                this.setState({ draggingElement: element });
-              }
-
-              let lastX = x;
-              let lastY = y;
-
-              const onMouseMove = (e: MouseEvent) => {
-                const target = e.target;
-                if (!(target instanceof HTMLElement)) {
-                  return;
-                }
-
-                if (isDraggingElements) {
-                  const selectedElements = elements.filter(
-                    (el) => el.isSelected
-                  );
-                  if (selectedElements.length) {
-                    const x = e.clientX - target.offsetLeft;
-                    const y = e.clientY - target.offsetTop;
-                    selectedElements.forEach((element) => {
-                      element.x += x - lastX;
-                      element.y += y - lastY;
-                    });
-                    lastX = x;
-                    lastY = y;
-                    this.drawScene();
-                    return;
-                  }
-                }
-
-                // It is very important to read this.state within each move event,
-                // otherwise we would read a stale one!
-                const draggingElement = this.state.draggingElement;
-                if (!draggingElement) return;
-                let width = e.clientX - target.offsetLeft - draggingElement.x;
-                let height = e.clientY - target.offsetTop - draggingElement.y;
-                draggingElement.width = width;
-                // Make a perfect square or circle when shift is enabled
-                draggingElement.height = e.shiftKey ? width : height;
-
-                generateDraw(draggingElement);
-
-                if (this.state.elementType === "selection") {
-                  setSelection(draggingElement);
-                }
-                this.drawScene();
-              };
-
-              const onMouseUp = (e: MouseEvent) => {
-                const { draggingElement, elementType } = this.state;
-
-                window.removeEventListener("mousemove", onMouseMove);
-                window.removeEventListener("mouseup", onMouseUp);
-
-                document.documentElement.style.cursor = cursorStyle;
-
-                // if no element is clicked, clear the selection and redraw
-                if (draggingElement === null) {
-                  clearSelection();
-                  this.drawScene();
-                  return;
-                }
-
-                if (elementType === "selection") {
-                  if (isDraggingElements) {
-                    isDraggingElements = false;
-                  }
-                  elements.pop();
-                } else {
-                  draggingElement.isSelected = true;
-                }
-
-                this.setState({
-                  draggingElement: null,
-                  elementType: "selection",
-                });
-                this.drawScene();
-              };
-
-              window.addEventListener("mousemove", onMouseMove);
-              window.addEventListener("mouseup", onMouseUp);
-
-              this.drawScene();
-            }}
-          />
-        </div>
-      </>
+        </fieldset>
+      </div>
     );
+  }
+
+  componentDidUpdate() {
+    renderScene(rc, context, this.state.viewBackgroundColor);
+    save(this.state);
   }
 }
