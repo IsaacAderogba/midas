@@ -7,10 +7,10 @@ import {
   getElementAbsoluteY2,
   getArrowPoints,
 } from "./coords";
-import { SHAPES } from "../../views/canvas/Canvas";
 import { withCustomMathRandom, randomSeed } from "./seed";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { KEYS } from "../constants/constants";
+import { SHAPES } from "../../views/canvas/CanvasTopbar";
 
 // Casting second argument (DrawingSurface) to any,
 // because it is requred by TS definitions and not required at runtime
