@@ -56,23 +56,24 @@ import {
   newElement,
   isArrowKey
 } from "../../~reusables/utils/element";
+import { useCanvasStore } from "../../~reusables/contexts/CanvasProvider";
 
 let canvas: HTMLCanvasElement;
 let rc: RoughCanvas;
 let context: CanvasRenderingContext2D;
 
 export const CanvasWrapper: React.FC = () => {
+  const elements = useCanvasStore(state => state.elements);
+  console.log(elements);
   return (
     <section>
       {/* <CanvasTopbar />
       <AssetsSidebar /> */}
-      <Canvas />
+      <Canvas elements={elements} />
       {/* <CustomizeSidebar /> */}
     </section>
   );
 };
-
-var elements = Array.of<MidasElement>();
 
 let skipHistory = false;
 const stateHistory: string[] = [];
@@ -144,7 +145,7 @@ let lastCanvasWidth = -1;
 let lastCanvasHeight = -1;
 let lastMouseUp: ((e: any) => void) | null = null;
 
-class Canvas extends React.Component<{}, ICanvasState> {
+class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
   public componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
     window.addEventListener("resize", this.onResize, false);
@@ -155,7 +156,7 @@ class Canvas extends React.Component<{}, ICanvasState> {
     context.translate(0.5, 0.5);
     this.forceUpdate();
     // TODO - at front or behind
-    const savedState = restoreFromLocalStorage(elements);
+    const savedState = restoreFromLocalStorage(this.props.elements);
     if (savedState) {
       this.setState(savedState);
     }
@@ -186,18 +187,18 @@ class Canvas extends React.Component<{}, ICanvasState> {
     if (isInputLike(event.target)) return;
 
     if (event.key === KEYS.ESCAPE) {
-      clearSelection(elements);
+      clearSelection(this.props.elements);
       this.forceUpdate();
       event.preventDefault();
     } else if (event.key === KEYS.BACKSPACE || event.key === KEYS.DELETE) {
-      deleteSelectedElements(elements);
+      deleteSelectedElements(this.props.elements);
       this.forceUpdate();
       event.preventDefault();
     } else if (isArrowKey(event.key)) {
       const step = event.shiftKey
         ? ELEMENT_SHIFT_TRANSLATE_AMOUNT
         : ELEMENT_TRANSLATE_AMOUNT;
-      elements.forEach(element => {
+        this.props.elements.forEach(element => {
         if (element.isSelected) {
           if (event.key === KEYS.ARROW_LEFT) element.x -= step;
           else if (event.key === KEYS.ARROW_RIGHT) element.x += step;
@@ -240,7 +241,7 @@ class Canvas extends React.Component<{}, ICanvasState> {
 
       // Select all: Cmd-A
     } else if (event.metaKey && event.code === "KeyA") {
-      elements.forEach(element => {
+      this.props.elements.forEach(element => {
         element.isSelected = true;
       });
       this.forceUpdate();
@@ -250,11 +251,11 @@ class Canvas extends React.Component<{}, ICanvasState> {
     } else if (event.metaKey && event.code === "KeyZ") {
       let lastEntry = stateHistory.pop();
       // If nothing was changed since last, take the previous one
-      if (generateHistoryCurrentEntry(elements) === lastEntry) {
+      if (generateHistoryCurrentEntry(this.props.elements) === lastEntry) {
         lastEntry = stateHistory.pop();
       }
       if (lastEntry !== undefined) {
-        restoreHistoryEntry(elements, lastEntry, skipHistory);
+        restoreHistoryEntry(this.props.elements, lastEntry, skipHistory);
       }
       this.forceUpdate();
       event.preventDefault();
@@ -275,7 +276,7 @@ class Canvas extends React.Component<{}, ICanvasState> {
           checked={this.state.elementType === type}
           onChange={() => {
             this.setState({ elementType: type });
-            clearSelection(elements);
+            clearSelection(this.props.elements);
             this.forceUpdate();
           }}
         />
@@ -285,13 +286,13 @@ class Canvas extends React.Component<{}, ICanvasState> {
   }
 
   private deleteSelectedElements = () => {
-    deleteSelectedElements(elements);
+    deleteSelectedElements(this.props.elements);
     this.forceUpdate();
   };
 
   private clearCanvas = () => {
     if (window.confirm("This will clear the whole canvas. Are you sure?")) {
-      elements.splice(0, elements.length);
+      this.props.elements.splice(0, this.props.elements.length);
       this.setState({
         viewBackgroundColor: "#ffffff",
         scrollX: 0,
@@ -302,22 +303,22 @@ class Canvas extends React.Component<{}, ICanvasState> {
   };
 
   private moveAllLeft = () => {
-    moveAllLeft(elements, getSelectedIndices(elements));
+    moveAllLeft(this.props.elements, getSelectedIndices(this.props.elements));
     this.forceUpdate();
   };
 
   private moveOneLeft = () => {
-    moveOneLeft(elements, getSelectedIndices(elements));
+    moveOneLeft(this.props.elements, getSelectedIndices(this.props.elements));
     this.forceUpdate();
   };
 
   private moveAllRight = () => {
-    moveAllRight(elements, getSelectedIndices(elements));
+    moveAllRight(this.props.elements, getSelectedIndices(this.props.elements));
     this.forceUpdate();
   };
 
   private moveOneRight = () => {
-    moveOneRight(elements, getSelectedIndices(elements));
+    moveOneRight(this.props.elements, getSelectedIndices(this.props.elements));
     this.forceUpdate();
   };
 
@@ -326,6 +327,7 @@ class Canvas extends React.Component<{}, ICanvasState> {
   public render() {
     const canvasWidth = window.innerWidth - CANVAS_WINDOW_OFFSET_LEFT;
     const canvasHeight = window.innerHeight - CANVAS_WINDOW_OFFSET_TOP;
+    const { elements } = this.props;
 
     return (
       <div
@@ -825,11 +827,11 @@ class Canvas extends React.Component<{}, ICanvasState> {
         scrollY: this.state.scrollY,
         viewBackgroundColor: this.state.viewBackgroundColor
       },
-      elements
+      this.props.elements
     );
-    save(this.state, elements);
+    save(this.state, this.props.elements);
     if (!skipHistory) {
-      pushHistoryEntry(stateHistory, generateHistoryCurrentEntry(elements));
+      pushHistoryEntry(stateHistory, generateHistoryCurrentEntry(this.props.elements));
     }
     skipHistory = false;
   }
