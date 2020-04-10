@@ -1,6 +1,6 @@
 import rough from "roughjs/bin/wrappers/rough";
 import { MidasElement } from "./types";
-import { ICanvasState } from "../../views/canvas/Canvas";
+import { ICanvasStore } from '../../~reusables/contexts/CanvasProvider';
 import {
   getElementAbsoluteX1,
   getElementAbsoluteX2,
@@ -128,7 +128,7 @@ export function saveFile(name: string, data: string) {
   link.remove();
 }
 
-export function save(state: ICanvasState, elements: MidasElement[]) {
+export function save(state: ICanvasStore, elements: MidasElement[]) {
   localStorage.setItem(LOCAL_STORAGE_MIDAS_KEY, JSON.stringify(elements));
   localStorage.setItem(LOCAL_STORAGE_MIDAS_STATE_KEY, JSON.stringify(state));
 }

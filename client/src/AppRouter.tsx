@@ -13,7 +13,7 @@ import { Workspace } from "./views/app/Workspace";
 // helpers
 import { styled } from "./~reusables/contexts/ThemeProvider";
 import { SIDEBAR_WIDTH } from "./~reusables/constants/dimensions";
-import { CanvasWrapper } from "./views/canvas/Canvas";
+import { Canvas } from "./views/canvas/Canvas";
 
 export const AppRouter = () => {
   return (
@@ -62,7 +62,7 @@ const ProtectedAppRouter: React.FC = () => {
           render={(routeProps) => {
             return (
               <CanvasProvider {...routeProps}>
-                <CanvasWrapper />
+                <Canvas />
               </CanvasProvider>
             );
           }}

@@ -2,6 +2,7 @@
 import React from "react";
 import rough from "roughjs/bin/wrappers/rough";
 import { RoughCanvas } from "roughjs/bin/canvas";
+import { useContextSelector } from "use-context-selector";
 
 // components
 import { CanvasTopbar, SHAPES } from "./CanvasTopbar";
@@ -56,19 +57,36 @@ import {
   newElement,
   isArrowKey
 } from "../../~reusables/utils/element";
-import { useCanvasStore } from "../../~reusables/contexts/CanvasProvider";
+import {
+  useElementsStore,
+  CanvasContext,
+  ICanvasState
+} from "../../~reusables/contexts/CanvasProvider";
 
 let canvas: HTMLCanvasElement;
 let rc: RoughCanvas;
 let context: CanvasRenderingContext2D;
 
-export const CanvasWrapper: React.FC = () => {
-  const elements = useCanvasStore(state => state.elements);
+export const Canvas: React.FC = () => {
   return (
     <section>
       {/* <CanvasTopbar />
       <AssetsSidebar /> */}
-      <Canvas elements={elements} />
+      <StatefulCanvas />
+      {/* <CustomizeSidebar /> */}
+    </section>
+  );
+};
+
+export const StatefulCanvas: React.FC = () => {
+  const elements = useElementsStore(state => state.elements);
+  const canvasStore = useContextSelector(CanvasContext, state => state);
+
+  return (
+    <section>
+      {/* <CanvasTopbar />
+      <AssetsSidebar /> */}
+      <StatelessCanvas {...canvasStore} elements={elements} />
       {/* <CustomizeSidebar /> */}
     </section>
   );
@@ -76,26 +94,14 @@ export const CanvasWrapper: React.FC = () => {
 
 let skipHistory = false;
 const stateHistory: string[] = [];
-
 const shapesShortcutKeys = SHAPES.map(shape => shape.value[0]);
-
-export type ICanvasState = {
-  draggingElement: MidasElement | null;
-  resizingElement: MidasElement | null;
-  elementType: string;
-  exportBackground: boolean;
-  currentItemStrokeColor: string;
-  currentItemBackgroundColor: string;
-  viewBackgroundColor: string;
-  scrollX: number;
-  scrollY: number;
-};
-
 let lastCanvasWidth = -1;
 let lastCanvasHeight = -1;
 let lastMouseUp: ((e: any) => void) | null = null;
 
-class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
+class StatelessCanvas extends React.Component<
+  ICanvasState & { elements: MidasElement[] }
+> {
   public componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
     window.addEventListener("resize", this.onResize, false);
@@ -108,7 +114,7 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
     // TODO - at front or behind
     const savedState = restoreFromLocalStorage(this.props.elements);
     if (savedState) {
-      this.setState(savedState);
+      this.props.setState(savedState);
     }
   }
 
@@ -116,18 +122,6 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
     document.removeEventListener("keydown", this.onKeyDown, false);
     window.removeEventListener("resize", this.onResize, false);
   }
-
-  public state: ICanvasState = {
-    draggingElement: null,
-    resizingElement: null,
-    elementType: "selection",
-    exportBackground: true,
-    currentItemStrokeColor: "#000000",
-    currentItemBackgroundColor: "#ffffff",
-    viewBackgroundColor: "#ffffff",
-    scrollX: 0,
-    scrollY: 0
-  };
 
   private onResize = () => {
     this.forceUpdate();
@@ -148,7 +142,7 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
       const step = event.shiftKey
         ? ELEMENT_SHIFT_TRANSLATE_AMOUNT
         : ELEMENT_TRANSLATE_AMOUNT;
-        this.props.elements.forEach(element => {
+      this.props.elements.forEach(element => {
         if (element.isSelected) {
           if (event.key === KEYS.ARROW_LEFT) element.x -= step;
           else if (event.key === KEYS.ARROW_RIGHT) element.x += step;
@@ -197,7 +191,10 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
       this.forceUpdate();
       event.preventDefault();
     } else if (shapesShortcutKeys.includes(event.key.toLowerCase())) {
-      this.setState({ elementType: findElementByKey(event.key) });
+      this.props.setState(prevState => ({
+        ...prevState,
+        elementType: findElementByKey(event.key)
+      }));
     } else if (event.metaKey && event.code === "KeyZ") {
       let lastEntry = stateHistory.pop();
       // If nothing was changed since last, take the previous one
@@ -223,9 +220,12 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
       <label>
         <input
           type="radio"
-          checked={this.state.elementType === type}
+          checked={this.props.elementType === type}
           onChange={() => {
-            this.setState({ elementType: type });
+            this.props.setState(prevState => ({
+              ...prevState,
+              elementType: type
+            }));
             clearSelection(this.props.elements);
             this.forceUpdate();
           }}
@@ -243,11 +243,12 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
   private clearCanvas = () => {
     if (window.confirm("This will clear the whole canvas. Are you sure?")) {
       this.props.elements.splice(0, this.props.elements.length);
-      this.setState({
+      this.props.setState(prevState => ({
+        ...prevState,
         viewBackgroundColor: "#ffffff",
         scrollX: 0,
         scrollY: 0
-      });
+      }));
       this.forceUpdate();
     }
   };
@@ -329,9 +330,12 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
               <label key={value} className="tool">
                 <input
                   type="radio"
-                  checked={this.state.elementType === value}
+                  checked={this.props.elementType === value}
                   onChange={() => {
-                    this.setState({ elementType: value });
+                    this.props.setState(prevState => ({
+                      ...prevState,
+                      elementType: value
+                    }));
                     clearSelection(elements);
                     document.documentElement.style.cursor =
                       value === "text" ? "text" : "crosshair";
@@ -347,9 +351,12 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
             <label>
               <input
                 type="color"
-                value={this.state.viewBackgroundColor}
+                value={this.props.viewBackgroundColor}
                 onChange={e => {
-                  this.setState({ viewBackgroundColor: e.target.value });
+                  this.props.setState(prevState => ({
+                    ...prevState,
+                    viewBackgroundColor: e.target.value
+                  }));
                 }}
               />
               Background
@@ -357,9 +364,12 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
             <label>
               <input
                 type="color"
-                value={this.state.currentItemStrokeColor}
+                value={this.props.currentItemStrokeColor}
                 onChange={e => {
-                  this.setState({ currentItemStrokeColor: e.target.value });
+                  this.props.setState(prevState => ({
+                    ...prevState,
+                    currentItemStrokeColor: e.target.value
+                  }));
                 }}
               />
               Shape Stroke
@@ -367,9 +377,12 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
             <label>
               <input
                 type="color"
-                value={this.state.currentItemBackgroundColor}
+                value={this.props.currentItemBackgroundColor}
                 onChange={e => {
-                  this.setState({ currentItemBackgroundColor: e.target.value });
+                  this.props.setState(prevState => ({
+                    ...prevState,
+                    currentItemBackgroundColor: e.target.value
+                  }));
                 }}
               />
               Shape Background
@@ -388,7 +401,7 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
           <div className="panelColumn">
             <button
               onClick={() => {
-                exportAsPNG(this.state, canvas, elements);
+                exportAsPNG(this.props, canvas, elements);
               }}
             >
               Export to png
@@ -396,9 +409,12 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
             <label>
               <input
                 type="checkbox"
-                checked={this.state.exportBackground}
+                checked={this.props.exportBackground}
                 onChange={e => {
-                  this.setState({ exportBackground: e.target.checked });
+                  this.props.setState(prevState => ({
+                    ...prevState,
+                    exportBackground: e.target.checked
+                  }));
                 }}
               />
               background
@@ -487,36 +503,37 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
             }
 
             const x =
-              e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.state.scrollX;
-            const y = e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.state.scrollY;
+              e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.props.scrollX;
+            const y = e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.props.scrollY;
             const element = newElement(
-              this.state.elementType,
+              this.props.elementType,
               x,
               y,
-              this.state.currentItemStrokeColor,
-              this.state.currentItemBackgroundColor
+              this.props.currentItemStrokeColor,
+              this.props.currentItemBackgroundColor
             );
             let resizeHandle: string | false = false;
             let isDraggingElements = false;
             let isResizingElements = false;
-            if (this.state.elementType === "selection") {
+            if (this.props.elementType === "selection") {
               const resizeElement = elements.find(element => {
                 return resizeTest(element, x, y, {
-                  scrollX: this.state.scrollX,
-                  scrollY: this.state.scrollY,
-                  viewBackgroundColor: this.state.viewBackgroundColor
+                  scrollX: this.props.scrollX,
+                  scrollY: this.props.scrollY,
+                  viewBackgroundColor: this.props.viewBackgroundColor
                 });
               });
 
-              this.setState({
+              this.props.setState(prevState => ({
+                ...prevState,
                 resizingElement: resizeElement ? resizeElement : null
-              });
+              }));
 
               if (resizeElement) {
                 resizeHandle = resizeTest(resizeElement, x, y, {
-                  scrollX: this.state.scrollX,
-                  scrollY: this.state.scrollY,
-                  viewBackgroundColor: this.state.viewBackgroundColor
+                  scrollX: this.props.scrollX,
+                  scrollY: this.props.scrollY,
+                  viewBackgroundColor: this.props.viewBackgroundColor
                 });
                 document.documentElement.style.cursor = `${resizeHandle}-resize`;
                 isResizingElements = true;
@@ -583,14 +600,18 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
 
             generateDraw(element);
             elements.push(element);
-            if (this.state.elementType === "text") {
-              this.setState({
+            if (this.props.elementType === "text") {
+              this.props.setState(prevState => ({
+                ...prevState,
                 draggingElement: null,
                 elementType: "selection"
-              });
+              }));
               element.isSelected = true;
             } else {
-              this.setState({ draggingElement: element });
+              this.props.setState(prevState => ({
+                ...prevState,
+                draggingElement: element
+              }));
             }
 
             let lastX = x;
@@ -602,14 +623,14 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
                 return;
               }
 
-              if (isResizingElements && this.state.resizingElement) {
-                const el = this.state.resizingElement;
+              if (isResizingElements && this.props.resizingElement) {
+                const el = this.props.resizingElement;
                 const selectedElements = elements.filter(el => el.isSelected);
                 if (selectedElements.length === 1) {
                   const x =
-                    e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.state.scrollX;
+                    e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.props.scrollX;
                   const y =
-                    e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.state.scrollY;
+                    e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.props.scrollY;
                   selectedElements.forEach(element => {
                     switch (resizeHandle) {
                       case "nw":
@@ -669,9 +690,9 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
                 const selectedElements = elements.filter(el => el.isSelected);
                 if (selectedElements.length) {
                   const x =
-                    e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.state.scrollX;
+                    e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.props.scrollX;
                   const y =
-                    e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.state.scrollY;
+                    e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.props.scrollY;
                   selectedElements.forEach(element => {
                     element.x += x - lastX;
                     element.y += y - lastY;
@@ -687,25 +708,25 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
 
               // It is very important to read this.state within each move event,
               // otherwise we would read a stale one!
-              const draggingElement = this.state.draggingElement;
+              const draggingElement = this.props.draggingElement;
               if (!draggingElement) return;
               let width =
                 e.clientX -
                 CANVAS_WINDOW_OFFSET_LEFT -
                 draggingElement.x -
-                this.state.scrollX;
+                this.props.scrollX;
               let height =
                 e.clientY -
                 CANVAS_WINDOW_OFFSET_TOP -
                 draggingElement.y -
-                this.state.scrollY;
+                this.props.scrollY;
               draggingElement.width = width;
               // Make a perfect square or circle when shift is enabled
               draggingElement.height = e.shiftKey ? width : height;
 
               generateDraw(draggingElement);
 
-              if (this.state.elementType === "selection") {
+              if (this.props.elementType === "selection") {
                 setSelection(draggingElement, elements);
               }
               // We don't want to save history when moving an element
@@ -714,7 +735,7 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
             };
 
             const onMouseUp = (e: MouseEvent) => {
-              const { draggingElement, elementType } = this.state;
+              const { draggingElement, elementType } = this.props;
 
               lastMouseUp = null;
               window.removeEventListener("mousemove", onMouseMove);
@@ -738,10 +759,11 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
                 draggingElement.isSelected = true;
               }
 
-              this.setState({
+              this.props.setState(prevState => ({
+                ...prevState,
                 draggingElement: null,
                 elementType: "selection"
-              });
+              }));
               this.forceUpdate();
             };
 
@@ -762,9 +784,10 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
   private handleWheel = (e: WheelEvent) => {
     e.preventDefault();
     const { deltaX, deltaY } = e;
-    this.setState(state => ({
-      scrollX: state.scrollX - deltaX,
-      scrollY: state.scrollY - deltaY
+    this.props.setState(prevState => ({
+      ...prevState,
+      scrollX: this.props.scrollX - deltaX,
+      scrollY: this.props.scrollY - deltaY
     }));
   };
 
@@ -773,15 +796,18 @@ class Canvas extends React.Component<{elements: MidasElement[]}, ICanvasState> {
       rc,
       canvas,
       {
-        scrollX: this.state.scrollX,
-        scrollY: this.state.scrollY,
-        viewBackgroundColor: this.state.viewBackgroundColor
+        scrollX: this.props.scrollX,
+        scrollY: this.props.scrollY,
+        viewBackgroundColor: this.props.viewBackgroundColor
       },
       this.props.elements
     );
-    save(this.state, this.props.elements);
+    save(this.props, this.props.elements);
     if (!skipHistory) {
-      pushHistoryEntry(stateHistory, generateHistoryCurrentEntry(this.props.elements));
+      pushHistoryEntry(
+        stateHistory,
+        generateHistoryCurrentEntry(this.props.elements)
+      );
     }
     skipHistory = false;
   }
