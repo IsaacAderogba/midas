@@ -2,7 +2,6 @@
 import React from "react";
 import { css } from "styled-components/macro";
 import { RouteComponentProps, Route, Switch, Redirect } from "react-router-dom";
-import gql from "graphql-tag";
 
 // components
 import { Button } from "antd";
@@ -16,47 +15,51 @@ import { useAppStore } from "../../~reusables/contexts/AppProvider";
 import { useCreateProjectMutation } from "../../generated/graphql";
 
 export const Workspace: React.FC<RouteComponentProps> = () => {
-  const { workspace, isWorkspaceLoading } = useAppStore((state) => ({
+  const { workspace, isWorkspaceLoading } = useAppStore(state => ({
     workspace: state.workspace,
-    isWorkspaceLoading: state.isWorkspaceLoading,
+    isWorkspaceLoading: state.isWorkspaceLoading
   }));
 
   // todo - GET WORKSPACE USER
   const [createProject, { loading, error }] = useCreateProjectMutation({
     variables: {
-      newProjectInput: { title: "Untitled project", workspaceUserId: "1" },
+      newProjectInput: { title: "Untitled project", workspaceUserId: "1" }
     },
     update() {},
-    onError() {},
+    onError() {}
   });
 
   return (
     <StyledWorkspace>
       <header
         css={css`
-          background: ${(p) => p.theme.colors.white};
-          padding: ${(p) => `${p.theme.space[7]}px ${p.theme.space[8]}px 0`};
-          border-bottom: 1px solid ${(p) => p.theme.colors.greys[9]};
+          background: ${p => p.theme.colors.white};
+          padding: ${p => `${p.theme.space[7]}px ${p.theme.space[8]}px 0`};
+          border-bottom: 1px solid ${p => p.theme.colors.greys[9]};
         `}
       >
         {workspace ? (
           <div
             css={css`
               display: flex;
-              background: ${(p) => p.theme.colors.white};
+              background: ${p => p.theme.colors.white};
               align-items: center;
               justify-content: space-between;
             `}
           >
             <H2>{workspace.name}</H2>
-            <Button loading={loading} type="primary" onClick={() => createProject()}>
+            <Button
+              loading={loading}
+              type="primary"
+              onClick={() => createProject()}
+            >
               New project
             </Button>
           </div>
         ) : (
           <div
             css={css`
-              background: ${(p) => p.theme.colors.white};
+              background: ${p => p.theme.colors.white};
             `}
           >
             <H2>{isWorkspaceLoading ? "" : "No workspace selected"}</H2>
@@ -64,7 +67,7 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
         )}
         <PageNav
           css={css`
-            margin-top: ${(p) => p.theme.space[7]}px;
+            margin-top: ${p => p.theme.space[7]}px;
           `}
         >
           <PageNavItem name="Projects" link="/app/workspace" />
@@ -74,7 +77,7 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
       </header>
       <section
         css={css`
-          padding: ${(p) => `${p.theme.space[7]}px 0 0 ${p.theme.space[8]}px`};
+          padding: ${p => `${p.theme.space[7]}px 0 0 ${p.theme.space[8]}px`};
         `}
       >
         <Switch>
@@ -103,22 +106,5 @@ const StyledWorkspace = styled.div`
 
   & > section {
     height: 100%;
-  }
-`;
-
-export const createProject = gql`
-  mutation createProject($newProjectInput: NewProjectInput!) {
-    createProject(newProjectInput: $newProjectInput) {
-      id
-      workspaceId
-      workspaceUserId
-      title
-      thumbnailPhotoURL
-      thumbnailPhotoID
-      inviteShareStatus
-      inviteSharePrivileges
-      createdAt
-      updatedAt
-    }
   }
 `;

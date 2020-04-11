@@ -288,107 +288,6 @@ export type WorkspaceUserWhere = {
   userId?: Maybe<Scalars['Int']>;
 };
 
-export type RegisterUserMutationVariables = {
-  registerInput?: Maybe<RegisterInput>;
-};
-
-
-export type RegisterUserMutation = (
-  { __typename?: 'Mutation' }
-  & { registerUser: (
-    { __typename?: 'AuthUser' }
-    & Pick<AuthUser, 'token'>
-    & { user: (
-      { __typename?: 'User' }
-      & UserAttributesFragment
-    ) }
-  ) }
-);
-
-export type LoginUserMutationVariables = {
-  loginInput?: Maybe<LoginInput>;
-};
-
-
-export type LoginUserMutation = (
-  { __typename?: 'Mutation' }
-  & { loginUser: (
-    { __typename?: 'AuthUser' }
-    & Pick<AuthUser, 'token'>
-    & { user: (
-      { __typename?: 'User' }
-      & UserAttributesFragment
-    ) }
-  ) }
-);
-
-export type CreateWorkspaceMutationVariables = {
-  newWorkspaceInput?: Maybe<NewWorkspaceInput>;
-};
-
-
-export type CreateWorkspaceMutation = (
-  { __typename?: 'Mutation' }
-  & { createWorkspace?: Maybe<(
-    { __typename?: 'Workspace' }
-    & WorkspaceAttributesFragment
-  )> }
-);
-
-export type CreateProjectMutationVariables = {
-  newProjectInput: NewProjectInput;
-};
-
-
-export type CreateProjectMutation = (
-  { __typename?: 'Mutation' }
-  & { createProject?: Maybe<(
-    { __typename?: 'Project' }
-    & Pick<Project, 'id' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'createdAt' | 'updatedAt'>
-  )> }
-);
-
-export type GetWorkspaceQueryVariables = {};
-
-
-export type GetWorkspaceQuery = (
-  { __typename?: 'Query' }
-  & { workspace?: Maybe<(
-    { __typename?: 'Workspace' }
-    & { workspaceUsers: Array<(
-      { __typename?: 'WorkspaceUser' }
-      & Pick<WorkspaceUser, 'role'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'firstName' | 'lastName' | 'avatarURL' | 'email'>
-      ) }
-    )> }
-    & WorkspaceAttributesFragment
-  )> }
-);
-
-export type GetWorkspacesQueryVariables = {};
-
-
-export type GetWorkspacesQuery = (
-  { __typename?: 'Query' }
-  & { workspaces: Array<(
-    { __typename?: 'Workspace' }
-    & WorkspacesAttributesFragment
-  )> }
-);
-
-export type GetUserQueryVariables = {};
-
-
-export type GetUserQuery = (
-  { __typename?: 'Query' }
-  & { user?: Maybe<(
-    { __typename?: 'User' }
-    & UserAttributesFragment
-  )> }
-);
-
 export type GetProjectQueryVariables = {
   where: ProjectWhere;
 };
@@ -441,6 +340,107 @@ export type UpdateProjectMutation = (
   & { updateProject?: Maybe<(
     { __typename?: 'Project' }
     & ProjectAttributesFragment
+  )> }
+);
+
+export type CreateProjectMutationVariables = {
+  newProjectInput: NewProjectInput;
+};
+
+
+export type CreateProjectMutation = (
+  { __typename?: 'Mutation' }
+  & { createProject?: Maybe<(
+    { __typename?: 'Project' }
+    & Pick<Project, 'id' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'createdAt' | 'updatedAt'>
+  )> }
+);
+
+export type GetUserQueryVariables = {};
+
+
+export type GetUserQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'User' }
+    & UserAttributesFragment
+  )> }
+);
+
+export type LoginUserMutationVariables = {
+  loginInput?: Maybe<LoginInput>;
+};
+
+
+export type LoginUserMutation = (
+  { __typename?: 'Mutation' }
+  & { loginUser: (
+    { __typename?: 'AuthUser' }
+    & Pick<AuthUser, 'token'>
+    & { user: (
+      { __typename?: 'User' }
+      & UserAttributesFragment
+    ) }
+  ) }
+);
+
+export type RegisterUserMutationVariables = {
+  registerInput?: Maybe<RegisterInput>;
+};
+
+
+export type RegisterUserMutation = (
+  { __typename?: 'Mutation' }
+  & { registerUser: (
+    { __typename?: 'AuthUser' }
+    & Pick<AuthUser, 'token'>
+    & { user: (
+      { __typename?: 'User' }
+      & UserAttributesFragment
+    ) }
+  ) }
+);
+
+export type CreateWorkspaceMutationVariables = {
+  newWorkspaceInput?: Maybe<NewWorkspaceInput>;
+};
+
+
+export type CreateWorkspaceMutation = (
+  { __typename?: 'Mutation' }
+  & { createWorkspace?: Maybe<(
+    { __typename?: 'Workspace' }
+    & WorkspaceAttributesFragment
+  )> }
+);
+
+export type GetWorkspaceQueryVariables = {};
+
+
+export type GetWorkspaceQuery = (
+  { __typename?: 'Query' }
+  & { workspace?: Maybe<(
+    { __typename?: 'Workspace' }
+    & { workspaceUsers: Array<(
+      { __typename?: 'WorkspaceUser' }
+      & Pick<WorkspaceUser, 'role'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'firstName' | 'lastName' | 'avatarURL' | 'email'>
+      ) }
+    )> }
+    & WorkspaceAttributesFragment
+  )> }
+);
+
+export type GetWorkspacesQueryVariables = {};
+
+
+export type GetWorkspacesQuery = (
+  { __typename?: 'Query' }
+  & { workspaces: Array<(
+    { __typename?: 'Workspace' }
+    & WorkspacesAttributesFragment
   )> }
 );
 
@@ -538,255 +538,6 @@ export const ProjectsAttributesFragmentDoc = gql`
   updatedAt
 }
     `;
-export const RegisterUserDocument = gql`
-    mutation registerUser($registerInput: RegisterInput) {
-  registerUser(registerInput: $registerInput) {
-    token
-    user {
-      ...userAttributes
-    }
-  }
-}
-    ${UserAttributesFragmentDoc}`;
-export type RegisterUserMutationFn = ApolloReactCommon.MutationFunction<RegisterUserMutation, RegisterUserMutationVariables>;
-
-/**
- * __useRegisterUserMutation__
- *
- * To run a mutation, you first call `useRegisterUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRegisterUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [registerUserMutation, { data, loading, error }] = useRegisterUserMutation({
- *   variables: {
- *      registerInput: // value for 'registerInput'
- *   },
- * });
- */
-export function useRegisterUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RegisterUserMutation, RegisterUserMutationVariables>) {
-        return ApolloReactHooks.useMutation<RegisterUserMutation, RegisterUserMutationVariables>(RegisterUserDocument, baseOptions);
-      }
-export type RegisterUserMutationHookResult = ReturnType<typeof useRegisterUserMutation>;
-export type RegisterUserMutationResult = ApolloReactCommon.MutationResult<RegisterUserMutation>;
-export type RegisterUserMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterUserMutation, RegisterUserMutationVariables>;
-export const LoginUserDocument = gql`
-    mutation loginUser($loginInput: LoginInput) {
-  loginUser(loginInput: $loginInput) {
-    token
-    user {
-      ...userAttributes
-    }
-  }
-}
-    ${UserAttributesFragmentDoc}`;
-export type LoginUserMutationFn = ApolloReactCommon.MutationFunction<LoginUserMutation, LoginUserMutationVariables>;
-
-/**
- * __useLoginUserMutation__
- *
- * To run a mutation, you first call `useLoginUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLoginUserMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [loginUserMutation, { data, loading, error }] = useLoginUserMutation({
- *   variables: {
- *      loginInput: // value for 'loginInput'
- *   },
- * });
- */
-export function useLoginUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LoginUserMutation, LoginUserMutationVariables>) {
-        return ApolloReactHooks.useMutation<LoginUserMutation, LoginUserMutationVariables>(LoginUserDocument, baseOptions);
-      }
-export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
-export type LoginUserMutationResult = ApolloReactCommon.MutationResult<LoginUserMutation>;
-export type LoginUserMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
-export const CreateWorkspaceDocument = gql`
-    mutation createWorkspace($newWorkspaceInput: NewWorkspaceInput) {
-  createWorkspace(newWorkspaceInput: $newWorkspaceInput) {
-    ...workspaceAttributes
-  }
-}
-    ${WorkspaceAttributesFragmentDoc}`;
-export type CreateWorkspaceMutationFn = ApolloReactCommon.MutationFunction<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
-
-/**
- * __useCreateWorkspaceMutation__
- *
- * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
- *   variables: {
- *      newWorkspaceInput: // value for 'newWorkspaceInput'
- *   },
- * });
- */
-export function useCreateWorkspaceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>) {
-        return ApolloReactHooks.useMutation<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, baseOptions);
-      }
-export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
-export type CreateWorkspaceMutationResult = ApolloReactCommon.MutationResult<CreateWorkspaceMutation>;
-export type CreateWorkspaceMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
-export const CreateProjectDocument = gql`
-    mutation createProject($newProjectInput: NewProjectInput!) {
-  createProject(newProjectInput: $newProjectInput) {
-    id
-    workspaceId
-    workspaceUserId
-    title
-    thumbnailPhotoURL
-    thumbnailPhotoID
-    inviteShareStatus
-    inviteSharePrivileges
-    createdAt
-    updatedAt
-  }
-}
-    `;
-export type CreateProjectMutationFn = ApolloReactCommon.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
-
-/**
- * __useCreateProjectMutation__
- *
- * To run a mutation, you first call `useCreateProjectMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateProjectMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createProjectMutation, { data, loading, error }] = useCreateProjectMutation({
- *   variables: {
- *      newProjectInput: // value for 'newProjectInput'
- *   },
- * });
- */
-export function useCreateProjectMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
-        return ApolloReactHooks.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, baseOptions);
-      }
-export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
-export type CreateProjectMutationResult = ApolloReactCommon.MutationResult<CreateProjectMutation>;
-export type CreateProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
-export const GetWorkspaceDocument = gql`
-    query getWorkspace {
-  workspace {
-    ...workspaceAttributes
-    workspaceUsers {
-      role
-      user {
-        id
-        firstName
-        lastName
-        avatarURL
-        email
-      }
-    }
-  }
-}
-    ${WorkspaceAttributesFragmentDoc}`;
-
-/**
- * __useGetWorkspaceQuery__
- *
- * To run a query within a React component, call `useGetWorkspaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetWorkspaceQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetWorkspaceQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspaceQuery, GetWorkspaceQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, baseOptions);
-      }
-export function useGetWorkspaceLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspaceQuery, GetWorkspaceQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, baseOptions);
-        }
-export type GetWorkspaceQueryHookResult = ReturnType<typeof useGetWorkspaceQuery>;
-export type GetWorkspaceLazyQueryHookResult = ReturnType<typeof useGetWorkspaceLazyQuery>;
-export type GetWorkspaceQueryResult = ApolloReactCommon.QueryResult<GetWorkspaceQuery, GetWorkspaceQueryVariables>;
-export const GetWorkspacesDocument = gql`
-    query getWorkspaces {
-  workspaces {
-    ...workspacesAttributes
-  }
-}
-    ${WorkspacesAttributesFragmentDoc}`;
-
-/**
- * __useGetWorkspacesQuery__
- *
- * To run a query within a React component, call `useGetWorkspacesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetWorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetWorkspacesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetWorkspacesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspacesQuery, GetWorkspacesQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetWorkspacesQuery, GetWorkspacesQueryVariables>(GetWorkspacesDocument, baseOptions);
-      }
-export function useGetWorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspacesQuery, GetWorkspacesQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetWorkspacesQuery, GetWorkspacesQueryVariables>(GetWorkspacesDocument, baseOptions);
-        }
-export type GetWorkspacesQueryHookResult = ReturnType<typeof useGetWorkspacesQuery>;
-export type GetWorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspacesLazyQuery>;
-export type GetWorkspacesQueryResult = ApolloReactCommon.QueryResult<GetWorkspacesQuery, GetWorkspacesQueryVariables>;
-export const GetUserDocument = gql`
-    query getUser {
-  user {
-    ...userAttributes
-  }
-}
-    ${UserAttributesFragmentDoc}`;
-
-/**
- * __useGetUserQuery__
- *
- * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, baseOptions);
-      }
-export function useGetUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, baseOptions);
-        }
-export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
-export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
-export type GetUserQueryResult = ApolloReactCommon.QueryResult<GetUserQuery, GetUserQueryVariables>;
 export const GetProjectDocument = gql`
     query getProject($where: ProjectWhere!) {
   project(where: $where) {
@@ -917,3 +668,252 @@ export function useUpdateProjectMutation(baseOptions?: ApolloReactHooks.Mutation
 export type UpdateProjectMutationHookResult = ReturnType<typeof useUpdateProjectMutation>;
 export type UpdateProjectMutationResult = ApolloReactCommon.MutationResult<UpdateProjectMutation>;
 export type UpdateProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateProjectMutation, UpdateProjectMutationVariables>;
+export const CreateProjectDocument = gql`
+    mutation createProject($newProjectInput: NewProjectInput!) {
+  createProject(newProjectInput: $newProjectInput) {
+    id
+    workspaceId
+    workspaceUserId
+    title
+    thumbnailPhotoURL
+    thumbnailPhotoID
+    inviteShareStatus
+    inviteSharePrivileges
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type CreateProjectMutationFn = ApolloReactCommon.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
+
+/**
+ * __useCreateProjectMutation__
+ *
+ * To run a mutation, you first call `useCreateProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProjectMutation, { data, loading, error }] = useCreateProjectMutation({
+ *   variables: {
+ *      newProjectInput: // value for 'newProjectInput'
+ *   },
+ * });
+ */
+export function useCreateProjectMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, baseOptions);
+      }
+export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
+export type CreateProjectMutationResult = ApolloReactCommon.MutationResult<CreateProjectMutation>;
+export type CreateProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const GetUserDocument = gql`
+    query getUser {
+  user {
+    ...userAttributes
+  }
+}
+    ${UserAttributesFragmentDoc}`;
+
+/**
+ * __useGetUserQuery__
+ *
+ * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, baseOptions);
+      }
+export function useGetUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, baseOptions);
+        }
+export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
+export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
+export type GetUserQueryResult = ApolloReactCommon.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const LoginUserDocument = gql`
+    mutation loginUser($loginInput: LoginInput) {
+  loginUser(loginInput: $loginInput) {
+    token
+    user {
+      ...userAttributes
+    }
+  }
+}
+    ${UserAttributesFragmentDoc}`;
+export type LoginUserMutationFn = ApolloReactCommon.MutationFunction<LoginUserMutation, LoginUserMutationVariables>;
+
+/**
+ * __useLoginUserMutation__
+ *
+ * To run a mutation, you first call `useLoginUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginUserMutation, { data, loading, error }] = useLoginUserMutation({
+ *   variables: {
+ *      loginInput: // value for 'loginInput'
+ *   },
+ * });
+ */
+export function useLoginUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LoginUserMutation, LoginUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<LoginUserMutation, LoginUserMutationVariables>(LoginUserDocument, baseOptions);
+      }
+export type LoginUserMutationHookResult = ReturnType<typeof useLoginUserMutation>;
+export type LoginUserMutationResult = ApolloReactCommon.MutationResult<LoginUserMutation>;
+export type LoginUserMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginUserMutation, LoginUserMutationVariables>;
+export const RegisterUserDocument = gql`
+    mutation registerUser($registerInput: RegisterInput) {
+  registerUser(registerInput: $registerInput) {
+    token
+    user {
+      ...userAttributes
+    }
+  }
+}
+    ${UserAttributesFragmentDoc}`;
+export type RegisterUserMutationFn = ApolloReactCommon.MutationFunction<RegisterUserMutation, RegisterUserMutationVariables>;
+
+/**
+ * __useRegisterUserMutation__
+ *
+ * To run a mutation, you first call `useRegisterUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerUserMutation, { data, loading, error }] = useRegisterUserMutation({
+ *   variables: {
+ *      registerInput: // value for 'registerInput'
+ *   },
+ * });
+ */
+export function useRegisterUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RegisterUserMutation, RegisterUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<RegisterUserMutation, RegisterUserMutationVariables>(RegisterUserDocument, baseOptions);
+      }
+export type RegisterUserMutationHookResult = ReturnType<typeof useRegisterUserMutation>;
+export type RegisterUserMutationResult = ApolloReactCommon.MutationResult<RegisterUserMutation>;
+export type RegisterUserMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterUserMutation, RegisterUserMutationVariables>;
+export const CreateWorkspaceDocument = gql`
+    mutation createWorkspace($newWorkspaceInput: NewWorkspaceInput) {
+  createWorkspace(newWorkspaceInput: $newWorkspaceInput) {
+    ...workspaceAttributes
+  }
+}
+    ${WorkspaceAttributesFragmentDoc}`;
+export type CreateWorkspaceMutationFn = ApolloReactCommon.MutationFunction<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+
+/**
+ * __useCreateWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
+ *   variables: {
+ *      newWorkspaceInput: // value for 'newWorkspaceInput'
+ *   },
+ * });
+ */
+export function useCreateWorkspaceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, baseOptions);
+      }
+export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
+export type CreateWorkspaceMutationResult = ApolloReactCommon.MutationResult<CreateWorkspaceMutation>;
+export type CreateWorkspaceMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+export const GetWorkspaceDocument = gql`
+    query getWorkspace {
+  workspace {
+    ...workspaceAttributes
+    workspaceUsers {
+      role
+      user {
+        id
+        firstName
+        lastName
+        avatarURL
+        email
+      }
+    }
+  }
+}
+    ${WorkspaceAttributesFragmentDoc}`;
+
+/**
+ * __useGetWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetWorkspaceQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspaceQuery, GetWorkspaceQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, baseOptions);
+      }
+export function useGetWorkspaceLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspaceQuery, GetWorkspaceQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetWorkspaceQuery, GetWorkspaceQueryVariables>(GetWorkspaceDocument, baseOptions);
+        }
+export type GetWorkspaceQueryHookResult = ReturnType<typeof useGetWorkspaceQuery>;
+export type GetWorkspaceLazyQueryHookResult = ReturnType<typeof useGetWorkspaceLazyQuery>;
+export type GetWorkspaceQueryResult = ApolloReactCommon.QueryResult<GetWorkspaceQuery, GetWorkspaceQueryVariables>;
+export const GetWorkspacesDocument = gql`
+    query getWorkspaces {
+  workspaces {
+    ...workspacesAttributes
+  }
+}
+    ${WorkspacesAttributesFragmentDoc}`;
+
+/**
+ * __useGetWorkspacesQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspacesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspacesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspacesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetWorkspacesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetWorkspacesQuery, GetWorkspacesQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetWorkspacesQuery, GetWorkspacesQueryVariables>(GetWorkspacesDocument, baseOptions);
+      }
+export function useGetWorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetWorkspacesQuery, GetWorkspacesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetWorkspacesQuery, GetWorkspacesQueryVariables>(GetWorkspacesDocument, baseOptions);
+        }
+export type GetWorkspacesQueryHookResult = ReturnType<typeof useGetWorkspacesQuery>;
+export type GetWorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspacesLazyQuery>;
+export type GetWorkspacesQueryResult = ApolloReactCommon.QueryResult<GetWorkspacesQuery, GetWorkspacesQueryVariables>;

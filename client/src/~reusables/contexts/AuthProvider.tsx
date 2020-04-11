@@ -1,21 +1,10 @@
 // modules
 import React, { createContext, useEffect } from "react";
 import { useLocalStore } from "mobx-react";
-import gql from "graphql-tag";
 
 // helpers
 import { useGetUserQuery, GetUserQuery } from "../../generated/graphql";
 import { useStoreState } from "../hooks/useStoreState";
-import { User } from "../utils/fragments";
-
-export const getUser = gql`
-  query getUser {
-    user {
-      ...userAttributes
-    }
-  }
-  ${User.fragments.attributes}
-`;
 
 export interface IAuthStore {
   user: GetUserQuery["user"];

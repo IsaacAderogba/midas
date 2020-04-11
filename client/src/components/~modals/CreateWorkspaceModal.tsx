@@ -1,7 +1,6 @@
 // modules
 import React, { useState } from "react";
 import { css } from "styled-components/macro";
-import gql from "graphql-tag";
 
 // components
 import { Modal, Form, Input, Button, Alert } from "antd";
@@ -9,7 +8,6 @@ import { P2 } from "../atoms/Text";
 
 // helpers
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
-import { Workspace } from "../../~reusables/utils/fragments";
 import { useCreateWorkspaceMutation } from "../../generated/graphql";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 import { useAppStore } from "../../~reusables/contexts/AppProvider";
@@ -101,12 +99,3 @@ export const CreateWorkspaceModal = () => {
     </Modal>
   );
 };
-
-export const createWorkspace = gql`
-  mutation createWorkspace($newWorkspaceInput: NewWorkspaceInput) {
-    createWorkspace(newWorkspaceInput: $newWorkspaceInput) {
-      ...workspaceAttributes
-    }
-  }
-  ${Workspace.fragments.attributes}
-`;

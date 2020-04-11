@@ -1,7 +1,6 @@
 // modules
 import React, { useState } from "react";
 import { css } from "styled-components/macro";
-import gql from "graphql-tag";
 
 // components
 import { Modal, Tabs, Input, Form, Button, Alert } from "antd";
@@ -9,7 +8,6 @@ import { Modal, Tabs, Input, Form, Button, Alert } from "antd";
 // helpers
 import { useUIStore, IUIStore } from "../../~reusables/contexts/UIProvider";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
-import { User } from "../../~reusables/utils/fragments";
 import {
   useLoginUserMutation,
   useRegisterUserMutation,
@@ -20,7 +18,10 @@ import {
   useAuthStore,
   IAuthStore
 } from "../../~reusables/contexts/AuthProvider";
-import { setLocalStorageTokenKey, setLocalStorageWorkspaceKey } from "../../~reusables/utils/localStorage";
+import {
+  setLocalStorageTokenKey,
+  setLocalStorageWorkspaceKey
+} from "../../~reusables/utils/localStorage";
 
 enum AuthModalTabs {
   Signup = "Signup",
@@ -66,18 +67,6 @@ export const AuthModal: React.FC<IAuthModal> = ({ type }) => {
     </Modal>
   );
 };
-
-export const registerUser = gql`
-  mutation registerUser($registerInput: RegisterInput) {
-    registerUser(registerInput: $registerInput) {
-      token
-      user {
-        ...userAttributes
-      }
-    }
-  }
-  ${User.fragments.attributes}
-`;
 
 export const RegisterFields: React.FC = () => {
   const { space } = useTheme();
@@ -189,18 +178,6 @@ export const RegisterFields: React.FC = () => {
     </Form>
   );
 };
-
-export const loginUser = gql`
-  mutation loginUser($loginInput: LoginInput) {
-    loginUser(loginInput: $loginInput) {
-      token
-      user {
-        ...userAttributes
-      }
-    }
-  }
-  ${User.fragments.attributes}
-`;
 
 export const LoginFields: React.FC = () => {
   const { space } = useTheme();

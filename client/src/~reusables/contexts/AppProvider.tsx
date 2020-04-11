@@ -8,11 +8,9 @@ import {
   useGetWorkspacesQuery,
   GetWorkspacesQuery,
 } from "../../generated/graphql";
-import gql from "graphql-tag";
 
 // helpers
 import { useStoreState } from "../hooks/useStoreState";
-import { Workspace } from "../utils/fragments";
 import { setLocalStorageWorkspaceKey } from "../utils/localStorage";
 import { useUIStore } from "./UIProvider";
 import { CreateWorkspaceModal } from "../../components/~modals/CreateWorkspaceModal";
@@ -99,30 +97,3 @@ export const AppProvider: React.FC = ({ children }) => {
   );
 };
 
-export const getWorkspace = gql`
-  query getWorkspace {
-    workspace {
-      ...workspaceAttributes
-      workspaceUsers {
-        role
-        user {
-          id
-          firstName
-          lastName
-          avatarURL
-          email
-        }
-      }
-    }
-  }
-  ${Workspace.fragments.attributes}
-`;
-
-export const getWorkspaces = gql`
-  query getWorkspaces {
-    workspaces {
-      ...workspacesAttributes
-    }
-  }
-  ${Workspace.fragments.workspacesAttributes}
-`;

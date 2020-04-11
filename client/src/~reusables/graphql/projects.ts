@@ -39,3 +39,20 @@ export const updateProject = gql`
   }
   ${Project.fragments.attributes}
 `;
+
+export const createProject = gql`
+  mutation createProject($newProjectInput: NewProjectInput!) {
+    createProject(newProjectInput: $newProjectInput) {
+      id
+      workspaceId
+      workspaceUserId
+      title
+      thumbnailPhotoURL
+      thumbnailPhotoID
+      inviteShareStatus
+      inviteSharePrivileges
+      createdAt
+      updatedAt
+    }
+  }
+`;
