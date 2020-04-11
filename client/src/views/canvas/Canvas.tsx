@@ -1,5 +1,5 @@
 // modules
-import React from "react";
+import React, { useEffect } from "react";
 import { useContextSelector } from "use-context-selector";
 import { css } from "styled-components/macro";
 
@@ -23,10 +23,7 @@ import {
   pushHistoryEntry
 } from "../../~reusables/utils/history";
 import { randomSeed } from "../../~reusables/utils/seed";
-import {
-  restoreFromLocalStorage,
-  save
-} from "../../~reusables/utils/saveAndRetrieval";
+import { canvasStoreWhiteList } from "../../~reusables/utils/saveAndRetrieval";
 import {
   hitTest,
   resizeTest,
@@ -59,6 +56,7 @@ import {
   ELEMENT_TRANSLATE_AMOUNT
 } from "../../~reusables/constants/dimensions";
 import { useUpdateProjectMutation } from "../../generated/graphql";
+import _ from "lodash";
 
 export const Canvas: React.FC = () => {
   return (
@@ -74,11 +72,31 @@ export const Canvas: React.FC = () => {
 export const StatefulCanvas: React.FC = () => {
   const elements = useElementsStore(state => state.elements);
   const canvasStore = useContextSelector(CanvasContext, state => state);
-  console.log(canvasStore)
+  console.log(canvasStore);
 
-  // const [updateProject] = useUpdateProjectMutation({
-  //   variables: { projectInput: {}, where: {} }
-  // });
+  const [updateProject] = useUpdateProjectMutation();
+  const updateProjectDebounced = _.debounce(
+    (state: ICanvasState, elements: MidasElement[]) => {
+      updateProject({
+        variables: {
+          projectInput: {
+            state: JSON.stringify(_.pick(state, canvasStoreWhiteList)),
+            elements: JSON.stringify(elements)
+          },
+          where: { uuid: canvasStore.project?.uuid }
+        }
+      });
+    },
+    2000
+  );
+
+  useEffect(() => {
+    /**
+     * Anytime canvas store or elements changes, make a write to the
+     * database after a debounced 2 second pause
+     */
+    updateProjectDebounced(canvasStore, elements);
+  }, [canvasStore, elements]);
 
   return <StatelessCanvas {...canvasStore} elements={elements} />;
 };
@@ -90,9 +108,10 @@ let lastCanvasWidth = -1;
 let lastCanvasHeight = -1;
 let lastMouseUp: ((e: any) => void) | null = null;
 
-class StatelessCanvas extends React.Component<
-  ICanvasState & { elements: MidasElement[] }
-> {
+interface IStatelessCanvas extends ICanvasState {
+  elements: MidasElement[];
+}
+class StatelessCanvas extends React.Component<IStatelessCanvas> {
   public state = {
     scrollX: 0,
     scrollY: 0
@@ -620,7 +639,6 @@ class StatelessCanvas extends React.Component<
         },
         this.props.elements
       );
-      save(this.props, this.props.elements);
       if (!skipHistory) {
         pushHistoryEntry(
           stateHistory,

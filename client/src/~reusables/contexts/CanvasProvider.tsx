@@ -109,7 +109,7 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
     getProject,
     { loading, subscribeToMore, data }
   ] = useGetProjectLazyQuery({
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
     variables: { where: { uuid: match.params.uuid } }
   });
   const canvasRef = useRef<Maybe<HTMLCanvasElement>>(null);
@@ -137,7 +137,7 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
         data.project.state,
         elements
       );
-      
+
       if(savedState) {
         setState(savedState)
       }

@@ -127,7 +127,7 @@ export function saveFile(name: string, data: string) {
   link.remove();
 }
 
-const whitelist: (keyof ICanvasStore)[] = [
+export const canvasStoreWhiteList: (keyof ICanvasStore)[] = [
   "draggingElement",
   "resizingElement",
   "elementType",
@@ -138,7 +138,7 @@ const whitelist: (keyof ICanvasStore)[] = [
 ];
 
 export function save(state: ICanvasStore, elements: MidasElement[]) {
-  state = _.pick(state, whitelist);
+  state = _.pick(state, canvasStoreWhiteList);
   localStorage.setItem(LOCAL_STORAGE_MIDAS_KEY, JSON.stringify(elements));
   localStorage.setItem(LOCAL_STORAGE_MIDAS_STATE_KEY, JSON.stringify(state));
 }
@@ -167,7 +167,7 @@ export function restore(
       elements.forEach((element: MidasElement) => generateDraw(element));
     }
 
-    return savedState ? _.pick(JSON.parse(savedState), whitelist) : null;
+    return savedState ? _.pick(JSON.parse(savedState), canvasStoreWhiteList) : null;
   } catch (e) {
     elements.splice(0, elements.length);
     return null;
