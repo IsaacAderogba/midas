@@ -1,10 +1,16 @@
 // modules
 import React from "react";
 import { styled } from "../../~reusables/contexts/ThemeProvider";
+import { css } from "styled-components/macro";
 import { useContextSelector } from "use-context-selector";
 
 // components
-import { ClearOutlined } from "@ant-design/icons";
+import {
+  ClearOutlined,
+  DownloadOutlined,
+  UploadOutlined,
+  MenuOutlined
+} from "@ant-design/icons";
 import { CanvasIconWrapper } from "../../components/atoms/CanvasIconWrapper";
 
 // helpers
@@ -100,32 +106,57 @@ export const CanvasTopbar: React.FC = () => {
 
   return (
     <StyledCanvasTopbar>
-      <section>
+      <section
+        css={css`
+          display: flex;
+        `}
+      >
+        <CanvasIconWrapper icon={MenuOutlined} title="Menu" />
         <CanvasIconWrapper
           icon={ClearOutlined}
           title="Clear the canvas & reset background color"
           onClick={clearCanvas}
         />
+        <CanvasIconWrapper
+          icon={UploadOutlined}
+          title="Upload"
+          onClick={async () => await loadFromJSON(elements)}
+        />
+        <CanvasIconWrapper
+          icon={DownloadOutlined}
+          title="Download"
+          onClick={() => saveAsJSON(elements)}
+        />
       </section>
-      <section>
+      <section
+        css={css`
+          display: flex;
+        `}
+      >
         {SHAPES.map(({ value, icon }) => (
-          <label key={value} className="tool">
-            <input
-              type="radio"
-              checked={elementType === value}
-              onChange={() => {
-                setState(prevState => ({
-                  ...prevState,
-                  elementType: value
-                }));
-                clearSelection(elements);
-                document.documentElement.style.cursor =
-                  value === "text" ? "text" : "crosshair";
-                // forceUpdate();
-              }}
-            />
-            <div className="toolIcon">{icon}</div>
-          </label>
+          <CanvasIconWrapper
+            key={value}
+            svgIcon={icon}
+            checked={elementType === value}
+            onClick={() => {
+              setState(prevState => ({
+                ...prevState,
+                elementType: value
+              }));
+              clearSelection(elements);
+              document.documentElement.style.cursor =
+                value === "text" ? "text" : "crosshair";
+            }}
+          />
+
+          // <label key={value} className="tool">
+          //   <input
+          //     type="radio"
+          //     checked={elementType === value}
+          //     onChange={}
+          //   />
+          //   <div className="toolIcon">{icon}</div>
+          // </label>
         ))}
       </section>
       <section>
@@ -155,20 +186,6 @@ export const CanvasTopbar: React.FC = () => {
           />
           background
         </label>
-        <button
-          onClick={() => {
-            saveAsJSON(elements);
-          }}
-        >
-          Save as...
-        </button>
-        <button
-          onClick={() => {
-            loadFromJSON(elements).then(() => {});
-          }}
-        >
-          Load file...
-        </button>
       </section>
     </StyledCanvasTopbar>
   );
