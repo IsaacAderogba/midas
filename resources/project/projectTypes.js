@@ -31,6 +31,8 @@ const Project = objectType({
       type: ProjectInviteSharePrivileges,
       nullable: false,
     });
+    t.string("elements", { nullable: true });
+    t.string("state", { nullable: true });
     t.string("createdAt", { nullable: false });
     t.string("updatedAt", { nullable: false });
     t.field("workspace", {
@@ -96,6 +98,8 @@ const ProjectInput = inputObjectType({
       type: ProjectInviteSharePrivileges,
       required: false,
     });
+    t.string("elements", { required: false });
+    t.string("state", { required: false });
   },
 });
 

@@ -62,9 +62,11 @@ input NewWorkspaceUserInput {
 
 type Project {
   createdAt: String!
+  elements: String
   id: ID!
   inviteSharePrivileges: ProjectInviteSharePrivileges!
   inviteShareStatus: ProjectInviteShareStatus!
+  state: String
   thumbnailPhotoID: String
   thumbnailPhotoURL: String
   title: String!
@@ -77,8 +79,10 @@ type Project {
 }
 
 input ProjectInput {
+  elements: String
   inviteSharePrivileges: ProjectInviteSharePrivileges
   inviteShareStatus: ProjectInviteShareStatus
+  state: String
   thumbnailPhotoID: String
   thumbnailPhotoURL: String
   title: String

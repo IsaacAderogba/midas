@@ -37,8 +37,10 @@ export interface NexusGenInputs {
     workspaceId: number; // Int!
   }
   ProjectInput: { // input type
+    elements?: string | null; // String
     inviteSharePrivileges?: NexusGenEnums['ProjectInviteSharePrivileges'] | null; // ProjectInviteSharePrivileges
     inviteShareStatus?: NexusGenEnums['ProjectInviteShareStatus'] | null; // ProjectInviteShareStatus
+    state?: string | null; // String
     thumbnailPhotoID?: string | null; // String
     thumbnailPhotoURL?: string | null; // String
     title?: string | null; // String
@@ -97,9 +99,11 @@ export interface NexusGenRootTypes {
   Mutation: {};
   Project: { // root type
     createdAt: string; // String!
+    elements?: string | null; // String
     id: string; // ID!
     inviteSharePrivileges: NexusGenEnums['ProjectInviteSharePrivileges']; // ProjectInviteSharePrivileges!
     inviteShareStatus: NexusGenEnums['ProjectInviteShareStatus']; // ProjectInviteShareStatus!
+    state?: string | null; // String
     thumbnailPhotoID?: string | null; // String
     thumbnailPhotoURL?: string | null; // String
     title: string; // String!
@@ -194,9 +198,11 @@ export interface NexusGenFieldTypes {
   }
   Project: { // field return type
     createdAt: string; // String!
+    elements: string | null; // String
     id: string; // ID!
     inviteSharePrivileges: NexusGenEnums['ProjectInviteSharePrivileges']; // ProjectInviteSharePrivileges!
     inviteShareStatus: NexusGenEnums['ProjectInviteShareStatus']; // ProjectInviteShareStatus!
+    state: string | null; // String
     thumbnailPhotoID: string | null; // String
     thumbnailPhotoURL: string | null; // String
     title: string; // String!

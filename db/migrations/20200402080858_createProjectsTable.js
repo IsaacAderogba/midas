@@ -24,6 +24,8 @@ exports.up = function (knex) {
     Project.string("inviteSharePrivileges", 128)
       .notNullable()
       .defaultTo("can_view");
+    Project.text("elements", ["longText"]);
+    Project.text("state");
     Project.datetime("createdAt").notNullable();
     Project.datetime("updatedAt").notNullable();
   });
