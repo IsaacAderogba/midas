@@ -12,6 +12,7 @@ import {
   MenuOutlined
 } from "@ant-design/icons";
 import { CanvasIconWrapper } from "../../components/atoms/CanvasIconWrapper";
+import { Button } from "antd";
 
 // helpers
 import { CANVAS_TOPBAR_HEIGHT } from "../../~reusables/constants/dimensions";
@@ -148,19 +149,15 @@ export const CanvasTopbar: React.FC = () => {
                 value === "text" ? "text" : "crosshair";
             }}
           />
-
-          // <label key={value} className="tool">
-          //   <input
-          //     type="radio"
-          //     checked={elementType === value}
-          //     onChange={}
-          //   />
-          //   <div className="toolIcon">{icon}</div>
-          // </label>
         ))}
       </section>
-      <section>
-        <button
+      <section
+        css={css`
+          display: flex;
+        `}
+      >
+        <Button
+          type="primary"
           onClick={() => {
             if (canvasRef.current) {
               exportAsPNG(
@@ -171,8 +168,8 @@ export const CanvasTopbar: React.FC = () => {
             }
           }}
         >
-          Export to png
-        </button>
+          Export to PNG
+        </Button>
         <label>
           <input
             type="checkbox"
