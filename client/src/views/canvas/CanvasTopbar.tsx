@@ -3,6 +3,10 @@ import React from "react";
 import { styled } from "../../~reusables/contexts/ThemeProvider";
 import { useContextSelector } from "use-context-selector";
 
+// components
+import { ClearOutlined } from "@ant-design/icons";
+import { CanvasIconWrapper } from "../../components/atoms/CanvasIconWrapper";
+
 // helpers
 import { CANVAS_TOPBAR_HEIGHT } from "../../~reusables/constants/dimensions";
 import { clearSelection } from "../../~reusables/utils/element";
@@ -72,7 +76,7 @@ export const CanvasTopbar: React.FC = () => {
     elementType,
     canvasRef,
     exportBackground,
-    viewBackgroundColor,
+    viewBackgroundColor
   } = useContextSelector(CanvasContext, state => ({
     setState: state.setState,
     elementType: state.elementType,
@@ -96,17 +100,35 @@ export const CanvasTopbar: React.FC = () => {
 
   return (
     <StyledCanvasTopbar>
-      <h4>Shapes</h4>
-
-      <div className="panelColumn">
-        <button
-          onClick={clearCanvas}
+      <section>
+        <CanvasIconWrapper
+          icon={ClearOutlined}
           title="Clear the canvas & reset background color"
-        >
-          Clear canvas
-        </button>
-      </div>
-      <div className="panelColumn">
+          onClick={clearCanvas}
+        />
+      </section>
+      <section>
+        {SHAPES.map(({ value, icon }) => (
+          <label key={value} className="tool">
+            <input
+              type="radio"
+              checked={elementType === value}
+              onChange={() => {
+                setState(prevState => ({
+                  ...prevState,
+                  elementType: value
+                }));
+                clearSelection(elements);
+                document.documentElement.style.cursor =
+                  value === "text" ? "text" : "crosshair";
+                // forceUpdate();
+              }}
+            />
+            <div className="toolIcon">{icon}</div>
+          </label>
+        ))}
+      </section>
+      <section>
         <button
           onClick={() => {
             if (canvasRef.current) {
@@ -133,8 +155,6 @@ export const CanvasTopbar: React.FC = () => {
           />
           background
         </label>
-      </div>
-      <div className="panelColumn">
         <button
           onClick={() => {
             saveAsJSON(elements);
@@ -149,27 +169,7 @@ export const CanvasTopbar: React.FC = () => {
         >
           Load file...
         </button>
-      </div>
-
-      {SHAPES.map(({ value, icon }) => (
-        <label key={value} className="tool">
-          <input
-            type="radio"
-            checked={elementType === value}
-            onChange={() => {
-              setState(prevState => ({
-                ...prevState,
-                elementType: value
-              }));
-              clearSelection(elements);
-              document.documentElement.style.cursor =
-                value === "text" ? "text" : "crosshair";
-              // forceUpdate();
-            }}
-          />
-          <div className="toolIcon">{icon}</div>
-        </label>
-      ))}
+      </section>
     </StyledCanvasTopbar>
   );
 };
@@ -181,6 +181,8 @@ const StyledCanvasTopbar = styled.header`
   background: linear-gradient(180deg, #f1f1f1 0%, #efefef 100%);
   box-shadow: 0px 5px 15px rgba(168, 183, 203, 0.07);
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   overflow-x: scroll;
   top: 0;
   border-bottom: 1px solid ${p => p.theme.colors.greys[8]};
