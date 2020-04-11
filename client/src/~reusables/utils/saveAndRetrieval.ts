@@ -151,7 +151,7 @@ export function restoreFromLocalStorage(elements: MidasElement[]) {
 }
 
 export function restore(
-  savedElements: string | MidasElement[] | null,
+  savedElements: string | MidasElement[] | null | undefined,
   savedState: string | null,
   elements: MidasElement[]
 ) {

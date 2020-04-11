@@ -15,6 +15,11 @@ import rough from "roughjs/bin/wrappers/rough";
 import { useStoreState } from "../hooks/useStoreState";
 import { MidasElement, Maybe } from "../utils/types";
 import { RoughCanvas } from "roughjs/bin/canvas";
+import {
+  useGetProjectLazyQuery,
+  GetProjectQuery
+} from "../../generated/graphql";
+import { restore } from "../utils/saveAndRetrieval";
 
 /**
  * mobx just isn't playing nice, so we're isolating it to our elements
@@ -30,7 +35,12 @@ export const useElementsStore = <S,>(
   dataSelector: (store: IElementsStore) => S
 ) => useStoreState(ElementContext, contextData => contextData!, dataSelector);
 
-export const ElementsProvider: React.FC = ({ children }) => {
+interface IElementsProvider extends RouteComponentProps<{ uuid: string }> {}
+
+export const ElementsProvider: React.FC<IElementsProvider> = ({
+  children,
+  ...routeProps
+}) => {
   let store = useLocalStore<IElementsStore>(() => ({
     get elements() {
       return [];
@@ -38,7 +48,9 @@ export const ElementsProvider: React.FC = ({ children }) => {
   }));
 
   return (
-    <ElementContext.Provider value={store}>{children}</ElementContext.Provider>
+    <ElementContext.Provider value={store}>
+      <CanvasProvider {...routeProps}>{children}</CanvasProvider>
+    </ElementContext.Provider>
   );
 };
 
@@ -56,15 +68,16 @@ interface ICanvasAction {
   setState: React.Dispatch<React.SetStateAction<ICanvasStore>>;
 }
 
-interface ICanvasRefs {
+interface ICanvasUtils {
   canvasRef: React.MutableRefObject<Maybe<HTMLCanvasElement>>;
   rcRef: React.MutableRefObject<Maybe<RoughCanvas>>;
   contextRef: React.MutableRefObject<Maybe<CanvasRenderingContext2D>>;
   canvasUpdateListener: any;
   forceCanvasUpdate: React.DispatchWithoutAction;
+  project: GetProjectQuery["project"];
 }
 
-export type ICanvasState = ICanvasStore & ICanvasAction & ICanvasRefs;
+export type ICanvasState = ICanvasStore & ICanvasAction & ICanvasUtils;
 
 export const CanvasContext = createNewContext<ICanvasState>({
   draggingElement: null,
@@ -79,11 +92,26 @@ export const CanvasContext = createNewContext<ICanvasState>({
   rcRef: React.createRef(),
   contextRef: React.createRef(),
   canvasUpdateListener: null,
-  forceCanvasUpdate: () => {}
+  forceCanvasUpdate: () => {},
+  project: null
 });
 
-export const CanvasProvider: React.FC<RouteComponentProps> = ({ children }) => {
+interface ICanvasProvider extends RouteComponentProps<{ uuid: string }> {}
+
+export const CanvasProvider: React.FC<ICanvasProvider> = ({
+  children,
+  match
+}) => {
   const [canvasUpdateListener, forceCanvasUpdate] = useReducer(x => x + 1, 0);
+  const elements = useElementsStore(state => state.elements);
+
+  const [
+    getProject,
+    { loading, subscribeToMore, data }
+  ] = useGetProjectLazyQuery({
+    fetchPolicy: "network-only",
+    variables: { where: { uuid: match.params.uuid } }
+  });
   const canvasRef = useRef<Maybe<HTMLCanvasElement>>(null);
   const rcRef = useRef<Maybe<RoughCanvas>>(null);
   const contextRef = useRef<Maybe<CanvasRenderingContext2D>>(null);
@@ -99,8 +127,25 @@ export const CanvasProvider: React.FC<RouteComponentProps> = ({ children }) => {
   });
 
   useEffect(() => {
+    getProject();
+  }, [match.params.uuid]);
+
+  useEffect(() => {
+    if (data && data.project && data.project.state) {
+      const savedState = restore(
+        data.project.elements,
+        data.project.state,
+        elements
+      );
+      
+      if(savedState) {
+        setState(savedState)
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
     if (canvasRef.current) {
-      console.log(canvasRef.current);
       let tempCanvas = canvasRef.current as HTMLCanvasElement;
       rcRef.current = rough.canvas(tempCanvas);
       contextRef.current = tempCanvas.getContext("2d")!;
@@ -117,10 +162,11 @@ export const CanvasProvider: React.FC<RouteComponentProps> = ({ children }) => {
         contextRef,
         setState,
         canvasUpdateListener,
-        forceCanvasUpdate
+        forceCanvasUpdate,
+        project: data ? data.project : null
       }}
     >
-      <ElementsProvider>{children}</ElementsProvider>
+      {children}
     </CanvasContext.Provider>
   );
 };

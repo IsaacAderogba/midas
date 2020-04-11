@@ -58,6 +58,7 @@ import {
   ELEMENT_SHIFT_TRANSLATE_AMOUNT,
   ELEMENT_TRANSLATE_AMOUNT
 } from "../../~reusables/constants/dimensions";
+import { useUpdateProjectMutation } from "../../generated/graphql";
 
 export const Canvas: React.FC = () => {
   return (
@@ -73,7 +74,11 @@ export const Canvas: React.FC = () => {
 export const StatefulCanvas: React.FC = () => {
   const elements = useElementsStore(state => state.elements);
   const canvasStore = useContextSelector(CanvasContext, state => state);
-  console.log(canvasStore);
+  console.log(canvasStore)
+
+  // const [updateProject] = useUpdateProjectMutation({
+  //   variables: { projectInput: {}, where: {} }
+  // });
 
   return <StatelessCanvas {...canvasStore} elements={elements} />;
 };
@@ -98,11 +103,6 @@ class StatelessCanvas extends React.Component<
     window.addEventListener("resize", this.onResize, false);
 
     this.forceUpdate();
-    // TODO - at front or behind
-    const savedState = restoreFromLocalStorage(this.props.elements);
-    if (savedState) {
-      this.props.setState(savedState);
-    }
   }
 
   public componentWillUnmount() {

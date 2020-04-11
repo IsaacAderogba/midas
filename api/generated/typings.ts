@@ -48,7 +48,7 @@ export interface NexusGenInputs {
   }
   ProjectWhere: { // input type
     id?: string | null; // ID
-    uuid: string; // String!
+    uuid?: string | null; // String
     workspaceId?: string | null; // ID
     workspaceUserId?: string | null; // ID
   }

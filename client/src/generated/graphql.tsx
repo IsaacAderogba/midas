@@ -139,6 +139,8 @@ export type Project = {
   thumbnailPhotoID?: Maybe<Scalars['String']>;
   inviteShareStatus: ProjectInviteShareStatus;
   inviteSharePrivileges: ProjectInviteSharePrivileges;
+  elements?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   workspace: Workspace;
@@ -152,6 +154,8 @@ export type ProjectInput = {
   thumbnailPhotoID?: Maybe<Scalars['String']>;
   inviteShareStatus?: Maybe<ProjectInviteShareStatus>;
   inviteSharePrivileges?: Maybe<ProjectInviteSharePrivileges>;
+  elements?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
 };
 
 export enum ProjectInviteSharePrivileges {
@@ -171,7 +175,7 @@ export type ProjectSubscriptionPayload = {
 
 export type ProjectWhere = {
   id?: Maybe<Scalars['ID']>;
-  uuid: Scalars['String'];
+  uuid?: Maybe<Scalars['String']>;
   workspaceUserId?: Maybe<Scalars['ID']>;
   workspaceId?: Maybe<Scalars['ID']>;
 };
@@ -331,34 +335,6 @@ export type CreateWorkspaceMutation = (
   )> }
 );
 
-export type GetProjectsQueryVariables = {
-  where?: Maybe<ProjectWhere>;
-};
-
-
-export type GetProjectsQuery = (
-  { __typename?: 'Query' }
-  & { projects: Array<(
-    { __typename?: 'Project' }
-    & ProjectsAttributesFragment
-  )> }
-);
-
-export type ProjectsSubscriptionVariables = {};
-
-
-export type ProjectsSubscription = (
-  { __typename?: 'Subscription' }
-  & { projects: (
-    { __typename?: 'ProjectSubscriptionPayload' }
-    & Pick<ProjectSubscriptionPayload, 'mutation'>
-    & { data: (
-      { __typename?: 'Project' }
-      & ProjectsAttributesFragment
-    ) }
-  ) }
-);
-
 export type CreateProjectMutationVariables = {
   newProjectInput: NewProjectInput;
 };
@@ -413,6 +389,61 @@ export type GetUserQuery = (
   )> }
 );
 
+export type GetProjectQueryVariables = {
+  where: ProjectWhere;
+};
+
+
+export type GetProjectQuery = (
+  { __typename?: 'Query' }
+  & { project?: Maybe<(
+    { __typename?: 'Project' }
+    & ProjectAttributesFragment
+  )> }
+);
+
+export type GetProjectsQueryVariables = {
+  where?: Maybe<ProjectWhere>;
+};
+
+
+export type GetProjectsQuery = (
+  { __typename?: 'Query' }
+  & { projects: Array<(
+    { __typename?: 'Project' }
+    & ProjectsAttributesFragment
+  )> }
+);
+
+export type ProjectsSubscriptionVariables = {};
+
+
+export type ProjectsSubscription = (
+  { __typename?: 'Subscription' }
+  & { projects: (
+    { __typename?: 'ProjectSubscriptionPayload' }
+    & Pick<ProjectSubscriptionPayload, 'mutation'>
+    & { data: (
+      { __typename?: 'Project' }
+      & ProjectsAttributesFragment
+    ) }
+  ) }
+);
+
+export type UpdateProjectMutationVariables = {
+  projectInput: ProjectInput;
+  where: ProjectWhere;
+};
+
+
+export type UpdateProjectMutation = (
+  { __typename?: 'Mutation' }
+  & { updateProject?: Maybe<(
+    { __typename?: 'Project' }
+    & ProjectAttributesFragment
+  )> }
+);
+
 export type WorkspaceAttributesFragment = (
   { __typename?: 'Workspace' }
   & Pick<Workspace, 'id' | 'name' | 'url' | 'photoURL' | 'photoId' | 'trialStartedAt' | 'seats'>
@@ -430,6 +461,11 @@ export type UserAttributesFragment = (
     { __typename?: 'Workspace' }
     & WorkspacesAttributesFragment
   )>> }
+);
+
+export type ProjectAttributesFragment = (
+  { __typename?: 'Project' }
+  & Pick<Project, 'id' | 'uuid' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'elements' | 'state' | 'createdAt' | 'updatedAt'>
 );
 
 export type ProjectsAttributesFragment = (
@@ -470,6 +506,23 @@ export const UserAttributesFragmentDoc = gql`
   }
 }
     ${WorkspacesAttributesFragmentDoc}`;
+export const ProjectAttributesFragmentDoc = gql`
+    fragment projectAttributes on Project {
+  id
+  uuid
+  workspaceId
+  workspaceUserId
+  title
+  thumbnailPhotoURL
+  thumbnailPhotoID
+  inviteShareStatus
+  inviteSharePrivileges
+  elements
+  state
+  createdAt
+  updatedAt
+}
+    `;
 export const ProjectsAttributesFragmentDoc = gql`
     fragment projectsAttributes on Project {
   id
@@ -587,70 +640,6 @@ export function useCreateWorkspaceMutation(baseOptions?: ApolloReactHooks.Mutati
 export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
 export type CreateWorkspaceMutationResult = ApolloReactCommon.MutationResult<CreateWorkspaceMutation>;
 export type CreateWorkspaceMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
-export const GetProjectsDocument = gql`
-    query getProjects($where: ProjectWhere) {
-  projects(where: $where) {
-    ...projectsAttributes
-  }
-}
-    ${ProjectsAttributesFragmentDoc}`;
-
-/**
- * __useGetProjectsQuery__
- *
- * To run a query within a React component, call `useGetProjectsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetProjectsQuery({
- *   variables: {
- *      where: // value for 'where'
- *   },
- * });
- */
-export function useGetProjectsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, baseOptions);
-      }
-export function useGetProjectsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, baseOptions);
-        }
-export type GetProjectsQueryHookResult = ReturnType<typeof useGetProjectsQuery>;
-export type GetProjectsLazyQueryHookResult = ReturnType<typeof useGetProjectsLazyQuery>;
-export type GetProjectsQueryResult = ApolloReactCommon.QueryResult<GetProjectsQuery, GetProjectsQueryVariables>;
-export const ProjectsDocument = gql`
-    subscription projects {
-  projects {
-    mutation
-    data {
-      ...projectsAttributes
-    }
-  }
-}
-    ${ProjectsAttributesFragmentDoc}`;
-
-/**
- * __useProjectsSubscription__
- *
- * To run a query within a React component, call `useProjectsSubscription` and pass it any options that fit your needs.
- * When your component renders, `useProjectsSubscription` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useProjectsSubscription({
- *   variables: {
- *   },
- * });
- */
-export function useProjectsSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<ProjectsSubscription, ProjectsSubscriptionVariables>) {
-        return ApolloReactHooks.useSubscription<ProjectsSubscription, ProjectsSubscriptionVariables>(ProjectsDocument, baseOptions);
-      }
-export type ProjectsSubscriptionHookResult = ReturnType<typeof useProjectsSubscription>;
-export type ProjectsSubscriptionResult = ApolloReactCommon.SubscriptionResult<ProjectsSubscription>;
 export const CreateProjectDocument = gql`
     mutation createProject($newProjectInput: NewProjectInput!) {
   createProject(newProjectInput: $newProjectInput) {
@@ -798,3 +787,133 @@ export function useGetUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserQueryResult = ApolloReactCommon.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const GetProjectDocument = gql`
+    query getProject($where: ProjectWhere!) {
+  project(where: $where) {
+    ...projectAttributes
+  }
+}
+    ${ProjectAttributesFragmentDoc}`;
+
+/**
+ * __useGetProjectQuery__
+ *
+ * To run a query within a React component, call `useGetProjectQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetProjectQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetProjectQuery, GetProjectQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, baseOptions);
+      }
+export function useGetProjectLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetProjectQuery, GetProjectQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetProjectQuery, GetProjectQueryVariables>(GetProjectDocument, baseOptions);
+        }
+export type GetProjectQueryHookResult = ReturnType<typeof useGetProjectQuery>;
+export type GetProjectLazyQueryHookResult = ReturnType<typeof useGetProjectLazyQuery>;
+export type GetProjectQueryResult = ApolloReactCommon.QueryResult<GetProjectQuery, GetProjectQueryVariables>;
+export const GetProjectsDocument = gql`
+    query getProjects($where: ProjectWhere) {
+  projects(where: $where) {
+    ...projectsAttributes
+  }
+}
+    ${ProjectsAttributesFragmentDoc}`;
+
+/**
+ * __useGetProjectsQuery__
+ *
+ * To run a query within a React component, call `useGetProjectsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProjectsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProjectsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetProjectsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, baseOptions);
+      }
+export function useGetProjectsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetProjectsQuery, GetProjectsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetProjectsQuery, GetProjectsQueryVariables>(GetProjectsDocument, baseOptions);
+        }
+export type GetProjectsQueryHookResult = ReturnType<typeof useGetProjectsQuery>;
+export type GetProjectsLazyQueryHookResult = ReturnType<typeof useGetProjectsLazyQuery>;
+export type GetProjectsQueryResult = ApolloReactCommon.QueryResult<GetProjectsQuery, GetProjectsQueryVariables>;
+export const ProjectsDocument = gql`
+    subscription projects {
+  projects {
+    mutation
+    data {
+      ...projectsAttributes
+    }
+  }
+}
+    ${ProjectsAttributesFragmentDoc}`;
+
+/**
+ * __useProjectsSubscription__
+ *
+ * To run a query within a React component, call `useProjectsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useProjectsSubscription` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProjectsSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useProjectsSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<ProjectsSubscription, ProjectsSubscriptionVariables>) {
+        return ApolloReactHooks.useSubscription<ProjectsSubscription, ProjectsSubscriptionVariables>(ProjectsDocument, baseOptions);
+      }
+export type ProjectsSubscriptionHookResult = ReturnType<typeof useProjectsSubscription>;
+export type ProjectsSubscriptionResult = ApolloReactCommon.SubscriptionResult<ProjectsSubscription>;
+export const UpdateProjectDocument = gql`
+    mutation updateProject($projectInput: ProjectInput!, $where: ProjectWhere!) {
+  updateProject(projectInput: $projectInput, where: $where) {
+    ...projectAttributes
+  }
+}
+    ${ProjectAttributesFragmentDoc}`;
+export type UpdateProjectMutationFn = ApolloReactCommon.MutationFunction<UpdateProjectMutation, UpdateProjectMutationVariables>;
+
+/**
+ * __useUpdateProjectMutation__
+ *
+ * To run a mutation, you first call `useUpdateProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProjectMutation, { data, loading, error }] = useUpdateProjectMutation({
+ *   variables: {
+ *      projectInput: // value for 'projectInput'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateProjectMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateProjectMutation, UpdateProjectMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateProjectMutation, UpdateProjectMutationVariables>(UpdateProjectDocument, baseOptions);
+      }
+export type UpdateProjectMutationHookResult = ReturnType<typeof useUpdateProjectMutation>;
+export type UpdateProjectMutationResult = ApolloReactCommon.MutationResult<UpdateProjectMutation>;
+export type UpdateProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateProjectMutation, UpdateProjectMutationVariables>;

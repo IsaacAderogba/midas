@@ -107,7 +107,7 @@ const ProjectWhere = inputObjectType({
   name: "ProjectWhere",
   definition(t) {
     t.id("id", { required: false });
-    t.string("uuid", { nullable: false });
+    t.string("uuid", { required: false });
     t.id("workspaceUserId", { required: false });
     t.id("workspaceId", { required: false });
   },
