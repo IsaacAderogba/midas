@@ -1,7 +1,5 @@
 // modules
 import React from "react";
-import rough from "roughjs/bin/wrappers/rough";
-import { RoughCanvas } from "roughjs/bin/canvas";
 import { useContextSelector } from "use-context-selector";
 
 // components
@@ -25,9 +23,6 @@ import {
 } from "../../~reusables/utils/history";
 import { randomSeed } from "../../~reusables/utils/seed";
 import {
-  saveAsJSON,
-  loadFromJSON,
-  exportAsPNG,
   restoreFromLocalStorage,
   save
 } from "../../~reusables/utils/saveAndRetrieval";
@@ -63,17 +58,13 @@ import {
   ICanvasState
 } from "../../~reusables/contexts/CanvasProvider";
 
-let canvas: HTMLCanvasElement;
-let rc: RoughCanvas;
-let context: CanvasRenderingContext2D;
-
 export const Canvas: React.FC = () => {
   return (
     <section>
-      {/* <CanvasTopbar />
-      <AssetsSidebar /> */}
+      <CanvasTopbar />
+      {/* <AssetsSidebar /> */}
       <StatefulCanvas />
-      {/* <CustomizeSidebar /> */}
+      <CustomizeSidebar />
     </section>
   );
 };
@@ -81,15 +72,9 @@ export const Canvas: React.FC = () => {
 export const StatefulCanvas: React.FC = () => {
   const elements = useElementsStore(state => state.elements);
   const canvasStore = useContextSelector(CanvasContext, state => state);
+  console.log(canvasStore);
 
-  return (
-    <section>
-      {/* <CanvasTopbar />
-      <AssetsSidebar /> */}
-      <StatelessCanvas {...canvasStore} elements={elements} />
-      {/* <CustomizeSidebar /> */}
-    </section>
-  );
+  return <StatelessCanvas {...canvasStore} elements={elements} />;
 };
 
 let skipHistory = false;
@@ -106,10 +91,6 @@ class StatelessCanvas extends React.Component<
     document.addEventListener("keydown", this.onKeyDown, false);
     window.addEventListener("resize", this.onResize, false);
 
-    canvas = document.getElementById("canvas") as HTMLCanvasElement;
-    rc = rough.canvas(canvas);
-    context = canvas.getContext("2d")!;
-    context.translate(0.5, 0.5);
     this.forceUpdate();
     // TODO - at front or behind
     const savedState = restoreFromLocalStorage(this.props.elements);
@@ -209,48 +190,9 @@ class StatelessCanvas extends React.Component<
     }
   };
 
-  private renderOption({
-    type,
-    children
-  }: {
-    type: string;
-    children: React.ReactNode;
-  }) {
-    return (
-      <label>
-        <input
-          type="radio"
-          checked={this.props.elementType === type}
-          onChange={() => {
-            this.props.setState(prevState => ({
-              ...prevState,
-              elementType: type
-            }));
-            clearSelection(this.props.elements);
-            this.forceUpdate();
-          }}
-        />
-        {children}
-      </label>
-    );
-  }
-
   private deleteSelectedElements = () => {
     deleteSelectedElements(this.props.elements);
     this.forceUpdate();
-  };
-
-  private clearCanvas = () => {
-    if (window.confirm("This will clear the whole canvas. Are you sure?")) {
-      this.props.elements.splice(0, this.props.elements.length);
-      this.props.setState(prevState => ({
-        ...prevState,
-        viewBackgroundColor: "#ffffff",
-        scrollX: 0,
-        scrollY: 0
-      }));
-      this.forceUpdate();
-    }
   };
 
   private moveAllLeft = () => {
@@ -324,119 +266,6 @@ class StatelessCanvas extends React.Component<
         }}
       >
         <div className="sidePanel">
-          <h4>Shapes</h4>
-          <div className="panelTools">
-            {SHAPES.map(({ value, icon }) => (
-              <label key={value} className="tool">
-                <input
-                  type="radio"
-                  checked={this.props.elementType === value}
-                  onChange={() => {
-                    this.props.setState(prevState => ({
-                      ...prevState,
-                      elementType: value
-                    }));
-                    clearSelection(elements);
-                    document.documentElement.style.cursor =
-                      value === "text" ? "text" : "crosshair";
-                    this.forceUpdate();
-                  }}
-                />
-                <div className="toolIcon">{icon}</div>
-              </label>
-            ))}
-          </div>
-          <h4>Colors</h4>
-          <div className="panelColumn">
-            <label>
-              <input
-                type="color"
-                value={this.props.viewBackgroundColor}
-                onChange={e => {
-                  this.props.setState(prevState => ({
-                    ...prevState,
-                    viewBackgroundColor: e.target.value
-                  }));
-                }}
-              />
-              Background
-            </label>
-            <label>
-              <input
-                type="color"
-                value={this.props.currentItemStrokeColor}
-                onChange={e => {
-                  this.props.setState(prevState => ({
-                    ...prevState,
-                    currentItemStrokeColor: e.target.value
-                  }));
-                }}
-              />
-              Shape Stroke
-            </label>
-            <label>
-              <input
-                type="color"
-                value={this.props.currentItemBackgroundColor}
-                onChange={e => {
-                  this.props.setState(prevState => ({
-                    ...prevState,
-                    currentItemBackgroundColor: e.target.value
-                  }));
-                }}
-              />
-              Shape Background
-            </label>
-          </div>
-          <h4>Canvas</h4>
-          <div className="panelColumn">
-            <button
-              onClick={this.clearCanvas}
-              title="Clear the canvas & reset background color"
-            >
-              Clear canvas
-            </button>
-          </div>
-          <h4>Export</h4>
-          <div className="panelColumn">
-            <button
-              onClick={() => {
-                exportAsPNG(this.props, canvas, elements);
-              }}
-            >
-              Export to png
-            </button>
-            <label>
-              <input
-                type="checkbox"
-                checked={this.props.exportBackground}
-                onChange={e => {
-                  this.props.setState(prevState => ({
-                    ...prevState,
-                    exportBackground: e.target.checked
-                  }));
-                }}
-              />
-              background
-            </label>
-          </div>
-          <h4>Save/Load</h4>
-          <div className="panelColumn">
-            <button
-              onClick={() => {
-                saveAsJSON(elements);
-              }}
-            >
-              Save as...
-            </button>
-            <button
-              onClick={() => {
-                loadFromJSON(elements).then(() => this.forceUpdate());
-              }}
-            >
-              Load file...
-            </button>
-          </div>
           {someElementIsSelected(elements) && (
             <>
               <h4>Shape options</h4>
@@ -459,6 +288,7 @@ class StatelessCanvas extends React.Component<
           width={canvasWidth * window.devicePixelRatio}
           height={canvasHeight * window.devicePixelRatio}
           ref={canvas => {
+            this.props.canvasRef.current = canvas;
             if (this.removeWheelEventListener) {
               this.removeWheelEventListener();
               this.removeWheelEventListener = undefined;
@@ -573,7 +403,8 @@ class StatelessCanvas extends React.Component<
               }
             }
 
-            if (isTextElement(element)) {
+            if (isTextElement(element) && this.props.contextRef.current) {
+              const context = this.props.contextRef.current;
               resetCursor();
               const text = prompt("What text do you want?");
               if (text === null) {
@@ -792,23 +623,25 @@ class StatelessCanvas extends React.Component<
   };
 
   componentDidUpdate() {
-    renderScene(
-      rc,
-      canvas,
-      {
-        scrollX: this.props.scrollX,
-        scrollY: this.props.scrollY,
-        viewBackgroundColor: this.props.viewBackgroundColor
-      },
-      this.props.elements
-    );
-    save(this.props, this.props.elements);
-    if (!skipHistory) {
-      pushHistoryEntry(
-        stateHistory,
-        generateHistoryCurrentEntry(this.props.elements)
+    if (this.props.rcRef.current && this.props.canvasRef.current) {
+      renderScene(
+        this.props.rcRef.current,
+        this.props.canvasRef.current,
+        {
+          scrollX: this.props.scrollX,
+          scrollY: this.props.scrollY,
+          viewBackgroundColor: this.props.viewBackgroundColor
+        },
+        this.props.elements
       );
+      save(this.props, this.props.elements);
+      if (!skipHistory) {
+        pushHistoryEntry(
+          stateHistory,
+          generateHistoryCurrentEntry(this.props.elements)
+        );
+      }
+      skipHistory = false;
     }
-    skipHistory = false;
   }
 }

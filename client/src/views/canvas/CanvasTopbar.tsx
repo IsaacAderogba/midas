@@ -1,9 +1,20 @@
 // modules
 import React from "react";
 import { styled } from "../../~reusables/contexts/ThemeProvider";
+import { useContextSelector } from "use-context-selector";
 
 // helpers
 import { CANVAS_TOPBAR_HEIGHT } from "../../~reusables/constants/dimensions";
+import { clearSelection } from "../../~reusables/utils/element";
+import {
+  useElementsStore,
+  CanvasContext
+} from "../../~reusables/contexts/CanvasProvider";
+import {
+  saveAsJSON,
+  loadFromJSON,
+  exportAsPNG
+} from "../../~reusables/utils/saveAndRetrieval";
 
 // We inline font-awesome icons in order to save on js size rather than including the font awesome react library
 export const SHAPES = [
@@ -55,7 +66,112 @@ export const SHAPES = [
 ];
 
 export const CanvasTopbar: React.FC = () => {
-  return <StyledCanvasTopbar>CanvasTopbar</StyledCanvasTopbar>;
+  const elements = useElementsStore(state => state.elements);
+  const {
+    setState,
+    elementType,
+    canvasRef,
+    exportBackground,
+    viewBackgroundColor,
+  } = useContextSelector(CanvasContext, state => ({
+    setState: state.setState,
+    elementType: state.elementType,
+    canvasRef: state.canvasRef,
+    exportBackground: state.exportBackground,
+    viewBackgroundColor: state.viewBackgroundColor
+  }));
+
+  const clearCanvas = () => {
+    if (window.confirm("This will clear the whole canvas. Are you sure?")) {
+      elements.splice(0, elements.length);
+      setState(prevState => ({
+        ...prevState,
+        viewBackgroundColor: "#ffffff",
+        scrollX: 0,
+        scrollY: 0
+      }));
+      // forceUpdate();
+    }
+  };
+
+  return (
+    <StyledCanvasTopbar>
+      <h4>Shapes</h4>
+
+      <div className="panelColumn">
+        <button
+          onClick={clearCanvas}
+          title="Clear the canvas & reset background color"
+        >
+          Clear canvas
+        </button>
+      </div>
+      <div className="panelColumn">
+        <button
+          onClick={() => {
+            if (canvasRef.current) {
+              exportAsPNG(
+                { exportBackground, viewBackgroundColor },
+                canvasRef.current,
+                elements
+              );
+            }
+          }}
+        >
+          Export to png
+        </button>
+        <label>
+          <input
+            type="checkbox"
+            checked={exportBackground}
+            onChange={e => {
+              setState(prevState => ({
+                ...prevState,
+                exportBackground: e.target.checked
+              }));
+            }}
+          />
+          background
+        </label>
+      </div>
+      <div className="panelColumn">
+        <button
+          onClick={() => {
+            saveAsJSON(elements);
+          }}
+        >
+          Save as...
+        </button>
+        <button
+          onClick={() => {
+            loadFromJSON(elements).then(() => {});
+          }}
+        >
+          Load file...
+        </button>
+      </div>
+
+      {SHAPES.map(({ value, icon }) => (
+        <label key={value} className="tool">
+          <input
+            type="radio"
+            checked={elementType === value}
+            onChange={() => {
+              setState(prevState => ({
+                ...prevState,
+                elementType: value
+              }));
+              clearSelection(elements);
+              document.documentElement.style.cursor =
+                value === "text" ? "text" : "crosshair";
+              // forceUpdate();
+            }}
+          />
+          <div className="toolIcon">{icon}</div>
+        </label>
+      ))}
+    </StyledCanvasTopbar>
+  );
 };
 
 const StyledCanvasTopbar = styled.header`

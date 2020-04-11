@@ -1,24 +1,25 @@
 import rough from "roughjs/bin/wrappers/rough";
 import { MidasElement } from "./types";
-import { ICanvasStore } from '../../~reusables/contexts/CanvasProvider';
+import { ICanvasStore } from "../../~reusables/contexts/CanvasProvider";
 import {
   getElementAbsoluteX1,
   getElementAbsoluteX2,
   getElementAbsoluteY1,
-  getElementAbsoluteY2,
+  getElementAbsoluteY2
 } from "./coords";
 import {
   LOCAL_STORAGE_MIDAS_KEY,
-  LOCAL_STORAGE_MIDAS_STATE_KEY,
+  LOCAL_STORAGE_MIDAS_STATE_KEY
 } from "../constants/constants";
 import { generateDraw } from "./element";
 import { renderScene } from "./canvas";
+import _ from "lodash";
 
 export function saveAsJSON(elements: MidasElement[]) {
   const serialized = JSON.stringify({
     version: 1,
     source: window.location.origin,
-    elements,
+    elements
   });
 
   saveFile(
@@ -44,7 +45,7 @@ export function loadFromJSON(elements: MidasElement[]) {
 
   input.click();
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     reader.onloadend = () => {
       if (reader.readyState === FileReader.DONE) {
         const data = JSON.parse(reader.result as string);
@@ -59,8 +60,6 @@ interface IExportPNG {
   exportBackground: boolean;
   exportPadding?: number;
   viewBackgroundColor: string;
-  scrollX: number;
-  scrollY: number;
 }
 
 export function exportAsPNG(
@@ -77,7 +76,7 @@ export function exportAsPNG(
   let subCanvasY1 = Infinity;
   let subCanvasY2 = 0;
 
-  elements.forEach((element) => {
+  elements.forEach(element => {
     subCanvasX1 = Math.min(subCanvasX1, getElementAbsoluteX1(element));
     subCanvasX2 = Math.max(subCanvasX2, getElementAbsoluteX2(element));
     subCanvasY1 = Math.min(subCanvasY1, getElementAbsoluteY1(element));
@@ -100,14 +99,14 @@ export function exportAsPNG(
     {
       viewBackgroundColor: exportBackground ? viewBackgroundColor : null,
       scrollX: 0,
-      scrollY: 0,
+      scrollY: 0
     },
     elements,
     {
       offsetX: -subCanvasX1 + exportPadding,
       offsetY: -subCanvasY1 + exportPadding,
       renderScrollbars: false,
-      renderSelection: false,
+      renderSelection: false
     }
   );
 
@@ -128,7 +127,20 @@ export function saveFile(name: string, data: string) {
   link.remove();
 }
 
+const whitelist: (keyof ICanvasStore)[] = [
+  "draggingElement",
+  "resizingElement",
+  "elementType",
+  "exportBackground",
+  "currentItemStrokeColor",
+  "currentItemBackgroundColor",
+  "viewBackgroundColor",
+  "scrollX",
+  "scrollY"
+];
+
 export function save(state: ICanvasStore, elements: MidasElement[]) {
+  state = _.pick(state, whitelist);
   localStorage.setItem(LOCAL_STORAGE_MIDAS_KEY, JSON.stringify(elements));
   localStorage.setItem(LOCAL_STORAGE_MIDAS_STATE_KEY, JSON.stringify(state));
 }
@@ -157,7 +169,7 @@ export function restore(
       elements.forEach((element: MidasElement) => generateDraw(element));
     }
 
-    return savedState ? JSON.parse(savedState) : null;
+    return savedState ? _.pick(JSON.parse(savedState), whitelist) : null;
   } catch (e) {
     elements.splice(0, elements.length);
     return null;

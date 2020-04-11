@@ -1,12 +1,14 @@
 // modules
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect, useRef } from "react";
 import { useLocalStore } from "mobx-react";
 import { RouteComponentProps } from "react-router-dom";
 import { createContext as createNewContext } from "use-context-selector";
+import rough from "roughjs/bin/wrappers/rough";
 
 // helpers
 import { useStoreState } from "../hooks/useStoreState";
-import { MidasElement } from "../utils/types";
+import { MidasElement, Maybe } from "../utils/types";
+import { RoughCanvas } from "roughjs/bin/canvas";
 
 /**
  * mobx just isn't playing nice, so we're isolating it to our elements
@@ -47,7 +49,13 @@ interface ICanvasAction {
   setState: React.Dispatch<React.SetStateAction<ICanvasStore>>;
 }
 
-export type ICanvasState = ICanvasStore & ICanvasAction;
+interface ICanvasRefs {
+  canvasRef: React.MutableRefObject<Maybe<HTMLCanvasElement>>;
+  rcRef: React.MutableRefObject<Maybe<RoughCanvas>>;
+  contextRef: React.MutableRefObject<Maybe<CanvasRenderingContext2D>>;
+}
+
+export type ICanvasState = ICanvasStore & ICanvasAction & ICanvasRefs;
 
 export const CanvasContext = createNewContext<ICanvasState>({
   draggingElement: null,
@@ -59,10 +67,17 @@ export const CanvasContext = createNewContext<ICanvasState>({
   viewBackgroundColor: "#ffffff",
   scrollX: 0,
   scrollY: 0,
-  setState: () => {}
+  setState: () => {},
+  canvasRef: React.createRef(),
+  rcRef: React.createRef(),
+  contextRef: React.createRef()
 });
 
 export const CanvasProvider: React.FC<RouteComponentProps> = ({ children }) => {
+  const canvasRef = useRef<Maybe<HTMLCanvasElement>>(null);
+  const rcRef = useRef<Maybe<RoughCanvas>>(null);
+  const contextRef = useRef<Maybe<CanvasRenderingContext2D>>(null);
+
   const [state, setState] = useState<ICanvasStore>({
     draggingElement: null,
     resizingElement: null,
@@ -75,8 +90,26 @@ export const CanvasProvider: React.FC<RouteComponentProps> = ({ children }) => {
     scrollY: 0
   });
 
+  useEffect(() => {
+    if (canvasRef.current) {
+      console.log(canvasRef.current)
+      let tempCanvas = canvasRef.current as HTMLCanvasElement;
+      rcRef.current = rough.canvas(tempCanvas);
+      contextRef.current = tempCanvas.getContext("2d")!;
+      contextRef.current.translate(0.5, 0.5);
+    }
+  }, [canvasRef]);
+
   return (
-    <CanvasContext.Provider value={{ ...state, setState }}>
+    <CanvasContext.Provider
+      value={{
+        ...state,
+        canvasRef,
+        rcRef,
+        contextRef,
+        setState
+      }}
+    >
       <ElementsProvider>{children}</ElementsProvider>
     </CanvasContext.Provider>
   );
