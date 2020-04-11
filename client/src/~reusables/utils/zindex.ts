@@ -4,7 +4,11 @@ function swap<T>(elements: T[], indexA: number, indexB: number) {
   elements[indexB] = element;
 }
 
-export function moveOneLeft<T>(elements: T[], indicesToMove: number[]) {
+export function moveOneLeft<T>(
+  elements: T[],
+  indicesToMove: number[],
+  forceCanvasUpdate: React.DispatchWithoutAction
+) {
   indicesToMove.sort((a: number, b: number) => a - b);
   let isSorted = true;
   // We go from left to right to avoid overriding the wrong elements
@@ -17,9 +21,14 @@ export function moveOneLeft<T>(elements: T[], indicesToMove: number[]) {
     }
     swap(elements, index - 1, index);
   });
+  forceCanvasUpdate();
 }
 
-export function moveOneRight<T>(elements: T[], indicesToMove: number[]) {
+export function moveOneRight<T>(
+  elements: T[],
+  indicesToMove: number[],
+  forceCanvasUpdate: React.DispatchWithoutAction
+) {
   const reversedIndicesToMove = indicesToMove.sort(
     (a: number, b: number) => b - a
   );
@@ -35,6 +44,7 @@ export function moveOneRight<T>(elements: T[], indicesToMove: number[]) {
     }
     swap(elements, index + 1, index);
   });
+  forceCanvasUpdate();
 }
 
 // Let's go through an example
@@ -83,7 +93,11 @@ export function moveOneRight<T>(elements: T[], indicesToMove: number[]) {
 // [c, f, a, b, d, e, g]
 //
 // And we are done!
-export function moveAllLeft<T>(elements: T[], indicesToMove: number[]) {
+export function moveAllLeft<T>(
+  elements: T[],
+  indicesToMove: number[],
+  forceCanvasUpdate: React.DispatchWithoutAction
+) {
   indicesToMove.sort((a: number, b: number) => a - b);
 
   // Copy the elements to move
@@ -112,6 +126,7 @@ export function moveAllLeft<T>(elements: T[], indicesToMove: number[]) {
   leftMostElements.forEach((element, i) => {
     elements[i] = element;
   });
+  forceCanvasUpdate();
 }
 
 // Let's go through an example
@@ -159,7 +174,11 @@ export function moveAllLeft<T>(elements: T[], indicesToMove: number[]) {
 // [a, b, d, e, g, c, f]
 //
 // And we are done!
-export function moveAllRight<T>(elements: T[], indicesToMove: number[]) {
+export function moveAllRight<T>(
+  elements: T[],
+  indicesToMove: number[],
+  forceCanvasUpdate: React.DispatchWithoutAction
+) {
   const reversedIndicesToMove = indicesToMove.sort(
     (a: number, b: number) => b - a
   );
@@ -190,4 +209,5 @@ export function moveAllRight<T>(elements: T[], indicesToMove: number[]) {
   rightMostElements.forEach((element, i) => {
     elements[elements.length - i - 1] = element;
   });
+  forceCanvasUpdate();
 }

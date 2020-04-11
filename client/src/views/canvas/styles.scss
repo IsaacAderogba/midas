@@ -5,20 +5,6 @@
   font-display: swap;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.container {
-  display: flex;
-  position: fixed;
-  top: 48px;
-  bottom: 0;
-  left: 0;
-  right: 164px;
-}
-
 .sidePanel {
   width: 230px;
   background-color: #eee;

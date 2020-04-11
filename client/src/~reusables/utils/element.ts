@@ -5,7 +5,7 @@ import {
   getElementAbsoluteX2,
   getElementAbsoluteY1,
   getElementAbsoluteY2,
-  getArrowPoints,
+  getArrowPoints
 } from "./coords";
 import { withCustomMathRandom, randomSeed } from "./seed";
 import { RoughCanvas } from "roughjs/bin/canvas";
@@ -24,7 +24,7 @@ export function setSelection(
   const selectionX2 = getElementAbsoluteX2(selection);
   const selectionY1 = getElementAbsoluteY1(selection);
   const selectionY2 = getElementAbsoluteY2(selection);
-  elements.forEach((element) => {
+  elements.forEach(element => {
     const elementX1 = getElementAbsoluteX1(element);
     const elementX2 = getElementAbsoluteX2(element);
     const elementY1 = getElementAbsoluteY1(element);
@@ -39,13 +39,13 @@ export function setSelection(
 }
 
 export function clearSelection(elements: MidasElement[]) {
-  elements.forEach((element) => {
+  elements.forEach(element => {
     element.isSelected = false;
   });
 }
 
 export const someElementIsSelected = (elements: MidasElement[]) =>
-  elements.some((element) => element.isSelected);
+  elements.some(element => element.isSelected);
 
 export function getSelectedIndices(elements: MidasElement[]) {
   const selectedIndices: number[] = [];
@@ -66,12 +66,16 @@ export function findElementByKey(key: string) {
   }, defaultElement);
 }
 
-export function deleteSelectedElements(elements: MidasElement[]) {
+export function deleteSelectedElements(
+  elements: MidasElement[],
+  forceCanvasUpdate: React.DispatchWithoutAction
+) {
   for (let i = elements.length - 1; i >= 0; --i) {
     if (elements[i].isSelected) {
       elements.splice(i, 1);
     }
   }
+  forceCanvasUpdate();
 }
 
 export function isTextElement(
@@ -107,7 +111,7 @@ export function generateDraw(element: MidasElement) {
     const shape = withCustomMathRandom(element.seed, () => {
       return generator.rectangle(0, 0, element.width, element.height, {
         stroke: element.strokeColor,
-        fill: element.backgroundColor,
+        fill: element.backgroundColor
       });
     });
     element.draw = (rc, context, { scrollX, scrollY }) => {
@@ -138,12 +142,12 @@ export function generateDraw(element: MidasElement) {
       // -----
       generator.line(x1, y1, x2, y2, { stroke: element.strokeColor }),
       //    /
-      generator.line(x4, y4, x2, y2, { stroke: element.strokeColor }),
+      generator.line(x4, y4, x2, y2, { stroke: element.strokeColor })
     ]);
 
     element.draw = (rc, context, { scrollX, scrollY }) => {
       context.translate(element.x + scrollX, element.y + scrollY);
-      shapes.forEach((shape) => rc.draw(shape));
+      shapes.forEach(shape => rc.draw(shape));
       context.translate(-element.x - scrollX, -element.y - scrollY);
     };
     return;
@@ -189,7 +193,7 @@ export function newElement(
       rc: RoughCanvas,
       context: CanvasRenderingContext2D,
       sceneState: SceneState
-    ) {},
+    ) {}
   };
   return element;
 }

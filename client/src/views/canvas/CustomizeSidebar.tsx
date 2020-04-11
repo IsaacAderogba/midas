@@ -4,19 +4,38 @@ import { useContextSelector } from "use-context-selector";
 
 // components
 import { CanvasSidebar } from "../../components/~layout/CanvasSidebar";
-import { CanvasContext } from "../../~reusables/contexts/CanvasProvider";
+
+// helpers
+import {
+  CanvasContext,
+  useElementsStore
+} from "../../~reusables/contexts/CanvasProvider";
+import {
+  someElementIsSelected,
+  deleteSelectedElements,
+  getSelectedIndices
+} from "../../~reusables/utils/element";
+import {
+  moveAllLeft,
+  moveOneLeft,
+  moveOneRight,
+  moveAllRight
+} from "../../~reusables/utils/zindex";
 
 export const CustomizeSidebar: React.FC = () => {
+  const elements = useElementsStore(state => state.elements);
   const {
     setState,
     viewBackgroundColor,
     currentItemStrokeColor,
-    currentItemBackgroundColor
+    currentItemBackgroundColor,
+    forceCanvasUpdate,
   } = useContextSelector(CanvasContext, state => ({
     setState: state.setState,
     viewBackgroundColor: state.viewBackgroundColor,
     currentItemStrokeColor: state.currentItemStrokeColor,
-    currentItemBackgroundColor: state.currentItemBackgroundColor
+    currentItemBackgroundColor: state.currentItemBackgroundColor,
+    forceCanvasUpdate: state.forceCanvasUpdate,
   }));
 
   return (
@@ -64,6 +83,64 @@ export const CustomizeSidebar: React.FC = () => {
           Shape Background
         </label>
       </div>
+      {someElementIsSelected(elements) && (
+        <>
+          <h4>Shape options</h4>
+          <div className="panelColumn">
+            <button
+              onClick={() =>
+                deleteSelectedElements(elements, forceCanvasUpdate)
+              }
+            >
+              Delete
+            </button>
+            <button
+              onClick={() =>
+                moveOneRight(
+                  elements,
+                  getSelectedIndices(elements),
+                  forceCanvasUpdate
+                )
+              }
+            >
+              Bring forward
+            </button>
+            <button
+              onClick={() =>
+                moveAllRight(
+                  elements,
+                  getSelectedIndices(elements),
+                  forceCanvasUpdate
+                )
+              }
+            >
+              Bring to front
+            </button>
+            <button
+              onClick={() =>
+                moveOneLeft(
+                  elements,
+                  getSelectedIndices(elements),
+                  forceCanvasUpdate
+                )
+              }
+            >
+              Send backward
+            </button>
+            <button
+              onClick={() => {
+                moveAllLeft(
+                  elements,
+                  getSelectedIndices(elements),
+                  forceCanvasUpdate
+                );
+              }}
+            >
+              Send to back
+            </button>
+          </div>
+        </>
+      )}
     </CanvasSidebar>
   );
 };

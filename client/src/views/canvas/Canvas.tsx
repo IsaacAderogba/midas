@@ -1,6 +1,7 @@
 // modules
 import React from "react";
 import { useContextSelector } from "use-context-selector";
+import { css } from "styled-components/macro";
 
 // components
 import { CanvasTopbar, SHAPES } from "./CanvasTopbar";
@@ -32,13 +33,7 @@ import {
   resetCursor,
   renderScene
 } from "../../~reusables/utils/canvas";
-import {
-  KEYS,
-  ELEMENT_SHIFT_TRANSLATE_AMOUNT,
-  ELEMENT_TRANSLATE_AMOUNT,
-  CANVAS_WINDOW_OFFSET_LEFT,
-  CANVAS_WINDOW_OFFSET_TOP
-} from "../../~reusables/constants/constants";
+import { KEYS } from "../../~reusables/constants/constants";
 import {
   getSelectedIndices,
   clearSelection,
@@ -57,12 +52,18 @@ import {
   CanvasContext,
   ICanvasState
 } from "../../~reusables/contexts/CanvasProvider";
+import {
+  CANVAS_SIDEBAR_WIDTH,
+  CANVAS_TOPBAR_HEIGHT,
+  ELEMENT_SHIFT_TRANSLATE_AMOUNT,
+  ELEMENT_TRANSLATE_AMOUNT
+} from "../../~reusables/constants/dimensions";
 
 export const Canvas: React.FC = () => {
   return (
     <section>
       <CanvasTopbar />
-      {/* <AssetsSidebar /> */}
+      <AssetsSidebar />
       <StatefulCanvas />
       <CustomizeSidebar />
     </section>
@@ -87,6 +88,11 @@ let lastMouseUp: ((e: any) => void) | null = null;
 class StatelessCanvas extends React.Component<
   ICanvasState & { elements: MidasElement[] }
 > {
+  public state = {
+    scrollX: 0,
+    scrollY: 0
+  };
+
   public componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
     window.addEventListener("resize", this.onResize, false);
@@ -116,7 +122,7 @@ class StatelessCanvas extends React.Component<
       this.forceUpdate();
       event.preventDefault();
     } else if (event.key === KEYS.BACKSPACE || event.key === KEYS.DELETE) {
-      deleteSelectedElements(this.props.elements);
+      deleteSelectedElements(this.props.elements, this.props.forceCanvasUpdate);
       this.forceUpdate();
       event.preventDefault();
     } else if (isArrowKey(event.key)) {
@@ -141,12 +147,20 @@ class StatelessCanvas extends React.Component<
       event.altKey &&
       event.code === "KeyB"
     ) {
-      this.moveOneLeft();
+      moveOneLeft(
+        this.props.elements,
+        getSelectedIndices(this.props.elements),
+        this.props.forceCanvasUpdate
+      );
       event.preventDefault();
 
       // Send to back: Cmd-Shift-B
     } else if (event.metaKey && event.shiftKey && event.code === "KeyB") {
-      this.moveAllLeft();
+      moveAllLeft(
+        this.props.elements,
+        getSelectedIndices(this.props.elements),
+        this.props.forceCanvasUpdate
+      );
       event.preventDefault();
 
       // Bring forward: Cmd-Shift-Alt-F
@@ -156,12 +170,20 @@ class StatelessCanvas extends React.Component<
       event.altKey &&
       event.code === "KeyF"
     ) {
-      this.moveOneRight();
+      moveOneRight(
+        this.props.elements,
+        getSelectedIndices(this.props.elements),
+        this.props.forceCanvasUpdate
+      );
       event.preventDefault();
 
       // Bring to front: Cmd-Shift-F
     } else if (event.metaKey && event.shiftKey && event.code === "KeyF") {
-      this.moveAllRight();
+      moveAllRight(
+        this.props.elements,
+        getSelectedIndices(this.props.elements),
+        this.props.forceCanvasUpdate
+      );
       event.preventDefault();
 
       // Select all: Cmd-A
@@ -190,48 +212,28 @@ class StatelessCanvas extends React.Component<
     }
   };
 
-  private deleteSelectedElements = () => {
-    deleteSelectedElements(this.props.elements);
-    this.forceUpdate();
-  };
-
-  private moveAllLeft = () => {
-    moveAllLeft(this.props.elements, getSelectedIndices(this.props.elements));
-    this.forceUpdate();
-  };
-
-  private moveOneLeft = () => {
-    moveOneLeft(this.props.elements, getSelectedIndices(this.props.elements));
-    this.forceUpdate();
-  };
-
-  private moveAllRight = () => {
-    moveAllRight(this.props.elements, getSelectedIndices(this.props.elements));
-    this.forceUpdate();
-  };
-
-  private moveOneRight = () => {
-    moveOneRight(this.props.elements, getSelectedIndices(this.props.elements));
-    this.forceUpdate();
-  };
-
   private removeWheelEventListener: (() => void) | undefined;
 
   public render() {
-    const canvasWidth = window.innerWidth - CANVAS_WINDOW_OFFSET_LEFT;
-    const canvasHeight = window.innerHeight - CANVAS_WINDOW_OFFSET_TOP;
+    const canvasWidth = window.innerWidth - CANVAS_SIDEBAR_WIDTH * 2;
+    const canvasHeight = window.innerHeight - CANVAS_TOPBAR_HEIGHT;
     const { elements } = this.props;
 
     return (
       <div
-        className="container"
+        css={css`
+          position: absolute;
+          top: ${CANVAS_TOPBAR_HEIGHT}px;
+          bottom: 0;
+          left: ${CANVAS_SIDEBAR_WIDTH}px;
+          right: ${CANVAS_SIDEBAR_WIDTH}px;
+        `}
         onCut={e => {
           e.clipboardData.setData(
             "text/plain",
             JSON.stringify(elements.filter(element => element.isSelected))
           );
-          deleteSelectedElements(elements);
-          this.forceUpdate();
+          deleteSelectedElements(elements, this.props.forceCanvasUpdate);
           e.preventDefault();
         }}
         onCopy={e => {
@@ -265,20 +267,6 @@ class StatelessCanvas extends React.Component<
           e.preventDefault();
         }}
       >
-        <div className="sidePanel">
-          {someElementIsSelected(elements) && (
-            <>
-              <h4>Shape options</h4>
-              <div className="panelColumn">
-                <button onClick={this.deleteSelectedElements}>Delete</button>
-                <button onClick={this.moveOneRight}>Bring forward</button>
-                <button onClick={this.moveAllRight}>Bring to front</button>
-                <button onClick={this.moveOneLeft}>Send backward</button>
-                <button onClick={this.moveAllLeft}>Send to back</button>
-              </div>
-            </>
-          )}
-        </div>
         <canvas
           id="canvas"
           style={{
@@ -332,9 +320,8 @@ class StatelessCanvas extends React.Component<
               document.activeElement.blur();
             }
 
-            const x =
-              e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.props.scrollX;
-            const y = e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.props.scrollY;
+            const x = e.clientX - CANVAS_SIDEBAR_WIDTH - this.state.scrollX;
+            const y = e.clientY - CANVAS_TOPBAR_HEIGHT - this.state.scrollY;
             const element = newElement(
               this.props.elementType,
               x,
@@ -348,8 +335,8 @@ class StatelessCanvas extends React.Component<
             if (this.props.elementType === "selection") {
               const resizeElement = elements.find(element => {
                 return resizeTest(element, x, y, {
-                  scrollX: this.props.scrollX,
-                  scrollY: this.props.scrollY,
+                  scrollX: this.state.scrollX,
+                  scrollY: this.state.scrollY,
                   viewBackgroundColor: this.props.viewBackgroundColor
                 });
               });
@@ -361,8 +348,8 @@ class StatelessCanvas extends React.Component<
 
               if (resizeElement) {
                 resizeHandle = resizeTest(resizeElement, x, y, {
-                  scrollX: this.props.scrollX,
-                  scrollY: this.props.scrollY,
+                  scrollX: this.state.scrollX,
+                  scrollY: this.state.scrollY,
                   viewBackgroundColor: this.props.viewBackgroundColor
                 });
                 document.documentElement.style.cursor = `${resizeHandle}-resize`;
@@ -459,9 +446,9 @@ class StatelessCanvas extends React.Component<
                 const selectedElements = elements.filter(el => el.isSelected);
                 if (selectedElements.length === 1) {
                   const x =
-                    e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.props.scrollX;
+                    e.clientX - CANVAS_SIDEBAR_WIDTH - this.state.scrollX;
                   const y =
-                    e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.props.scrollY;
+                    e.clientY - CANVAS_TOPBAR_HEIGHT - this.state.scrollY;
                   selectedElements.forEach(element => {
                     switch (resizeHandle) {
                       case "nw":
@@ -521,9 +508,9 @@ class StatelessCanvas extends React.Component<
                 const selectedElements = elements.filter(el => el.isSelected);
                 if (selectedElements.length) {
                   const x =
-                    e.clientX - CANVAS_WINDOW_OFFSET_LEFT - this.props.scrollX;
+                    e.clientX - CANVAS_SIDEBAR_WIDTH - this.state.scrollX;
                   const y =
-                    e.clientY - CANVAS_WINDOW_OFFSET_TOP - this.props.scrollY;
+                    e.clientY - CANVAS_TOPBAR_HEIGHT - this.state.scrollY;
                   selectedElements.forEach(element => {
                     element.x += x - lastX;
                     element.y += y - lastY;
@@ -543,14 +530,14 @@ class StatelessCanvas extends React.Component<
               if (!draggingElement) return;
               let width =
                 e.clientX -
-                CANVAS_WINDOW_OFFSET_LEFT -
+                CANVAS_SIDEBAR_WIDTH -
                 draggingElement.x -
-                this.props.scrollX;
+                this.state.scrollX;
               let height =
                 e.clientY -
-                CANVAS_WINDOW_OFFSET_TOP -
+                CANVAS_TOPBAR_HEIGHT -
                 draggingElement.y -
-                this.props.scrollY;
+                this.state.scrollY;
               draggingElement.width = width;
               // Make a perfect square or circle when shift is enabled
               draggingElement.height = e.shiftKey ? width : height;
@@ -615,11 +602,10 @@ class StatelessCanvas extends React.Component<
   private handleWheel = (e: WheelEvent) => {
     e.preventDefault();
     const { deltaX, deltaY } = e;
-    this.props.setState(prevState => ({
-      ...prevState,
-      scrollX: this.props.scrollX - deltaX,
-      scrollY: this.props.scrollY - deltaY
-    }));
+    this.setState({
+      scrollX: this.state.scrollX - deltaX,
+      scrollY: this.state.scrollY - deltaY
+    });
   };
 
   componentDidUpdate() {
@@ -628,8 +614,8 @@ class StatelessCanvas extends React.Component<
         this.props.rcRef.current,
         this.props.canvasRef.current,
         {
-          scrollX: this.props.scrollX,
-          scrollY: this.props.scrollY,
+          scrollX: this.state.scrollX,
+          scrollY: this.state.scrollY,
           viewBackgroundColor: this.props.viewBackgroundColor
         },
         this.props.elements

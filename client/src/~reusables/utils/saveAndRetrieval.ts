@@ -135,8 +135,6 @@ const whitelist: (keyof ICanvasStore)[] = [
   "currentItemStrokeColor",
   "currentItemBackgroundColor",
   "viewBackgroundColor",
-  "scrollX",
-  "scrollY"
 ];
 
 export function save(state: ICanvasStore, elements: MidasElement[]) {

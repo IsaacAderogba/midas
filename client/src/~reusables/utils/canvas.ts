@@ -11,7 +11,7 @@ import {
   SCROLLBAR_MARGIN,
   SCROLLBAR_WIDTH,
   SCROLLBAR_COLOR,
-} from "../constants/constants";
+} from "../constants/dimensions";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { getSelectedIndices } from "./element";
 

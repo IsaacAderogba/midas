@@ -1,5 +1,11 @@
 // modules
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useRef,
+  useReducer
+} from "react";
 import { useLocalStore } from "mobx-react";
 import { RouteComponentProps } from "react-router-dom";
 import { createContext as createNewContext } from "use-context-selector";
@@ -13,16 +19,19 @@ import { RoughCanvas } from "roughjs/bin/canvas";
 /**
  * mobx just isn't playing nice, so we're isolating it to our elements
  */
-export const ElementContext = createContext<{ elements: MidasElement[] }>({
+interface IElementsStore {
+  elements: MidasElement[];
+}
+export const ElementContext = createContext<IElementsStore>({
   elements: []
 });
 
 export const useElementsStore = <S,>(
-  dataSelector: (store: { elements: MidasElement[] }) => S
+  dataSelector: (store: IElementsStore) => S
 ) => useStoreState(ElementContext, contextData => contextData!, dataSelector);
 
 export const ElementsProvider: React.FC = ({ children }) => {
-  let store = useLocalStore<{ elements: MidasElement[] }>(() => ({
+  let store = useLocalStore<IElementsStore>(() => ({
     get elements() {
       return [];
     }
@@ -41,8 +50,6 @@ export interface ICanvasStore {
   currentItemStrokeColor: string;
   currentItemBackgroundColor: string;
   viewBackgroundColor: string;
-  scrollX: number;
-  scrollY: number;
 }
 
 interface ICanvasAction {
@@ -53,6 +60,8 @@ interface ICanvasRefs {
   canvasRef: React.MutableRefObject<Maybe<HTMLCanvasElement>>;
   rcRef: React.MutableRefObject<Maybe<RoughCanvas>>;
   contextRef: React.MutableRefObject<Maybe<CanvasRenderingContext2D>>;
+  canvasUpdateListener: any;
+  forceCanvasUpdate: React.DispatchWithoutAction;
 }
 
 export type ICanvasState = ICanvasStore & ICanvasAction & ICanvasRefs;
@@ -65,15 +74,16 @@ export const CanvasContext = createNewContext<ICanvasState>({
   currentItemStrokeColor: "#000000",
   currentItemBackgroundColor: "#ffffff",
   viewBackgroundColor: "#ffffff",
-  scrollX: 0,
-  scrollY: 0,
   setState: () => {},
   canvasRef: React.createRef(),
   rcRef: React.createRef(),
-  contextRef: React.createRef()
+  contextRef: React.createRef(),
+  canvasUpdateListener: null,
+  forceCanvasUpdate: () => {}
 });
 
 export const CanvasProvider: React.FC<RouteComponentProps> = ({ children }) => {
+  const [canvasUpdateListener, forceCanvasUpdate] = useReducer(x => x + 1, 0);
   const canvasRef = useRef<Maybe<HTMLCanvasElement>>(null);
   const rcRef = useRef<Maybe<RoughCanvas>>(null);
   const contextRef = useRef<Maybe<CanvasRenderingContext2D>>(null);
@@ -85,14 +95,12 @@ export const CanvasProvider: React.FC<RouteComponentProps> = ({ children }) => {
     exportBackground: true,
     currentItemStrokeColor: "#000000",
     currentItemBackgroundColor: "#ffffff",
-    viewBackgroundColor: "#ffffff",
-    scrollX: 0,
-    scrollY: 0
+    viewBackgroundColor: "#ffffff"
   });
 
   useEffect(() => {
     if (canvasRef.current) {
-      console.log(canvasRef.current)
+      console.log(canvasRef.current);
       let tempCanvas = canvasRef.current as HTMLCanvasElement;
       rcRef.current = rough.canvas(tempCanvas);
       contextRef.current = tempCanvas.getContext("2d")!;
@@ -107,7 +115,9 @@ export const CanvasProvider: React.FC<RouteComponentProps> = ({ children }) => {
         canvasRef,
         rcRef,
         contextRef,
-        setState
+        setState,
+        canvasUpdateListener,
+        forceCanvasUpdate
       }}
     >
       <ElementsProvider>{children}</ElementsProvider>
