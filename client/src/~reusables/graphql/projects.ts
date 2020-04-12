@@ -31,9 +31,32 @@ export const projectsSubscription = gql`
   ${Project.fragments.projectsAttributes}
 `;
 
+// export const projectSubscription = gql`
+//   subscription project(where: { id: 3}) {
+//     data {
+//       id
+//       elements
+//     }
+//     canvasScene
+//     canvasPayload {
+//       workspaceUserId
+//       pointerCoordX
+//       pointerCoordY
+//     }
+//   }
+// `;
+
 export const updateProject = gql`
-  mutation updateProject($projectInput: ProjectInput!, $where: ProjectWhere!) {
-    updateProject(projectInput: $projectInput, where: $where) {
+  mutation updateProject(
+    $projectInput: ProjectInput!
+    $canvasPayloadInput: CanvasPayloadInput
+    $where: ProjectWhere!
+  ) {
+    updateProject(
+      projectInput: $projectInput
+      canvasPayloadInput: $canvasPayloadInput
+      where: $where
+    ) {
       ...projectAttributes
     }
   }

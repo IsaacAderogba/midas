@@ -682,7 +682,7 @@
             "description": "",
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null
@@ -1248,6 +1248,16 @@
             "name": "updateProject",
             "description": "",
             "args": [
+              {
+                "name": "canvasPayloadInput",
+                "description": "",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "CanvasPayloadInput",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
               {
                 "name": "projectInput",
                 "description": "",
@@ -1851,6 +1861,51 @@
       },
       {
         "kind": "INPUT_OBJECT",
+        "name": "CanvasPayloadInput",
+        "description": "",
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "workspaceUserId",
+            "description": "",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "pointerCoordX",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "pointerCoordY",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
         "name": "ProjectInput",
         "description": "",
         "fields": null,
@@ -2010,6 +2065,30 @@
             "deprecationReason": null
           },
           {
+            "name": "canvasPayload",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "CanvasPayload",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "canvasScene",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "CanvasScene",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "data",
             "description": "",
             "args": [],
@@ -2077,6 +2156,92 @@
           },
           {
             "name": "DELETED",
+            "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "CanvasPayload",
+        "description": "",
+        "fields": [
+          {
+            "name": "workspaceUserId",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pointerCoordX",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pointerCoordY",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "CanvasScene",
+        "description": "",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "SCENE_UPDATE",
+            "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "MOUSE_LOCATION",
+            "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CLIENT_CONNECT",
+            "description": "",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CLIENT_DISCONNECT",
             "description": "",
             "isDeprecated": false,
             "deprecationReason": null

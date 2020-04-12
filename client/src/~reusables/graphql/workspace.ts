@@ -11,7 +11,7 @@ export const createWorkspace = gql`
 `;
 
 export const getWorkspace = gql`
-  query getWorkspace {
+  query getWorkspace($where: WorkspaceUserWhere!) {
     workspace {
       ...workspaceAttributes
       workspaceUsers {
@@ -24,6 +24,14 @@ export const getWorkspace = gql`
           email
         }
       }
+    }
+    workspaceUser(where: $where) {
+      id
+      workspaceId
+      userId
+      role
+      lastSeen
+      status
     }
   }
   ${Workspace.fragments.attributes}

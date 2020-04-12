@@ -13,20 +13,20 @@ type AuthUser {
 }
 
 type CanvasPayload {
-  elements: String
   pointerCoordX: Int
   pointerCoordY: Int
-  workspaceUserId: ID!
+  workspaceUserId: String!
 }
 
 input CanvasPayloadInput {
-  elements: String
   pointerCoordX: Int
   pointerCoordY: Int
-  workspaceUserId: ID!
+  workspaceUserId: String!
 }
 
 enum CanvasScene {
+  CLIENT_CONNECT
+  CLIENT_DISCONNECT
   MOUSE_LOCATION
   SCENE_UPDATE
 }
@@ -46,7 +46,7 @@ type Mutation {
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   loginUser(loginInput: LoginInput): AuthUser!
   registerUser(registerInput: RegisterInput): AuthUser!
-  updateProject(canvasInput: CanvasPayloadInput!, projectInput: ProjectInput!, where: ProjectWhere!): Project
+  updateProject(canvasPayloadInput: CanvasPayloadInput, projectInput: ProjectInput!, where: ProjectWhere!): Project
   updateUser(userInput: UserInput): User
   updateWorkspace(workspaceInput: WorkspaceInput): Workspace
   updateWorkspaceUser(where: WorkspaceUserWhere, workspaceUserInput: WorkspaceUserInput): WorkspaceUser
@@ -213,5 +213,5 @@ enum WorkspaceUserStatus {
 }
 
 input WorkspaceUserWhere {
-  userId: Int
+  userId: ID
 }

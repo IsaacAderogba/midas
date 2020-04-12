@@ -11,7 +11,7 @@ const {
   ProjectInput,
   ProjectWhere,
   ProjectSubscriptionPayload,
-  CanvasPayloadInput
+  CanvasPayloadInput,
 } = require("./projectTypes");
 const { MutationEnum } = require("../types");
 
@@ -78,7 +78,7 @@ const Mutation = extendType({
       type: Project,
       nullable: true,
       args: {
-        canvasInput: arg({ type: CanvasPayloadInput, required: true}),
+        canvasPayloadInput: arg({ type: CanvasPayloadInput, required: false }),
         projectInput: arg({ type: ProjectInput, required: true }),
         where: arg({ type: ProjectWhere, required: true }),
       },

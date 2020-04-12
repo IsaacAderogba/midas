@@ -43,7 +43,7 @@ const WorkspaceUser = objectType({
 const WorkspaceUserWhere = inputObjectType({
   name: "WorkspaceUserWhere",
   definition(t) {
-    t.int("userId", { required: false });
+    t.id("userId", { required: false });
   }
 });
 

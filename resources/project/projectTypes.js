@@ -110,7 +110,12 @@ const CanvasEnum = {
 // canvas CLIENT_CONNECT, CLIENT_DISCONNECT
 const CanvasScene = enumType({
   name: "CanvasScene",
-  members: [CanvasEnum.SCENE_UPDATE, CanvasEnum.MOUSE_LOCATION],
+  members: [
+    CanvasEnum.SCENE_UPDATE,
+    CanvasEnum.MOUSE_LOCATION,
+    CanvasEnum.CLIENT_CONNECT,
+    CanvasEnum.CLIENT_DISCONNECT,
+  ],
 });
 
 const CanvasSceneInput = inputObjectType({
@@ -123,8 +128,7 @@ const CanvasSceneInput = inputObjectType({
 const CanvasPayload = objectType({
   name: "CanvasPayload",
   definition(t) {
-    t.id("workspaceUserId", { nullable: false });
-    t.string("elements", { nullable: true });
+    t.string("workspaceUserId", { nullable: false });
     t.int("pointerCoordX", { nullable: true });
     t.int("pointerCoordY", { nullable: true });
   },
@@ -133,8 +137,7 @@ const CanvasPayload = objectType({
 const CanvasPayloadInput = inputObjectType({
   name: "CanvasPayloadInput",
   definition(t) {
-    t.id("workspaceUserId", { required: true });
-    t.string("elements", { required: false });
+    t.string("workspaceUserId", { required: true });
     t.int("pointerCoordX", { required: false });
     t.int("pointerCoordY", { required: false });
   },

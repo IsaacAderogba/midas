@@ -22,6 +22,26 @@ export type AuthUser = {
   user: User;
 };
 
+export type CanvasPayload = {
+   __typename?: 'CanvasPayload';
+  workspaceUserId: Scalars['String'];
+  pointerCoordX?: Maybe<Scalars['Int']>;
+  pointerCoordY?: Maybe<Scalars['Int']>;
+};
+
+export type CanvasPayloadInput = {
+  workspaceUserId: Scalars['String'];
+  pointerCoordX?: Maybe<Scalars['Int']>;
+  pointerCoordY?: Maybe<Scalars['Int']>;
+};
+
+export enum CanvasScene {
+  SceneUpdate = 'SCENE_UPDATE',
+  MouseLocation = 'MOUSE_LOCATION',
+  ClientConnect = 'CLIENT_CONNECT',
+  ClientDisconnect = 'CLIENT_DISCONNECT'
+}
+
 export type LoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -92,6 +112,7 @@ export type MutationCreateProjectArgs = {
 
 
 export type MutationUpdateProjectArgs = {
+  canvasPayloadInput?: Maybe<CanvasPayloadInput>;
   projectInput: ProjectInput;
   where: ProjectWhere;
 };
@@ -166,6 +187,8 @@ export enum ProjectInviteShareStatus {
 export type ProjectSubscriptionPayload = {
    __typename?: 'ProjectSubscriptionPayload';
   mutation: MutationType;
+  canvasPayload?: Maybe<CanvasPayload>;
+  canvasScene?: Maybe<CanvasScene>;
   data: Project;
   updatedFields: Array<Scalars['String']>;
 };
@@ -287,7 +310,7 @@ export enum WorkspaceUserStatus {
 }
 
 export type WorkspaceUserWhere = {
-  userId?: Maybe<Scalars['Int']>;
+  userId?: Maybe<Scalars['ID']>;
 };
 
 export type GetProjectQueryVariables = {
@@ -333,6 +356,7 @@ export type ProjectsSubscription = (
 
 export type UpdateProjectMutationVariables = {
   projectInput: ProjectInput;
+  canvasPayloadInput?: Maybe<CanvasPayloadInput>;
   where: ProjectWhere;
 };
 
@@ -416,7 +440,9 @@ export type CreateWorkspaceMutation = (
   )> }
 );
 
-export type GetWorkspaceQueryVariables = {};
+export type GetWorkspaceQueryVariables = {
+  where: WorkspaceUserWhere;
+};
 
 
 export type GetWorkspaceQuery = (
@@ -432,6 +458,9 @@ export type GetWorkspaceQuery = (
       ) }
     )> }
     & WorkspaceAttributesFragment
+  )>, workspaceUser?: Maybe<(
+    { __typename?: 'WorkspaceUser' }
+    & Pick<WorkspaceUser, 'id' | 'workspaceId' | 'userId' | 'role' | 'lastSeen' | 'status'>
   )> }
 );
 
@@ -635,8 +664,8 @@ export function useProjectsSubscription(baseOptions?: ApolloReactHooks.Subscript
 export type ProjectsSubscriptionHookResult = ReturnType<typeof useProjectsSubscription>;
 export type ProjectsSubscriptionResult = ApolloReactCommon.SubscriptionResult<ProjectsSubscription>;
 export const UpdateProjectDocument = gql`
-    mutation updateProject($projectInput: ProjectInput!, $where: ProjectWhere!) {
-  updateProject(projectInput: $projectInput, where: $where) {
+    mutation updateProject($projectInput: ProjectInput!, $canvasPayloadInput: CanvasPayloadInput, $where: ProjectWhere!) {
+  updateProject(projectInput: $projectInput, canvasPayloadInput: $canvasPayloadInput, where: $where) {
     ...projectAttributes
   }
 }
@@ -657,6 +686,7 @@ export type UpdateProjectMutationFn = ApolloReactCommon.MutationFunction<UpdateP
  * const [updateProjectMutation, { data, loading, error }] = useUpdateProjectMutation({
  *   variables: {
  *      projectInput: // value for 'projectInput'
+ *      canvasPayloadInput: // value for 'canvasPayloadInput'
  *      where: // value for 'where'
  *   },
  * });
@@ -843,7 +873,7 @@ export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorks
 export type CreateWorkspaceMutationResult = ApolloReactCommon.MutationResult<CreateWorkspaceMutation>;
 export type CreateWorkspaceMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
 export const GetWorkspaceDocument = gql`
-    query getWorkspace {
+    query getWorkspace($where: WorkspaceUserWhere!) {
   workspace {
     ...workspaceAttributes
     workspaceUsers {
@@ -856,6 +886,14 @@ export const GetWorkspaceDocument = gql`
         email
       }
     }
+  }
+  workspaceUser(where: $where) {
+    id
+    workspaceId
+    userId
+    role
+    lastSeen
+    status
   }
 }
     ${WorkspaceAttributesFragmentDoc}`;
@@ -872,6 +910,7 @@ export const GetWorkspaceDocument = gql`
  * @example
  * const { data, loading, error } = useGetWorkspaceQuery({
  *   variables: {
+ *      where: // value for 'where'
  *   },
  * });
  */

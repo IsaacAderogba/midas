@@ -40,8 +40,7 @@ export const useCanvasElementsStore = <S,>(
     dataSelector
   );
 
-interface ICanvasElementsProvider
-  extends RouteComponentProps<{ id: string }> {}
+interface ICanvasElementsProvider extends RouteComponentProps<{ id: string }> {}
 
 export const CanvasElementsProvider: React.FC<ICanvasElementsProvider> = ({
   children,
@@ -110,17 +109,13 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
 }) => {
   const [canvasUpdateListener, forceCanvasUpdate] = useReducer(x => x + 1, 0);
   const elements = useCanvasElementsStore(state => state.elements);
-
-  const [
-    getProject,
-    { loading, subscribeToMore, data }
-  ] = useGetProjectLazyQuery({
-    fetchPolicy: "no-cache",
-    variables: { where: { id: match.params.id } }
-  });
   const canvasRef = useRef<Maybe<HTMLCanvasElement>>(null);
   const rcRef = useRef<Maybe<RoughCanvas>>(null);
   const contextRef = useRef<Maybe<CanvasRenderingContext2D>>(null);
+  const [getProject, { data }] = useGetProjectLazyQuery({
+    fetchPolicy: "no-cache",
+    variables: { where: { id: match.params.id } }
+  });
 
   const [canvasState, setCanvasState] = useState<ICanvasStore>({
     draggingElement: null,

@@ -15,15 +15,20 @@ import { useAppStore } from "../../~reusables/contexts/AppProvider";
 import { useCreateProjectMutation } from "../../generated/graphql";
 
 export const Workspace: React.FC<RouteComponentProps> = () => {
-  const { workspace, isWorkspaceLoading } = useAppStore(state => ({
-    workspace: state.workspace,
-    isWorkspaceLoading: state.isWorkspaceLoading
-  }));
+  const { workspace, isWorkspaceLoading, workspaceUser } = useAppStore(
+    state => ({
+      workspace: state.workspace,
+      isWorkspaceLoading: state.isWorkspaceLoading,
+      workspaceUser: state.workspaceUser
+    })
+  );
 
-  // todo - GET WORKSPACE USER
   const [createProject, { loading, error }] = useCreateProjectMutation({
     variables: {
-      newProjectInput: { title: "Untitled project", workspaceUserId: "1" }
+      newProjectInput: {
+        title: "Untitled project",
+        workspaceUserId: workspaceUser ? workspaceUser.id : ""
+      }
     },
     update() {},
     onError() {}

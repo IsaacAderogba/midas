@@ -6,7 +6,7 @@ import {
   useGetWorkspaceQuery,
   Workspace as WorkspaceType,
   useGetWorkspacesQuery,
-  GetWorkspacesQuery,
+  GetWorkspacesQuery
 } from "../../generated/graphql";
 
 // helpers
@@ -14,6 +14,7 @@ import { useStoreState } from "../hooks/useStoreState";
 import { setLocalStorageWorkspaceKey } from "../utils/localStorage";
 import { useUIStore } from "./UIProvider";
 import { CreateWorkspaceModal } from "../../components/~modals/CreateWorkspaceModal";
+import { useAuthStore } from "./AuthProvider";
 
 /**
  * Heavy duty
@@ -27,6 +28,7 @@ import { CreateWorkspaceModal } from "../../components/~modals/CreateWorkspaceMo
 
 export interface IAppStore {
   workspace: GetWorkspaceQuery["workspace"];
+  workspaceUser: GetWorkspaceQuery["workspaceUser"];
   workspaces: GetWorkspacesQuery["workspaces"];
   isWorkspaceLoading: boolean;
   setWorkspace: (workspaceId: WorkspaceType["id"]) => void;
@@ -35,24 +37,29 @@ export interface IAppStore {
 
 export const AppContext = createContext<IAppStore>({
   workspace: null,
+  workspaceUser: null,
   workspaces: [],
   isWorkspaceLoading: false,
   setWorkspace: () => {},
-  createWorkspace: () => {},
+  createWorkspace: () => {}
 });
 
 export const useAppStore = <S,>(dataSelector: (store: IAppStore) => S) =>
-  useStoreState(AppContext, (contextData) => contextData!, dataSelector);
+  useStoreState(AppContext, contextData => contextData!, dataSelector);
 
 export const AppProvider: React.FC = ({ children }) => {
-  const modalState = useUIStore((state) => state.modalState);
-  const workspace = useGetWorkspaceQuery();
+  const userId = useAuthStore(state => state.user?.id);
+  const modalState = useUIStore(state => state.modalState);
+  const workspace = useGetWorkspaceQuery({
+    variables: { where: { userId: userId } }
+  });
   const workspaces = useGetWorkspacesQuery();
   const store = useLocalStore<IAppStore>(() => ({
     workspace: null,
+    workspaceUser: null,
     workspaces: [],
     isWorkspaceLoading: true,
-    setWorkspace: (workspaceId) => {
+    setWorkspace: workspaceId => {
       /**
        * for security reasons, we pass the workspace ID in the auth header
        * itself. So in order to chose a set up a new workspace as currently
@@ -61,15 +68,16 @@ export const AppProvider: React.FC = ({ children }) => {
       setLocalStorageWorkspaceKey(workspaceId);
       workspace.refetch();
     },
-    createWorkspace: (createdWorkspaceId) => {
+    createWorkspace: createdWorkspaceId => {
       workspaces.refetch();
       store.setWorkspace(createdWorkspaceId);
-    },
+    }
   }));
 
   useEffect(() => {
     if (workspace.data) {
       store.workspace = workspace.data["workspace"];
+      store.workspaceUser = workspace.data["workspaceUser"];
       store.isWorkspaceLoading = workspace.loading;
     } else {
       store.isWorkspaceLoading = workspace.loading;
@@ -78,7 +86,7 @@ export const AppProvider: React.FC = ({ children }) => {
     workspace.loading,
     workspace.data,
     store.isWorkspaceLoading,
-    store.workspace,
+    store.workspace
   ]);
 
   useEffect(() => {
@@ -96,4 +104,3 @@ export const AppProvider: React.FC = ({ children }) => {
     </AppContext.Provider>
   );
 };
-

@@ -15,10 +15,9 @@ declare global {
 
 export interface NexusGenInputs {
   CanvasPayloadInput: { // input type
-    elements?: string | null; // String
     pointerCoordX?: number | null; // Int
     pointerCoordY?: number | null; // Int
-    workspaceUserId: string; // ID!
+    workspaceUserId: string; // String!
   }
   LoginInput: { // input type
     email: string; // String!
@@ -79,12 +78,12 @@ export interface NexusGenInputs {
     status?: NexusGenEnums['WorkspaceUserStatus'] | null; // WorkspaceUserStatus
   }
   WorkspaceUserWhere: { // input type
-    userId?: number | null; // Int
+    userId?: string | null; // ID
   }
 }
 
 export interface NexusGenEnums {
-  CanvasScene: "MOUSE_LOCATION" | "SCENE_UPDATE"
+  CanvasScene: "CLIENT_CONNECT" | "CLIENT_DISCONNECT" | "MOUSE_LOCATION" | "SCENE_UPDATE"
   MutationType: "CREATED" | "DELETED" | "UPDATED"
   ProjectInviteSharePrivileges: "can_view"
   ProjectInviteShareStatus: "people_invited"
@@ -102,10 +101,9 @@ export interface NexusGenRootTypes {
     userId: string; // ID!
   }
   CanvasPayload: { // root type
-    elements?: string | null; // String
     pointerCoordX?: number | null; // Int
     pointerCoordY?: number | null; // Int
-    workspaceUserId: string; // ID!
+    workspaceUserId: string; // String!
   }
   Mutation: {};
   Project: { // root type
@@ -195,10 +193,9 @@ export interface NexusGenFieldTypes {
     userId: string; // ID!
   }
   CanvasPayload: { // field return type
-    elements: string | null; // String
     pointerCoordX: number | null; // Int
     pointerCoordY: number | null; // Int
-    workspaceUserId: string; // ID!
+    workspaceUserId: string; // String!
   }
   Mutation: { // field return type
     createProject: NexusGenRootTypes['Project'] | null; // Project
@@ -306,7 +303,7 @@ export interface NexusGenArgTypes {
       registerInput?: NexusGenInputs['RegisterInput'] | null; // RegisterInput
     }
     updateProject: { // args
-      canvasInput: NexusGenInputs['CanvasPayloadInput']; // CanvasPayloadInput!
+      canvasPayloadInput?: NexusGenInputs['CanvasPayloadInput'] | null; // CanvasPayloadInput
       projectInput: NexusGenInputs['ProjectInput']; // ProjectInput!
       where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
     }
