@@ -95,7 +95,7 @@ export const Projects = () => {
 };
 
 const ProjectItem: React.FC<{ project: GetProjectsQuery["projects"][0] }> = ({
-  project: { title, updatedAt, uuid }
+  project: { title, updatedAt, id }
 }) => {
   const { fontSizes, colors } = useTheme();
 
@@ -116,7 +116,7 @@ const ProjectItem: React.FC<{ project: GetProjectsQuery["projects"][0] }> = ({
         }
       `}
     >
-      <Link to={`/app/canvas/${uuid}`}>
+      <Link to={`/app/canvas/${id}`}>
         <section
           css={css`
             width: 100%;

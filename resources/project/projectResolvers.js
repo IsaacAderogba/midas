@@ -11,6 +11,7 @@ const {
   ProjectInput,
   ProjectWhere,
   ProjectSubscriptionPayload,
+  CanvasPayloadInput
 } = require("./projectTypes");
 const { MutationEnum } = require("../types");
 
@@ -62,7 +63,6 @@ const Mutation = extendType({
           ...newProjectInput,
         });
 
-        console.log("MUTATION-CHANNEl", projectSubscriptionChannels.projects(user.workspaceId))
         pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
           [projectSubscriptionKeys.projects]: {
             mutation: MutationEnum.CREATED,
@@ -78,6 +78,7 @@ const Mutation = extendType({
       type: Project,
       nullable: true,
       args: {
+        canvasInput: arg({ type: CanvasPayloadInput, required: true}),
         projectInput: arg({ type: ProjectInput, required: true }),
         where: arg({ type: ProjectWhere, required: true }),
       },
@@ -98,6 +99,17 @@ const Mutation = extendType({
             updatedFields: [],
           },
         });
+
+        // pubsub.publish(
+        //   projectSubscriptionChannels.project(user.workspaceId, where.id),
+        //   {
+        //     [projectSubscriptionKeys.project]: {
+        //       mutation: MutationEnum.UPDATED,
+        //       data: updatedProject,
+        //       updatedFields: [],
+        //     },
+        //   }
+        // );
 
         return updatedProject;
       },
@@ -134,14 +146,33 @@ const Subscription = extendType({
       type: ProjectSubscriptionPayload,
       nullable: false,
       subscribe: (parent, args, { user, pubsub }) => {
-        console.log("SUBSCRIPTION CHANNEL", projectSubscriptionChannels.projects(user.workspaceId))
         return pubsub.asyncIterator(
           projectSubscriptionChannels.projects(user.workspaceId)
         );
       },
       resolve: ({ projects }) => {
-        console.log("PROJECTS", projects)
         return projects;
+      },
+    });
+    t.field(projectSubscriptionKeys.project, {
+      type: ProjectSubscriptionPayload,
+      nullable: false,
+      args: {
+        where: arg({ type: ProjectWhere, required: true }),
+      },
+      subscribe: (parent, { where }, { user, pubsub }) => {
+        console.log(
+          "PROJECT CHANNEL",
+          projectSubscriptionChannels.project(user.workspaceId, where.id)
+        );
+        return pubsub.asyncIterator(
+          projectSubscriptionChannels.project(user.workspaceId, where.id)
+        );
+      },
+      resolve: ({ project }, args, { pubsub, user }) => {
+        console.log(user);
+
+        return project;
       },
     });
   },

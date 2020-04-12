@@ -1,7 +1,6 @@
 exports.up = function (knex) {
   return knex.schema.createTable("Project", (Project) => {
     Project.increments();
-    Project.string("uuid", 255).notNullable().unique();
     Project.integer("workspaceId")
       .unsigned()
       .notNullable()

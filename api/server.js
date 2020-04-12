@@ -49,7 +49,7 @@ const apolloServer = new ApolloServer({
       return {
         ...connection.context,
         pubsub: redisPubSub,
-        user: payload
+        user: payload && payload.authorization
           ? await UserAPI.authenticateUser(payload.authorization)
           : connection.context.user,
         dataSources: {

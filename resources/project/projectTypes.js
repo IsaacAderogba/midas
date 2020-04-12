@@ -17,7 +17,6 @@ const Project = objectType({
   name: "Project",
   definition(t) {
     t.id("id", { nullable: false });
-    t.string("uuid", { nullable: false });
     t.id("workspaceId", { nullable: false });
     t.id("workspaceUserId", { nullable: false });
     t.string("title", { nullable: false });
@@ -50,15 +49,6 @@ const Project = objectType({
         });
       },
     });
-  },
-});
-
-const ProjectSubscriptionPayload = objectType({
-  name: "ProjectSubscriptionPayload",
-  definition(t) {
-    t.field("mutation", { type: MutationType, nullable: false });
-    t.field("data", { type: Project, nullable: false });
-    t.list.string("updatedFields", { nullable: false });
   },
 });
 
@@ -105,9 +95,59 @@ const ProjectWhere = inputObjectType({
   name: "ProjectWhere",
   definition(t) {
     t.id("id", { required: false });
-    t.string("uuid", { required: false });
     t.id("workspaceUserId", { required: false });
     t.id("workspaceId", { required: false });
+  },
+});
+
+const CanvasEnum = {
+  SCENE_UPDATE: "SCENE_UPDATE",
+  MOUSE_LOCATION: "MOUSE_LOCATION",
+  CLIENT_CONNECT: "CLIENT_CONNECT",
+  CLIENT_DISCONNECT: "CLIENT_DISCONNECT",
+};
+
+// canvas CLIENT_CONNECT, CLIENT_DISCONNECT
+const CanvasScene = enumType({
+  name: "CanvasScene",
+  members: [CanvasEnum.SCENE_UPDATE, CanvasEnum.MOUSE_LOCATION],
+});
+
+const CanvasSceneInput = inputObjectType({
+  name: "CanvasSceneInput",
+  definition(t) {
+    t.field("canvasScene", { type: CanvasScene, nullable: false });
+  },
+});
+
+const CanvasPayload = objectType({
+  name: "CanvasPayload",
+  definition(t) {
+    t.id("workspaceUserId", { nullable: false });
+    t.string("elements", { nullable: true });
+    t.int("pointerCoordX", { nullable: true });
+    t.int("pointerCoordY", { nullable: true });
+  },
+});
+
+const CanvasPayloadInput = inputObjectType({
+  name: "CanvasPayloadInput",
+  definition(t) {
+    t.id("workspaceUserId", { required: true });
+    t.string("elements", { required: false });
+    t.int("pointerCoordX", { required: false });
+    t.int("pointerCoordY", { required: false });
+  },
+});
+
+const ProjectSubscriptionPayload = objectType({
+  name: "ProjectSubscriptionPayload",
+  definition(t) {
+    t.field("mutation", { type: MutationType, nullable: false });
+    t.field("canvasPayload", { type: CanvasPayload, nullable: true });
+    t.field("canvasScene", { type: CanvasScene, nullable: true });
+    t.field("data", { type: Project, nullable: false });
+    t.list.string("updatedFields", { nullable: false });
   },
 });
 
@@ -117,4 +157,6 @@ module.exports = {
   NewProjectInput,
   ProjectWhere,
   ProjectSubscriptionPayload,
+  CanvasSceneInput,
+  CanvasPayloadInput,
 };

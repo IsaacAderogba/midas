@@ -12,6 +12,25 @@ type AuthUser {
   userId: ID!
 }
 
+type CanvasPayload {
+  elements: String
+  pointerCoordX: Int
+  pointerCoordY: Int
+  workspaceUserId: ID!
+}
+
+input CanvasPayloadInput {
+  elements: String
+  pointerCoordX: Int
+  pointerCoordY: Int
+  workspaceUserId: ID!
+}
+
+enum CanvasScene {
+  MOUSE_LOCATION
+  SCENE_UPDATE
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -27,7 +46,7 @@ type Mutation {
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   loginUser(loginInput: LoginInput): AuthUser!
   registerUser(registerInput: RegisterInput): AuthUser!
-  updateProject(projectInput: ProjectInput!, where: ProjectWhere!): Project
+  updateProject(canvasInput: CanvasPayloadInput!, projectInput: ProjectInput!, where: ProjectWhere!): Project
   updateUser(userInput: UserInput): User
   updateWorkspace(workspaceInput: WorkspaceInput): Workspace
   updateWorkspaceUser(where: WorkspaceUserWhere, workspaceUserInput: WorkspaceUserInput): WorkspaceUser
@@ -70,7 +89,6 @@ type Project {
   thumbnailPhotoURL: String
   title: String!
   updatedAt: String!
-  uuid: String!
   workspace: Workspace!
   workspaceId: ID!
   workspaceUser: WorkspaceUser!
@@ -96,6 +114,8 @@ enum ProjectInviteShareStatus {
 }
 
 type ProjectSubscriptionPayload {
+  canvasPayload: CanvasPayload
+  canvasScene: CanvasScene
   data: Project!
   mutation: MutationType!
   updatedFields: [String!]!
@@ -103,7 +123,6 @@ type ProjectSubscriptionPayload {
 
 input ProjectWhere {
   id: ID
-  uuid: String
   workspaceId: ID
   workspaceUserId: ID
 }
@@ -127,6 +146,7 @@ input RegisterInput {
 }
 
 type Subscription {
+  project(where: ProjectWhere!): ProjectSubscriptionPayload!
   projects: ProjectSubscriptionPayload!
 }
 

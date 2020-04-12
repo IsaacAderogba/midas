@@ -58,7 +58,7 @@ const ProtectedAppRouter: React.FC = () => {
         />
         <Route
           exact
-          path="/app/canvas/:uuid"
+          path="/app/canvas/:id"
           render={(routeProps) => {
             return (
               <CanvasElementsProvider {...routeProps}>

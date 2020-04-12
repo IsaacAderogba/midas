@@ -16,7 +16,7 @@ import {
   moveOneRight,
   moveAllRight
 } from "../../~reusables/utils/zindex";
-import "./styles.scss";
+import "./styles.css";
 import {
   generateHistoryCurrentEntry,
   restoreHistoryEntry,
@@ -87,7 +87,7 @@ export const StatefulCanvas: React.FC = () => {
         projectInput: {
           elements: JSON.stringify(elements)
         },
-        where: { uuid: canvasStore.project?.uuid }
+        where: { id: canvasStore.project?.id }
       }
     });
   }, 2000);

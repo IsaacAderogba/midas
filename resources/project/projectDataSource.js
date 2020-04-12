@@ -1,6 +1,5 @@
 const { SQLDataSource } = require("datasource-sql");
 const { knexConfig } = require("../../db/dbConfig");
-const uuidv4 = require("uuid/v4");
 
 const PROJECT_TABLE = "Project";
 
@@ -12,7 +11,6 @@ class ProjectAPI extends SQLDataSource {
         ...project,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        uuid: uuidv4(),
       });
     } catch (err) {
       console.log(err);

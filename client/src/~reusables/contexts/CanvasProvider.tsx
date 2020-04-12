@@ -41,7 +41,7 @@ export const useCanvasElementsStore = <S,>(
   );
 
 interface ICanvasElementsProvider
-  extends RouteComponentProps<{ uuid: string }> {}
+  extends RouteComponentProps<{ id: string }> {}
 
 export const CanvasElementsProvider: React.FC<ICanvasElementsProvider> = ({
   children,
@@ -102,7 +102,7 @@ export const CanvasContext = createNewContext<ICanvasState>({
   project: null
 });
 
-interface ICanvasProvider extends RouteComponentProps<{ uuid: string }> {}
+interface ICanvasProvider extends RouteComponentProps<{ id: string }> {}
 
 export const CanvasProvider: React.FC<ICanvasProvider> = ({
   children,
@@ -116,7 +116,7 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
     { loading, subscribeToMore, data }
   ] = useGetProjectLazyQuery({
     fetchPolicy: "no-cache",
-    variables: { where: { uuid: match.params.uuid } }
+    variables: { where: { id: match.params.id } }
   });
   const canvasRef = useRef<Maybe<HTMLCanvasElement>>(null);
   const rcRef = useRef<Maybe<RoughCanvas>>(null);
@@ -134,7 +134,7 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
 
   useEffect(() => {
     getProject();
-  }, [match.params.uuid]);
+  }, [match.params.id]);
 
   useEffect(() => {
     if (data && data.project) {
