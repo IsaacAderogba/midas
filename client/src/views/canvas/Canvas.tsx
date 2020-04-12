@@ -75,11 +75,9 @@ export const Canvas: React.FC = () => {
 export const StatefulCanvas: React.FC = () => {
   const elements = useCanvasElementsStore(state => state.elements);
   const canvasStore = useContextSelector(CanvasContext, state => state);
-  console.log(elements);
 
-  const [updateProject] = useUpdateProjectMutation();
+  const [updateProject] = useUpdateProjectMutation({ ignoreResults: true });
   const updateProjectDebounced = _.debounce(() => {
-    console.log("executed");
     localStorage.setItem(
       LOCAL_STORAGE_MIDAS_STATE_KEY,
       JSON.stringify(_.pick(canvasStore, canvasStoreWhiteList))
@@ -92,15 +90,19 @@ export const StatefulCanvas: React.FC = () => {
         where: { uuid: canvasStore.project?.uuid }
       }
     });
-  }, 3000);
+  }, 2000);
 
   useEffect(() => {
     /**
-     * Anytime canvas store or elements changes, make a write to the
-     * database after a debounced 3 second pause
+     * Anytime canvasStore or elements changes, make a write to the
+     * database after a debounced 2 second pause. Cancel and restart
+     * the debounce if the dependency variables change
      */
     updateProjectDebounced();
-  }, [canvasStore]);
+    return () => {
+      updateProjectDebounced.cancel();
+    };
+  }, [canvasStore, elements]);
 
   return <StatelessCanvas {...canvasStore} elements={elements} />;
 };
