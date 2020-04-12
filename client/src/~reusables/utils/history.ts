@@ -21,7 +21,8 @@ export function pushHistoryEntry(stateHistory: string[], newEntry: string) {
 export function restoreHistoryEntry(
   elements: MidasElement[],
   entry: string,
-  skipHistory: boolean
+  skipHistory: boolean,
+  forceCanvasUpdate: React.DispatchWithoutAction
 ) {
   const newElements = JSON.parse(entry);
   elements.splice(0, elements.length);
@@ -31,4 +32,5 @@ export function restoreHistoryEntry(
   });
   // When restoring, we shouldn't add an history entry otherwise we'll be stuck with it and can't go back
   skipHistory = true;
+  forceCanvasUpdate();
 }

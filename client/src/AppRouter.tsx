@@ -7,7 +7,7 @@ import { Landing } from "./views/marketing/Landing";
 import ProtectedRoute from "./components/organisms/ProtectedRoute";
 import { Sidebar } from "./components/~layout/Sidebar";
 import { AppProvider } from "./~reusables/contexts/AppProvider";
-import { ElementsProvider } from "./~reusables/contexts/CanvasProvider";
+import { CanvasElementsProvider } from "./~reusables/contexts/CanvasProvider";
 import { Workspace } from "./views/app/Workspace";
 
 // helpers
@@ -61,9 +61,9 @@ const ProtectedAppRouter: React.FC = () => {
           path="/app/canvas/:uuid"
           render={(routeProps) => {
             return (
-              <ElementsProvider {...routeProps}>
+              <CanvasElementsProvider {...routeProps}>
                 <Canvas />
-              </ElementsProvider>
+              </CanvasElementsProvider>
             );
           }}
         />

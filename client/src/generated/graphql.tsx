@@ -140,7 +140,6 @@ export type Project = {
   inviteShareStatus: ProjectInviteShareStatus;
   inviteSharePrivileges: ProjectInviteSharePrivileges;
   elements?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   workspace: Workspace;
@@ -155,7 +154,6 @@ export type ProjectInput = {
   inviteShareStatus?: Maybe<ProjectInviteShareStatus>;
   inviteSharePrivileges?: Maybe<ProjectInviteSharePrivileges>;
   elements?: Maybe<Scalars['String']>;
-  state?: Maybe<Scalars['String']>;
 };
 
 export enum ProjectInviteSharePrivileges {
@@ -465,7 +463,7 @@ export type UserAttributesFragment = (
 
 export type ProjectAttributesFragment = (
   { __typename?: 'Project' }
-  & Pick<Project, 'id' | 'uuid' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'elements' | 'state' | 'createdAt' | 'updatedAt'>
+  & Pick<Project, 'id' | 'uuid' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'elements' | 'createdAt' | 'updatedAt'>
 );
 
 export type ProjectsAttributesFragment = (
@@ -518,7 +516,6 @@ export const ProjectAttributesFragmentDoc = gql`
   inviteShareStatus
   inviteSharePrivileges
   elements
-  state
   createdAt
   updatedAt
 }

@@ -66,7 +66,6 @@ type Project {
   id: ID!
   inviteSharePrivileges: ProjectInviteSharePrivileges!
   inviteShareStatus: ProjectInviteShareStatus!
-  state: String
   thumbnailPhotoID: String
   thumbnailPhotoURL: String
   title: String!
@@ -82,7 +81,6 @@ input ProjectInput {
   elements: String
   inviteSharePrivileges: ProjectInviteSharePrivileges
   inviteShareStatus: ProjectInviteShareStatus
-  state: String
   thumbnailPhotoID: String
   thumbnailPhotoURL: String
   title: String

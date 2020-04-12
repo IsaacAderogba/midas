@@ -25,7 +25,6 @@ exports.up = function (knex) {
       .notNullable()
       .defaultTo("can_view");
     Project.text("elements", ["longText"]).defaultTo("");
-    Project.text("state").defaultTo("");
     Project.datetime("createdAt").notNullable();
     Project.datetime("updatedAt").notNullable();
   });

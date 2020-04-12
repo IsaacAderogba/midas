@@ -40,7 +40,6 @@ export interface NexusGenInputs {
     elements?: string | null; // String
     inviteSharePrivileges?: NexusGenEnums['ProjectInviteSharePrivileges'] | null; // ProjectInviteSharePrivileges
     inviteShareStatus?: NexusGenEnums['ProjectInviteShareStatus'] | null; // ProjectInviteShareStatus
-    state?: string | null; // String
     thumbnailPhotoID?: string | null; // String
     thumbnailPhotoURL?: string | null; // String
     title?: string | null; // String
@@ -103,7 +102,6 @@ export interface NexusGenRootTypes {
     id: string; // ID!
     inviteSharePrivileges: NexusGenEnums['ProjectInviteSharePrivileges']; // ProjectInviteSharePrivileges!
     inviteShareStatus: NexusGenEnums['ProjectInviteShareStatus']; // ProjectInviteShareStatus!
-    state?: string | null; // String
     thumbnailPhotoID?: string | null; // String
     thumbnailPhotoURL?: string | null; // String
     title: string; // String!
@@ -202,7 +200,6 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     inviteSharePrivileges: NexusGenEnums['ProjectInviteSharePrivileges']; // ProjectInviteSharePrivileges!
     inviteShareStatus: NexusGenEnums['ProjectInviteShareStatus']; // ProjectInviteShareStatus!
-    state: string | null; // String
     thumbnailPhotoID: string | null; // String
     thumbnailPhotoURL: string | null; // String
     title: string; // String!

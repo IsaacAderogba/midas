@@ -49,7 +49,7 @@ export function loadFromJSON(elements: MidasElement[]) {
     reader.onloadend = () => {
       if (reader.readyState === FileReader.DONE) {
         const data = JSON.parse(reader.result as string);
-        restore(data.elements, null, elements);
+        restore(data.elements, elements);
         resolve();
       }
     };
@@ -143,18 +143,12 @@ export function save(state: ICanvasStore, elements: MidasElement[]) {
   localStorage.setItem(LOCAL_STORAGE_MIDAS_STATE_KEY, JSON.stringify(state));
 }
 
-export function restoreFromLocalStorage(elements: MidasElement[]) {
-  const savedElements = localStorage.getItem(LOCAL_STORAGE_MIDAS_KEY);
-  const savedState = localStorage.getItem(LOCAL_STORAGE_MIDAS_STATE_KEY);
-
-  return restore(savedElements, savedState, elements);
-}
-
 export function restore(
   savedElements: string | MidasElement[] | null | undefined,
-  savedState: string | null,
   elements: MidasElement[]
 ) {
+  const savedState = localStorage.getItem(LOCAL_STORAGE_MIDAS_STATE_KEY);
+
   try {
     if (savedElements) {
       elements.splice(

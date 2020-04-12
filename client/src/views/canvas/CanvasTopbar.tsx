@@ -18,7 +18,7 @@ import { Button } from "antd";
 import { CANVAS_TOPBAR_HEIGHT } from "../../~reusables/constants/dimensions";
 import { clearSelection } from "../../~reusables/utils/element";
 import {
-  useElementsStore,
+  useCanvasElementsStore,
   CanvasContext
 } from "../../~reusables/contexts/CanvasProvider";
 import {
@@ -77,15 +77,15 @@ export const SHAPES = [
 ];
 
 export const CanvasTopbar: React.FC = () => {
-  const elements = useElementsStore(state => state.elements);
+  const elements = useCanvasElementsStore(state => state.elements);
   const {
-    setState,
+    setCanvasState,
     elementType,
     canvasRef,
     exportBackground,
     viewBackgroundColor
   } = useContextSelector(CanvasContext, state => ({
-    setState: state.setState,
+    setCanvasState: state.setCanvasState,
     elementType: state.elementType,
     canvasRef: state.canvasRef,
     exportBackground: state.exportBackground,
@@ -95,7 +95,7 @@ export const CanvasTopbar: React.FC = () => {
   const clearCanvas = () => {
     if (window.confirm("This will clear the whole canvas. Are you sure?")) {
       elements.splice(0, elements.length);
-      setState(prevState => ({
+      setCanvasState(prevState => ({
         ...prevState,
         viewBackgroundColor: "#ffffff",
         scrollX: 0,
@@ -140,7 +140,7 @@ export const CanvasTopbar: React.FC = () => {
             svgIcon={icon}
             checked={elementType === value}
             onClick={() => {
-              setState(prevState => ({
+              setCanvasState(prevState => ({
                 ...prevState,
                 elementType: value
               }));
@@ -175,7 +175,7 @@ export const CanvasTopbar: React.FC = () => {
             type="checkbox"
             checked={exportBackground}
             onChange={e => {
-              setState(prevState => ({
+              setCanvasState(prevState => ({
                 ...prevState,
                 exportBackground: e.target.checked
               }));

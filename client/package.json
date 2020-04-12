@@ -40,7 +40,6 @@
     "lodash": "^4.17.15",
     "mobx": "^5.15.4",
     "mobx-react": "^6.1.8",
-    "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-app-rewired": "^2.1.5",
     "react-dom": "^16.13.1",

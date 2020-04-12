@@ -8,7 +8,7 @@ import { CanvasSidebar } from "../../components/~layout/CanvasSidebar";
 // helpers
 import {
   CanvasContext,
-  useElementsStore
+  useCanvasElementsStore
 } from "../../~reusables/contexts/CanvasProvider";
 import {
   someElementIsSelected,
@@ -23,19 +23,19 @@ import {
 } from "../../~reusables/utils/zindex";
 
 export const CustomizeSidebar: React.FC = () => {
-  const elements = useElementsStore(state => state.elements);
+  const elements = useCanvasElementsStore(state => state.elements);
   const {
-    setState,
+    setCanvasState,
     viewBackgroundColor,
     currentItemStrokeColor,
     currentItemBackgroundColor,
-    forceCanvasUpdate,
+    forceCanvasUpdate
   } = useContextSelector(CanvasContext, state => ({
-    setState: state.setState,
+    setCanvasState: state.setCanvasState,
     viewBackgroundColor: state.viewBackgroundColor,
     currentItemStrokeColor: state.currentItemStrokeColor,
     currentItemBackgroundColor: state.currentItemBackgroundColor,
-    forceCanvasUpdate: state.forceCanvasUpdate,
+    forceCanvasUpdate: state.forceCanvasUpdate
   }));
 
   return (
@@ -48,7 +48,7 @@ export const CustomizeSidebar: React.FC = () => {
             type="color"
             value={viewBackgroundColor}
             onChange={e => {
-              setState(prevState => ({
+              setCanvasState(prevState => ({
                 ...prevState,
                 viewBackgroundColor: e.target.value
               }));
@@ -61,7 +61,7 @@ export const CustomizeSidebar: React.FC = () => {
             type="color"
             value={currentItemStrokeColor}
             onChange={e => {
-              setState(prevState => ({
+              setCanvasState(prevState => ({
                 ...prevState,
                 currentItemStrokeColor: e.target.value
               }));
@@ -74,7 +74,7 @@ export const CustomizeSidebar: React.FC = () => {
             type="color"
             value={currentItemBackgroundColor}
             onChange={e => {
-              setState(prevState => ({
+              setCanvasState(prevState => ({
                 ...prevState,
                 currentItemBackgroundColor: e.target.value
               }));

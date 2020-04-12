@@ -30,7 +30,10 @@ import {
   resetCursor,
   renderScene
 } from "../../~reusables/utils/canvas";
-import { KEYS } from "../../~reusables/constants/constants";
+import {
+  KEYS,
+  LOCAL_STORAGE_MIDAS_STATE_KEY
+} from "../../~reusables/constants/constants";
 import {
   getSelectedIndices,
   clearSelection,
@@ -45,7 +48,7 @@ import {
   isArrowKey
 } from "../../~reusables/utils/element";
 import {
-  useElementsStore,
+  useCanvasElementsStore,
   CanvasContext,
   ICanvasState
 } from "../../~reusables/contexts/CanvasProvider";
@@ -70,33 +73,34 @@ export const Canvas: React.FC = () => {
 };
 
 export const StatefulCanvas: React.FC = () => {
-  const elements = useElementsStore(state => state.elements);
+  const elements = useCanvasElementsStore(state => state.elements);
   const canvasStore = useContextSelector(CanvasContext, state => state);
-  console.log(canvasStore);
+  console.log(elements);
 
   const [updateProject] = useUpdateProjectMutation();
-  const updateProjectDebounced = _.debounce(
-    (state: ICanvasState, elements: MidasElement[]) => {
-      updateProject({
-        variables: {
-          projectInput: {
-            state: JSON.stringify(_.pick(state, canvasStoreWhiteList)),
-            elements: JSON.stringify(elements)
-          },
-          where: { uuid: canvasStore.project?.uuid }
-        }
-      });
-    },
-    2000
-  );
+  const updateProjectDebounced = _.debounce(() => {
+    console.log("executed");
+    localStorage.setItem(
+      LOCAL_STORAGE_MIDAS_STATE_KEY,
+      JSON.stringify(_.pick(canvasStore, canvasStoreWhiteList))
+    );
+    updateProject({
+      variables: {
+        projectInput: {
+          elements: JSON.stringify(elements)
+        },
+        where: { uuid: canvasStore.project?.uuid }
+      }
+    });
+  }, 3000);
 
   useEffect(() => {
     /**
      * Anytime canvas store or elements changes, make a write to the
-     * database after a debounced 2 second pause
+     * database after a debounced 3 second pause
      */
-    updateProjectDebounced(canvasStore, elements);
-  }, [canvasStore, elements]);
+    updateProjectDebounced();
+  }, [canvasStore]);
 
   return <StatelessCanvas {...canvasStore} elements={elements} />;
 };
@@ -120,8 +124,6 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
   public componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
     window.addEventListener("resize", this.onResize, false);
-
-    this.forceUpdate();
   }
 
   public componentWillUnmount() {
@@ -213,7 +215,7 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
       this.forceUpdate();
       event.preventDefault();
     } else if (shapesShortcutKeys.includes(event.key.toLowerCase())) {
-      this.props.setState(prevState => ({
+      this.props.setCanvasState(prevState => ({
         ...prevState,
         elementType: findElementByKey(event.key)
       }));
@@ -224,7 +226,12 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
         lastEntry = stateHistory.pop();
       }
       if (lastEntry !== undefined) {
-        restoreHistoryEntry(this.props.elements, lastEntry, skipHistory);
+        restoreHistoryEntry(
+          this.props.elements,
+          lastEntry,
+          skipHistory,
+          this.props.forceCanvasUpdate
+        );
       }
       this.forceUpdate();
       event.preventDefault();
@@ -232,6 +239,15 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
   };
 
   private removeWheelEventListener: (() => void) | undefined;
+
+  private handleWheel = (e: WheelEvent) => {
+    e.preventDefault();
+    const { deltaX, deltaY } = e;
+    this.setState({
+      scrollX: this.state.scrollX - deltaX,
+      scrollY: this.state.scrollY - deltaY
+    });
+  };
 
   public render() {
     const canvasWidth = window.innerWidth - CANVAS_SIDEBAR_WIDTH * 2;
@@ -360,7 +376,7 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
                 });
               });
 
-              this.props.setState(prevState => ({
+              this.props.setCanvasState(prevState => ({
                 ...prevState,
                 resizingElement: resizeElement ? resizeElement : null
               }));
@@ -438,14 +454,14 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
             generateDraw(element);
             elements.push(element);
             if (this.props.elementType === "text") {
-              this.props.setState(prevState => ({
+              this.props.setCanvasState(prevState => ({
                 ...prevState,
                 draggingElement: null,
                 elementType: "selection"
               }));
               element.isSelected = true;
             } else {
-              this.props.setState(prevState => ({
+              this.props.setCanvasState(prevState => ({
                 ...prevState,
                 draggingElement: element
               }));
@@ -596,7 +612,7 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
                 draggingElement.isSelected = true;
               }
 
-              this.props.setState(prevState => ({
+              this.props.setCanvasState(prevState => ({
                 ...prevState,
                 draggingElement: null,
                 elementType: "selection"
@@ -617,15 +633,6 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
       </div>
     );
   }
-
-  private handleWheel = (e: WheelEvent) => {
-    e.preventDefault();
-    const { deltaX, deltaY } = e;
-    this.setState({
-      scrollX: this.state.scrollX - deltaX,
-      scrollY: this.state.scrollY - deltaY
-    });
-  };
 
   componentDidUpdate() {
     if (this.props.rcRef.current && this.props.canvasRef.current) {

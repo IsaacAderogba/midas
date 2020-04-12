@@ -1,6 +1,5 @@
 // modules
 import React, { useEffect } from "react";
-import gql from "graphql-tag";
 import { css } from "styled-components/macro";
 
 // components
@@ -10,7 +9,6 @@ import { Card } from "antd";
 import { Link } from "react-router-dom";
 
 // helpers
-import { Project } from "../../~reusables/utils/fragments";
 import {
   useGetProjectsLazyQuery,
   ProjectsDocument,

@@ -58,7 +58,6 @@ export const Project = {
         inviteShareStatus
         inviteSharePrivileges
         elements
-        state
         createdAt
         updatedAt
       }

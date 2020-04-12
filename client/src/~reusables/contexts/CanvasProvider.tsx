@@ -27,17 +27,23 @@ import { restore } from "../utils/saveAndRetrieval";
 interface IElementsStore {
   elements: MidasElement[];
 }
-export const ElementContext = createContext<IElementsStore>({
+export const CanvasElementsContext = createContext<IElementsStore>({
   elements: []
 });
 
-export const useElementsStore = <S,>(
+export const useCanvasElementsStore = <S,>(
   dataSelector: (store: IElementsStore) => S
-) => useStoreState(ElementContext, contextData => contextData!, dataSelector);
+) =>
+  useStoreState(
+    CanvasElementsContext,
+    contextData => contextData!,
+    dataSelector
+  );
 
-interface IElementsProvider extends RouteComponentProps<{ uuid: string }> {}
+interface ICanvasElementsProvider
+  extends RouteComponentProps<{ uuid: string }> {}
 
-export const ElementsProvider: React.FC<IElementsProvider> = ({
+export const CanvasElementsProvider: React.FC<ICanvasElementsProvider> = ({
   children,
   ...routeProps
 }) => {
@@ -48,9 +54,9 @@ export const ElementsProvider: React.FC<IElementsProvider> = ({
   }));
 
   return (
-    <ElementContext.Provider value={store}>
+    <CanvasElementsContext.Provider value={store}>
       <CanvasProvider {...routeProps}>{children}</CanvasProvider>
-    </ElementContext.Provider>
+    </CanvasElementsContext.Provider>
   );
 };
 
@@ -65,7 +71,7 @@ export interface ICanvasStore {
 }
 
 interface ICanvasAction {
-  setState: React.Dispatch<React.SetStateAction<ICanvasStore>>;
+  setCanvasState: React.Dispatch<React.SetStateAction<ICanvasStore>>;
 }
 
 interface ICanvasUtils {
@@ -87,7 +93,7 @@ export const CanvasContext = createNewContext<ICanvasState>({
   currentItemStrokeColor: "#000000",
   currentItemBackgroundColor: "#ffffff",
   viewBackgroundColor: "#ffffff",
-  setState: () => {},
+  setCanvasState: () => {},
   canvasRef: React.createRef(),
   rcRef: React.createRef(),
   contextRef: React.createRef(),
@@ -103,7 +109,7 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
   match
 }) => {
   const [canvasUpdateListener, forceCanvasUpdate] = useReducer(x => x + 1, 0);
-  const elements = useElementsStore(state => state.elements);
+  const elements = useCanvasElementsStore(state => state.elements);
 
   const [
     getProject,
@@ -116,7 +122,7 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
   const rcRef = useRef<Maybe<RoughCanvas>>(null);
   const contextRef = useRef<Maybe<CanvasRenderingContext2D>>(null);
 
-  const [state, setState] = useState<ICanvasStore>({
+  const [canvasState, setCanvasState] = useState<ICanvasStore>({
     draggingElement: null,
     resizingElement: null,
     elementType: "selection",
@@ -131,15 +137,11 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
   }, [match.params.uuid]);
 
   useEffect(() => {
-    if (data && data.project && data.project.state) {
-      const savedState = restore(
-        data.project.elements,
-        data.project.state,
-        elements
-      );
+    if (data && data.project) {
+      const savedState = restore(data.project.elements, elements);
 
-      if(savedState) {
-        setState(savedState)
+      if (savedState) {
+        setCanvasState(savedState);
       }
     }
   }, [data]);
@@ -156,11 +158,11 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({
   return (
     <CanvasContext.Provider
       value={{
-        ...state,
+        ...canvasState,
         canvasRef,
         rcRef,
         contextRef,
-        setState,
+        setCanvasState,
         canvasUpdateListener,
         forceCanvasUpdate,
         project: data ? data.project : null
