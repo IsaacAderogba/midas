@@ -58,16 +58,18 @@ import {
   ELEMENT_SHIFT_TRANSLATE_AMOUNT,
   ELEMENT_TRANSLATE_AMOUNT
 } from "../../~reusables/constants/dimensions";
-import { useUpdateProjectMutation } from "../../generated/graphql";
+import { useUpdateProjectMutation, CanvasScene } from "../../generated/graphql";
 import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
+import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
 
 export const StatefulCanvas: React.FC = () => {
+  const userId = useAuthStore(state => (state.user ? state.user.id : ""));
   const { elements, project } = useProjectStore(state => ({
     elements: state.elements,
     project: state.project
   }));
   const canvasStore = useContextSelector(CanvasContext, state => state);
-  console.log(canvasStore)
+  console.log(canvasStore);
 
   const [updateProject] = useUpdateProjectMutation({ ignoreResults: true });
   const updateProjectDebounced = _.debounce(() => {
@@ -80,14 +82,18 @@ export const StatefulCanvas: React.FC = () => {
         projectInput: {
           elements: JSON.stringify(elements)
         },
-        where: { id: project?.id }
+        where: { id: project?.id },
+        canvasPayloadInput: {
+          userId,
+          canvasScene: CanvasScene.SceneUpdate
+        }
       }
     });
   }, 1000);
 
   useEffect(() => {
     /**
-     * Anytime canvasStore or elements changes, make a write to the
+     * Anytime canvasStore changes, make a write to the
      * database after a debounced 1 second pause. Cancel and restart
      * the debounce if the dependency variables change
      */
@@ -95,7 +101,11 @@ export const StatefulCanvas: React.FC = () => {
     return () => {
       updateProjectDebounced.cancel();
     };
-  }, [canvasStore, elements, updateProjectDebounced]);
+  }, [canvasStore]);
+
+  useEffect(() => {
+
+  }, [elements])
 
   return <StatelessCanvas {...canvasStore} elements={elements} />;
 };

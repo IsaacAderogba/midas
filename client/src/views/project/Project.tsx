@@ -18,6 +18,7 @@ import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
 
 export const Project: React.FC = () => {
   const userId = useAuthStore(state => (state.user ? state.user.id : ""));
+  
   let {
     project,
     removeCollaborator,
@@ -39,7 +40,7 @@ export const Project: React.FC = () => {
     onSubscriptionData({ subscriptionData: { data: subData } }) {
       console.log(subData);
       if (subData && subData.project && subData.project.canvasPayload) {
-        const { data, mutation, canvasPayload } = subData.project;
+        const { data, canvasPayload } = subData.project;
         const {
           pointerCoordX,
           pointerCoordY,
