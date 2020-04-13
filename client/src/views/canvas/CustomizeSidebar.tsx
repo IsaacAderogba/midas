@@ -6,10 +6,7 @@ import { useContextSelector } from "use-context-selector";
 import { CanvasSidebar } from "../../components/~layout/CanvasSidebar";
 
 // helpers
-import {
-  CanvasContext,
-  useCanvasElementsStore
-} from "../../~reusables/contexts/CanvasProvider";
+import { CanvasContext } from "../../~reusables/contexts/CanvasProvider";
 import {
   someElementIsSelected,
   deleteSelectedElements,
@@ -21,9 +18,10 @@ import {
   moveOneRight,
   moveAllRight
 } from "../../~reusables/utils/zindex";
+import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
 
 export const CustomizeSidebar: React.FC = () => {
-  const elements = useCanvasElementsStore(state => state.elements);
+  const elements = useProjectStore(state => state.elements);
   const {
     setCanvasState,
     viewBackgroundColor,

@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { useContextSelector } from "use-context-selector";
 import { css } from "styled-components/macro";
+import _ from "lodash";
 
 // components
 import { CanvasTopbar, SHAPES } from "./CanvasTopbar";
@@ -48,7 +49,6 @@ import {
   isArrowKey
 } from "../../~reusables/utils/element";
 import {
-  useCanvasElementsStore,
   CanvasContext,
   ICanvasState
 } from "../../~reusables/contexts/CanvasProvider";
@@ -59,7 +59,7 @@ import {
   ELEMENT_TRANSLATE_AMOUNT
 } from "../../~reusables/constants/dimensions";
 import { useUpdateProjectMutation } from "../../generated/graphql";
-import _ from "lodash";
+import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
 
 export const Canvas: React.FC = () => {
   return (
@@ -73,7 +73,10 @@ export const Canvas: React.FC = () => {
 };
 
 export const StatefulCanvas: React.FC = () => {
-  const elements = useCanvasElementsStore(state => state.elements);
+  const { elements, project } = useProjectStore(state => ({
+    elements: state.elements,
+    project: state.project
+  }));
   const canvasStore = useContextSelector(CanvasContext, state => state);
 
   const [updateProject] = useUpdateProjectMutation({ ignoreResults: true });
@@ -87,7 +90,7 @@ export const StatefulCanvas: React.FC = () => {
         projectInput: {
           elements: JSON.stringify(elements)
         },
-        where: { id: canvasStore.project?.id }
+        where: { id: project?.id }
       }
     });
   }, 2000);

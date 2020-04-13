@@ -7,7 +7,8 @@ import { Landing } from "./views/marketing/Landing";
 import ProtectedRoute from "./components/organisms/ProtectedRoute";
 import { Sidebar } from "./components/~layout/Sidebar";
 import { AppProvider } from "./~reusables/contexts/AppProvider";
-import { CanvasElementsProvider } from "./~reusables/contexts/CanvasProvider";
+import { CanvasProvider } from "./~reusables/contexts/CanvasProvider";
+import { ProjectProvider } from "./~reusables/contexts/ProjectProvider";
 import { Workspace } from "./views/app/Workspace";
 
 // helpers
@@ -21,7 +22,7 @@ export const AppRouter = () => {
       <Route
         exact
         path="/"
-        render={(routeProps) => <Landing {...routeProps} />}
+        render={routeProps => <Landing {...routeProps} />}
       />
       <ProtectedRoute path="/app" component={ProtectedAppRouter} />
       <Redirect to="/" />
@@ -40,7 +41,7 @@ const ProtectedAppRouter: React.FC = () => {
             "/app/workspace",
             "/app/workspace/wireframes",
             "/app/workspace/members",
-            "/app/workspace/settings",
+            "/app/workspace/settings"
           ]}
           render={() => {
             return (
@@ -49,7 +50,7 @@ const ProtectedAppRouter: React.FC = () => {
                 <main className="main-app">
                   <Route
                     path="/app/workspace"
-                    render={(routeProps) => <Workspace {...routeProps} />}
+                    render={routeProps => <Workspace {...routeProps} />}
                   />
                 </main>
               </StyledProtectedApp>
@@ -59,11 +60,13 @@ const ProtectedAppRouter: React.FC = () => {
         <Route
           exact
           path="/app/canvas/:id"
-          render={(routeProps) => {
+          render={routeProps => {
             return (
-              <CanvasElementsProvider {...routeProps}>
-                <Canvas />
-              </CanvasElementsProvider>
+              <ProjectProvider {...routeProps}>
+                <CanvasProvider {...routeProps}>
+                  <Canvas />
+                </CanvasProvider>
+              </ProjectProvider>
             );
           }}
         />
@@ -81,10 +84,10 @@ const StyledProtectedApp = styled.div`
     width: calc(100vw - ${SIDEBAR_WIDTH}px);
     overflow-y: auto;
     height: 100vh;
-    background: ${(p) => p.theme.colors.lightBackground};
+    background: ${p => p.theme.colors.lightBackground};
   }
 
-  @media only screen and (max-width: ${(p) => p.theme.breakpoints[1]}) {
+  @media only screen and (max-width: ${p => p.theme.breakpoints[1]}) {
     .main-app {
       max-width: 100vw;
       width: 100vw;

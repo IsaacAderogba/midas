@@ -18,7 +18,6 @@ import { Button } from "antd";
 import { CANVAS_TOPBAR_HEIGHT } from "../../~reusables/constants/dimensions";
 import { clearSelection } from "../../~reusables/utils/element";
 import {
-  useCanvasElementsStore,
   CanvasContext
 } from "../../~reusables/contexts/CanvasProvider";
 import {
@@ -26,6 +25,7 @@ import {
   loadFromJSON,
   exportAsPNG
 } from "../../~reusables/utils/saveAndRetrieval";
+import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
 
 // We inline font-awesome icons in order to save on js size rather than including the font awesome react library
 export const SHAPES = [
@@ -77,7 +77,7 @@ export const SHAPES = [
 ];
 
 export const CanvasTopbar: React.FC = () => {
-  const elements = useCanvasElementsStore(state => state.elements);
+  const elements = useProjectStore(state => state.elements);
   const {
     setCanvasState,
     elementType,

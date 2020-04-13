@@ -86,7 +86,8 @@ export const AppProvider: React.FC = ({ children }) => {
     workspace.loading,
     workspace.data,
     store.isWorkspaceLoading,
-    store.workspace
+    store.workspace,
+    store.workspaceUser
   ]);
 
   useEffect(() => {
