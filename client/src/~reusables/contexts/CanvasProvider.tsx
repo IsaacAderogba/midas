@@ -78,7 +78,7 @@ export const CanvasProvider: React.FC<ICanvasProvider> = ({ children }) => {
         setCanvasState(savedState);
       }
     }
-  }, [project]);
+  }, []);
 
   useEffect(() => {
     if (canvasRef.current) {

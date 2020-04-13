@@ -10,7 +10,7 @@ import {
 import { withCustomMathRandom, randomSeed } from "./seed";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { KEYS } from "../constants/constants";
-import { SHAPES } from "../../views/canvas/CanvasTopbar";
+import { SHAPES } from "../../views/project/CanvasTopbar";
 
 // Casting second argument (DrawingSurface) to any,
 // because it is requred by TS definitions and not required at runtime

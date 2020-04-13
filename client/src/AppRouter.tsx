@@ -10,11 +10,11 @@ import { AppProvider } from "./~reusables/contexts/AppProvider";
 import { CanvasProvider } from "./~reusables/contexts/CanvasProvider";
 import { ProjectProvider } from "./~reusables/contexts/ProjectProvider";
 import { Workspace } from "./views/app/Workspace";
+import { Project } from "./views/project/Project";
 
 // helpers
 import { styled } from "./~reusables/contexts/ThemeProvider";
 import { SIDEBAR_WIDTH } from "./~reusables/constants/dimensions";
-import { Canvas } from "./views/canvas/Canvas";
 
 export const AppRouter = () => {
   return (
@@ -59,12 +59,12 @@ const ProtectedAppRouter: React.FC = () => {
         />
         <Route
           exact
-          path="/app/canvas/:id"
+          path="/app/project/:id"
           render={routeProps => {
             return (
               <ProjectProvider {...routeProps}>
                 <CanvasProvider {...routeProps}>
-                  <Canvas />
+                  <Project />
                 </CanvasProvider>
               </ProjectProvider>
             );

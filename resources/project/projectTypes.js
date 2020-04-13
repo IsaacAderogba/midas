@@ -100,35 +100,28 @@ const ProjectWhere = inputObjectType({
   },
 });
 
-const CanvasEnum = {
+const CanvasSceneEnum = {
   SCENE_UPDATE: "SCENE_UPDATE",
   MOUSE_LOCATION: "MOUSE_LOCATION",
   CLIENT_CONNECT: "CLIENT_CONNECT",
   CLIENT_DISCONNECT: "CLIENT_DISCONNECT",
 };
 
-// canvas CLIENT_CONNECT, CLIENT_DISCONNECT
 const CanvasScene = enumType({
   name: "CanvasScene",
   members: [
-    CanvasEnum.SCENE_UPDATE,
-    CanvasEnum.MOUSE_LOCATION,
-    CanvasEnum.CLIENT_CONNECT,
-    CanvasEnum.CLIENT_DISCONNECT,
+    CanvasSceneEnum.SCENE_UPDATE,
+    CanvasSceneEnum.MOUSE_LOCATION,
+    CanvasSceneEnum.CLIENT_CONNECT,
+    CanvasSceneEnum.CLIENT_DISCONNECT,
   ],
-});
-
-const CanvasSceneInput = inputObjectType({
-  name: "CanvasSceneInput",
-  definition(t) {
-    t.field("canvasScene", { type: CanvasScene, nullable: false });
-  },
 });
 
 const CanvasPayload = objectType({
   name: "CanvasPayload",
   definition(t) {
     t.string("workspaceUserId", { nullable: false });
+    t.field("canvasScene", { type: CanvasScene, nullable: false });
     t.int("pointerCoordX", { nullable: true });
     t.int("pointerCoordY", { nullable: true });
   },
@@ -138,6 +131,7 @@ const CanvasPayloadInput = inputObjectType({
   name: "CanvasPayloadInput",
   definition(t) {
     t.string("workspaceUserId", { required: true });
+    t.field("canvasScene", { type: CanvasScene, required: true });
     t.int("pointerCoordX", { required: false });
     t.int("pointerCoordY", { required: false });
   },
@@ -148,7 +142,6 @@ const ProjectSubscriptionPayload = objectType({
   definition(t) {
     t.field("mutation", { type: MutationType, nullable: false });
     t.field("canvasPayload", { type: CanvasPayload, nullable: true });
-    t.field("canvasScene", { type: CanvasScene, nullable: true });
     t.field("data", { type: Project, nullable: false });
     t.list.string("updatedFields", { nullable: false });
   },
@@ -160,6 +153,6 @@ module.exports = {
   NewProjectInput,
   ProjectWhere,
   ProjectSubscriptionPayload,
-  CanvasSceneInput,
   CanvasPayloadInput,
+  CanvasSceneEnum
 };

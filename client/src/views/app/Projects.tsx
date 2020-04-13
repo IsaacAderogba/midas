@@ -116,7 +116,7 @@ const ProjectItem: React.FC<{ project: GetProjectsQuery["projects"][0] }> = ({
         }
       `}
     >
-      <Link to={`/app/canvas/${id}`}>
+      <Link to={`/app/project/${id}`}>
         <section
           css={css`
             width: 100%;

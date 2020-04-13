@@ -61,23 +61,13 @@ import {
 import { useUpdateProjectMutation } from "../../generated/graphql";
 import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
 
-export const Canvas: React.FC = () => {
-  return (
-    <section>
-      <CanvasTopbar />
-      <AssetsSidebar />
-      <StatefulCanvas />
-      <CustomizeSidebar />
-    </section>
-  );
-};
-
 export const StatefulCanvas: React.FC = () => {
   const { elements, project } = useProjectStore(state => ({
     elements: state.elements,
     project: state.project
   }));
   const canvasStore = useContextSelector(CanvasContext, state => state);
+  console.log(canvasStore)
 
   const [updateProject] = useUpdateProjectMutation({ ignoreResults: true });
   const updateProjectDebounced = _.debounce(() => {
@@ -93,19 +83,19 @@ export const StatefulCanvas: React.FC = () => {
         where: { id: project?.id }
       }
     });
-  }, 2000);
+  }, 1000);
 
   useEffect(() => {
     /**
      * Anytime canvasStore or elements changes, make a write to the
-     * database after a debounced 2 second pause. Cancel and restart
+     * database after a debounced 1 second pause. Cancel and restart
      * the debounce if the dependency variables change
      */
     updateProjectDebounced();
     return () => {
       updateProjectDebounced.cancel();
     };
-  }, [canvasStore, elements]);
+  }, [canvasStore, elements, updateProjectDebounced]);
 
   return <StatelessCanvas {...canvasStore} elements={elements} />;
 };

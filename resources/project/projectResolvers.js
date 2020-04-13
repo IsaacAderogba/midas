@@ -12,6 +12,7 @@ const {
   ProjectWhere,
   ProjectSubscriptionPayload,
   CanvasPayloadInput,
+  CanvasSceneEnum,
 } = require("./projectTypes");
 const { MutationEnum } = require("../types");
 
@@ -84,7 +85,7 @@ const Mutation = extendType({
       },
       resolve: async (
         parent,
-        { projectInput, where },
+        { projectInput, where, canvasPayloadInput },
         { dataSources, user, pubsub }
       ) => {
         const updatedProject = await dataSources.projectAPI.updateProject(
@@ -100,16 +101,40 @@ const Mutation = extendType({
           },
         });
 
-        // pubsub.publish(
-        //   projectSubscriptionChannels.project(user.workspaceId, where.id),
-        //   {
-        //     [projectSubscriptionKeys.project]: {
-        //       mutation: MutationEnum.UPDATED,
-        //       data: updatedProject,
-        //       updatedFields: [],
-        //     },
-        //   }
-        // );
+        /**
+         * The following enables real time collaborative editing on the web app
+         */
+        if (canvasPayloadInput) {
+          const { canvasScene } = canvasPayloadInput;
+          switch (canvasScene) {
+            case CanvasSceneEnum.CLIENT_CONNECT:
+              // TODO - REDIS STORAGE UPDATE
+              break;
+            case CanvasSceneEnum.CLIENT_DISCONNECT:
+              // TODO - REDIS STORAGE UPDATE
+              break;
+            case CanvasSceneEnum.MOUSE_LOCATION:
+              // TODO - REDIS STORAGE UPDATE
+
+              break;
+            case CanvasSceneEnum.SCENE_UPDATE:
+              // TODO - REDIS STORAGE UPDATE
+              break;
+            default:
+              break;
+          }
+          pubsub.publish(
+            projectSubscriptionChannels.project(user.workspaceId, where.id),
+            {
+              [projectSubscriptionKeys.project]: {
+                mutation: MutationEnum.UPDATED,
+                canvasPayload: canvasPayloadInput,
+                data: updatedProject,
+                updatedFields: [],
+              },
+            }
+          );
+        }
 
         return updatedProject;
       },

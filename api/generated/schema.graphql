@@ -13,12 +13,14 @@ type AuthUser {
 }
 
 type CanvasPayload {
+  canvasScene: CanvasScene!
   pointerCoordX: Int
   pointerCoordY: Int
   workspaceUserId: String!
 }
 
 input CanvasPayloadInput {
+  canvasScene: CanvasScene!
   pointerCoordX: Int
   pointerCoordY: Int
   workspaceUserId: String!
@@ -115,7 +117,6 @@ enum ProjectInviteShareStatus {
 
 type ProjectSubscriptionPayload {
   canvasPayload: CanvasPayload
-  canvasScene: CanvasScene
   data: Project!
   mutation: MutationType!
   updatedFields: [String!]!

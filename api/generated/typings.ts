@@ -15,6 +15,7 @@ declare global {
 
 export interface NexusGenInputs {
   CanvasPayloadInput: { // input type
+    canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     pointerCoordX?: number | null; // Int
     pointerCoordY?: number | null; // Int
     workspaceUserId: string; // String!
@@ -101,6 +102,7 @@ export interface NexusGenRootTypes {
     userId: string; // ID!
   }
   CanvasPayload: { // root type
+    canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     pointerCoordX?: number | null; // Int
     pointerCoordY?: number | null; // Int
     workspaceUserId: string; // String!
@@ -121,7 +123,6 @@ export interface NexusGenRootTypes {
   }
   ProjectSubscriptionPayload: { // root type
     canvasPayload?: NexusGenRootTypes['CanvasPayload'] | null; // CanvasPayload
-    canvasScene?: NexusGenEnums['CanvasScene'] | null; // CanvasScene
     data: NexusGenRootTypes['Project']; // Project!
     mutation: NexusGenEnums['MutationType']; // MutationType!
     updatedFields: string[]; // [String!]!
@@ -193,6 +194,7 @@ export interface NexusGenFieldTypes {
     userId: string; // ID!
   }
   CanvasPayload: { // field return type
+    canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     pointerCoordX: number | null; // Int
     pointerCoordY: number | null; // Int
     workspaceUserId: string; // String!
@@ -229,7 +231,6 @@ export interface NexusGenFieldTypes {
   }
   ProjectSubscriptionPayload: { // field return type
     canvasPayload: NexusGenRootTypes['CanvasPayload'] | null; // CanvasPayload
-    canvasScene: NexusGenEnums['CanvasScene'] | null; // CanvasScene
     data: NexusGenRootTypes['Project']; // Project!
     mutation: NexusGenEnums['MutationType']; // MutationType!
     updatedFields: string[]; // [String!]!

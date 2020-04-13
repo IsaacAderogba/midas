@@ -25,12 +25,14 @@ export type AuthUser = {
 export type CanvasPayload = {
    __typename?: 'CanvasPayload';
   workspaceUserId: Scalars['String'];
+  canvasScene: CanvasScene;
   pointerCoordX?: Maybe<Scalars['Int']>;
   pointerCoordY?: Maybe<Scalars['Int']>;
 };
 
 export type CanvasPayloadInput = {
   workspaceUserId: Scalars['String'];
+  canvasScene: CanvasScene;
   pointerCoordX?: Maybe<Scalars['Int']>;
   pointerCoordY?: Maybe<Scalars['Int']>;
 };
@@ -188,7 +190,6 @@ export type ProjectSubscriptionPayload = {
    __typename?: 'ProjectSubscriptionPayload';
   mutation: MutationType;
   canvasPayload?: Maybe<CanvasPayload>;
-  canvasScene?: Maybe<CanvasScene>;
   data: Project;
   updatedFields: Array<Scalars['String']>;
 };
@@ -351,6 +352,26 @@ export type ProjectsSubscription = (
       { __typename?: 'Project' }
       & ProjectsAttributesFragment
     ) }
+  ) }
+);
+
+export type ProjectSubscriptionVariables = {
+  where: ProjectWhere;
+};
+
+
+export type ProjectSubscription = (
+  { __typename?: 'Subscription' }
+  & { project: (
+    { __typename?: 'ProjectSubscriptionPayload' }
+    & Pick<ProjectSubscriptionPayload, 'mutation'>
+    & { data: (
+      { __typename?: 'Project' }
+      & Pick<Project, 'elements'>
+    ), canvasPayload?: Maybe<(
+      { __typename?: 'CanvasPayload' }
+      & Pick<CanvasPayload, 'workspaceUserId' | 'canvasScene' | 'pointerCoordX' | 'pointerCoordY'>
+    )> }
   ) }
 );
 
@@ -663,6 +684,44 @@ export function useProjectsSubscription(baseOptions?: ApolloReactHooks.Subscript
       }
 export type ProjectsSubscriptionHookResult = ReturnType<typeof useProjectsSubscription>;
 export type ProjectsSubscriptionResult = ApolloReactCommon.SubscriptionResult<ProjectsSubscription>;
+export const ProjectDocument = gql`
+    subscription project($where: ProjectWhere!) {
+  project(where: $where) {
+    data {
+      elements
+    }
+    mutation
+    canvasPayload {
+      workspaceUserId
+      canvasScene
+      pointerCoordX
+      pointerCoordY
+    }
+  }
+}
+    `;
+
+/**
+ * __useProjectSubscription__
+ *
+ * To run a query within a React component, call `useProjectSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useProjectSubscription` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProjectSubscription({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useProjectSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<ProjectSubscription, ProjectSubscriptionVariables>) {
+        return ApolloReactHooks.useSubscription<ProjectSubscription, ProjectSubscriptionVariables>(ProjectDocument, baseOptions);
+      }
+export type ProjectSubscriptionHookResult = ReturnType<typeof useProjectSubscription>;
+export type ProjectSubscriptionResult = ApolloReactCommon.SubscriptionResult<ProjectSubscription>;
 export const UpdateProjectDocument = gql`
     mutation updateProject($projectInput: ProjectInput!, $canvasPayloadInput: CanvasPayloadInput, $where: ProjectWhere!) {
   updateProject(projectInput: $projectInput, canvasPayloadInput: $canvasPayloadInput, where: $where) {
