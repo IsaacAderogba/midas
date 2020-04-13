@@ -39,7 +39,7 @@ export const projectSubscription = gql`
       }
       mutation
       canvasPayload {
-        workspaceUserId
+        userId
         canvasScene
         pointerCoordX
         pointerCoordY
@@ -50,7 +50,7 @@ export const projectSubscription = gql`
 
 export const updateProject = gql`
   mutation updateProject(
-    $projectInput: ProjectInput!
+    $projectInput: ProjectInput
     $canvasPayloadInput: CanvasPayloadInput
     $where: ProjectWhere!
   ) {

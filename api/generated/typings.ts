@@ -18,7 +18,7 @@ export interface NexusGenInputs {
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     pointerCoordX?: number | null; // Int
     pointerCoordY?: number | null; // Int
-    workspaceUserId: string; // String!
+    userId: string; // String!
   }
   LoginInput: { // input type
     email: string; // String!
@@ -105,7 +105,7 @@ export interface NexusGenRootTypes {
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     pointerCoordX?: number | null; // Int
     pointerCoordY?: number | null; // Int
-    workspaceUserId: string; // String!
+    userId: string; // String!
   }
   Mutation: {};
   Project: { // root type
@@ -197,7 +197,7 @@ export interface NexusGenFieldTypes {
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     pointerCoordX: number | null; // Int
     pointerCoordY: number | null; // Int
-    workspaceUserId: string; // String!
+    userId: string; // String!
   }
   Mutation: { // field return type
     createProject: NexusGenRootTypes['Project'] | null; // Project
@@ -305,7 +305,7 @@ export interface NexusGenArgTypes {
     }
     updateProject: { // args
       canvasPayloadInput?: NexusGenInputs['CanvasPayloadInput'] | null; // CanvasPayloadInput
-      projectInput: NexusGenInputs['ProjectInput']; // ProjectInput!
+      projectInput?: NexusGenInputs['ProjectInput'] | null; // ProjectInput
       where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
     }
     updateUser: { // args

@@ -16,14 +16,14 @@ type CanvasPayload {
   canvasScene: CanvasScene!
   pointerCoordX: Int
   pointerCoordY: Int
-  workspaceUserId: String!
+  userId: String!
 }
 
 input CanvasPayloadInput {
   canvasScene: CanvasScene!
   pointerCoordX: Int
   pointerCoordY: Int
-  workspaceUserId: String!
+  userId: String!
 }
 
 enum CanvasScene {
@@ -48,7 +48,7 @@ type Mutation {
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   loginUser(loginInput: LoginInput): AuthUser!
   registerUser(registerInput: RegisterInput): AuthUser!
-  updateProject(canvasPayloadInput: CanvasPayloadInput, projectInput: ProjectInput!, where: ProjectWhere!): Project
+  updateProject(canvasPayloadInput: CanvasPayloadInput, projectInput: ProjectInput, where: ProjectWhere!): Project
   updateUser(userInput: UserInput): User
   updateWorkspace(workspaceInput: WorkspaceInput): Workspace
   updateWorkspaceUser(where: WorkspaceUserWhere, workspaceUserInput: WorkspaceUserInput): WorkspaceUser

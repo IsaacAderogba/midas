@@ -24,14 +24,14 @@ export type AuthUser = {
 
 export type CanvasPayload = {
    __typename?: 'CanvasPayload';
-  workspaceUserId: Scalars['String'];
+  userId: Scalars['String'];
   canvasScene: CanvasScene;
   pointerCoordX?: Maybe<Scalars['Int']>;
   pointerCoordY?: Maybe<Scalars['Int']>;
 };
 
 export type CanvasPayloadInput = {
-  workspaceUserId: Scalars['String'];
+  userId: Scalars['String'];
   canvasScene: CanvasScene;
   pointerCoordX?: Maybe<Scalars['Int']>;
   pointerCoordY?: Maybe<Scalars['Int']>;
@@ -115,7 +115,7 @@ export type MutationCreateProjectArgs = {
 
 export type MutationUpdateProjectArgs = {
   canvasPayloadInput?: Maybe<CanvasPayloadInput>;
-  projectInput: ProjectInput;
+  projectInput?: Maybe<ProjectInput>;
   where: ProjectWhere;
 };
 
@@ -370,13 +370,13 @@ export type ProjectSubscription = (
       & Pick<Project, 'elements'>
     ), canvasPayload?: Maybe<(
       { __typename?: 'CanvasPayload' }
-      & Pick<CanvasPayload, 'workspaceUserId' | 'canvasScene' | 'pointerCoordX' | 'pointerCoordY'>
+      & Pick<CanvasPayload, 'userId' | 'canvasScene' | 'pointerCoordX' | 'pointerCoordY'>
     )> }
   ) }
 );
 
 export type UpdateProjectMutationVariables = {
-  projectInput: ProjectInput;
+  projectInput?: Maybe<ProjectInput>;
   canvasPayloadInput?: Maybe<CanvasPayloadInput>;
   where: ProjectWhere;
 };
@@ -692,7 +692,7 @@ export const ProjectDocument = gql`
     }
     mutation
     canvasPayload {
-      workspaceUserId
+      userId
       canvasScene
       pointerCoordX
       pointerCoordY
@@ -723,7 +723,7 @@ export function useProjectSubscription(baseOptions?: ApolloReactHooks.Subscripti
 export type ProjectSubscriptionHookResult = ReturnType<typeof useProjectSubscription>;
 export type ProjectSubscriptionResult = ApolloReactCommon.SubscriptionResult<ProjectSubscription>;
 export const UpdateProjectDocument = gql`
-    mutation updateProject($projectInput: ProjectInput!, $canvasPayloadInput: CanvasPayloadInput, $where: ProjectWhere!) {
+    mutation updateProject($projectInput: ProjectInput, $canvasPayloadInput: CanvasPayloadInput, $where: ProjectWhere!) {
   updateProject(projectInput: $projectInput, canvasPayloadInput: $canvasPayloadInput, where: $where) {
     ...projectAttributes
   }

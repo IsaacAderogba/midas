@@ -7,21 +7,30 @@ import { RouteComponentProps } from "react-router-dom";
 import { useStoreState } from "../hooks/useStoreState";
 import { MidasElement } from "../utils/types";
 import { useGetProjectQuery, GetProjectQuery } from "../../generated/graphql";
+import { restore } from "../utils/saveAndRetrieval";
 
-interface IProjectCollaborator {
+interface ICollaborator {
   userId: string;
-  pointerCoordsX: number;
-  pointerCoordsY: number;
+  pointerCoordX: number;
+  pointerCoordY: number;
 }
 interface IElementsStore {
   elements: MidasElement[];
-  projectCollaborators: IProjectCollaborator[];
+  collaborators: ICollaborator[];
   project: GetProjectQuery["project"];
+  addCollaborator: (collaborator: ICollaborator) => void;
+  removeCollaborator: (userId: ICollaborator["userId"]) => void;
+  updateCollaborator: (collaborator: ICollaborator) => void;
+  updateScene: (elements: MidasElement[]) => void;
 }
 export const ProjectContext = createContext<IElementsStore>({
   elements: [],
-  projectCollaborators: [],
-  project: null
+  collaborators: [],
+  project: null,
+  addCollaborator: () => {},
+  removeCollaborator: () => {},
+  updateCollaborator: () => {},
+  updateScene: () => {}
 });
 
 export const useProjectStore = <S,>(
@@ -40,8 +49,32 @@ export const ProjectProvider: React.FC<IProjectProvider> = observer(
       get elements() {
         return [];
       },
-      projectCollaborators: [],
-      project: null
+      collaborators: [],
+      project: null,
+      addCollaborator: collaborator => {
+        const foundCollaborator = store.collaborators.find(
+          c => (c.userId = collaborator.userId)
+        );
+        if (!foundCollaborator) {
+          store.collaborators = [...store.collaborators, collaborator];
+        }
+      },
+      removeCollaborator: userId => {
+        store.collaborators = store.collaborators.filter(
+          c => c.userId !== userId
+        );
+      },
+      updateCollaborator: collaborator => {
+        store.collaborators = store.collaborators.map(c => {
+          if (c.userId === collaborator.userId) {
+            return collaborator;
+          }
+          return c;
+        });
+      },
+      updateScene: elements => {
+        restore(elements, store.elements);
+      }
     }));
 
     useEffect(() => {

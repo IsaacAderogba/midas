@@ -120,7 +120,7 @@ const CanvasScene = enumType({
 const CanvasPayload = objectType({
   name: "CanvasPayload",
   definition(t) {
-    t.string("workspaceUserId", { nullable: false });
+    t.string("userId", { nullable: false });
     t.field("canvasScene", { type: CanvasScene, nullable: false });
     t.int("pointerCoordX", { nullable: true });
     t.int("pointerCoordY", { nullable: true });
@@ -130,7 +130,7 @@ const CanvasPayload = objectType({
 const CanvasPayloadInput = inputObjectType({
   name: "CanvasPayloadInput",
   definition(t) {
-    t.string("workspaceUserId", { required: true });
+    t.string("userId", { required: true });
     t.field("canvasScene", { type: CanvasScene, required: true });
     t.int("pointerCoordX", { required: false });
     t.int("pointerCoordY", { required: false });

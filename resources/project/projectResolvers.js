@@ -80,7 +80,7 @@ const Mutation = extendType({
       nullable: true,
       args: {
         canvasPayloadInput: arg({ type: CanvasPayloadInput, required: false }),
-        projectInput: arg({ type: ProjectInput, required: true }),
+        projectInput: arg({ type: ProjectInput, required: false }),
         where: arg({ type: ProjectWhere, required: true }),
       },
       resolve: async (
@@ -90,7 +90,7 @@ const Mutation = extendType({
       ) => {
         const updatedProject = await dataSources.projectAPI.updateProject(
           where,
-          projectInput
+          projectInput ? projectInput : {}
         );
 
         pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
@@ -195,8 +195,6 @@ const Subscription = extendType({
         );
       },
       resolve: ({ project }, args, { pubsub, user }) => {
-        console.log(user);
-
         return project;
       },
     });

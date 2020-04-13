@@ -1262,13 +1262,9 @@
                 "name": "projectInput",
                 "description": "",
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ProjectInput",
-                    "ofType": null
-                  }
+                  "kind": "INPUT_OBJECT",
+                  "name": "ProjectInput",
+                  "ofType": null
                 },
                 "defaultValue": null
               },
@@ -1866,7 +1862,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "workspaceUserId",
+            "name": "userId",
             "description": "",
             "type": {
               "kind": "NON_NULL",
@@ -2206,7 +2202,7 @@
         "description": "",
         "fields": [
           {
-            "name": "workspaceUserId",
+            "name": "userId",
             "description": "",
             "args": [],
             "type": {

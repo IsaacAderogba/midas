@@ -17,9 +17,7 @@ import { Button } from "antd";
 // helpers
 import { CANVAS_TOPBAR_HEIGHT } from "../../~reusables/constants/dimensions";
 import { clearSelection } from "../../~reusables/utils/element";
-import {
-  CanvasContext
-} from "../../~reusables/contexts/CanvasProvider";
+import { CanvasContext } from "../../~reusables/contexts/CanvasProvider";
 import {
   saveAsJSON,
   loadFromJSON,
@@ -77,7 +75,10 @@ export const SHAPES = [
 ];
 
 export const CanvasTopbar: React.FC = () => {
-  const elements = useProjectStore(state => state.elements);
+  const { elements, collaborators } = useProjectStore(state => ({
+    elements: state.elements,
+    collaborators: state.collaborators
+  }));
   const {
     setCanvasState,
     elementType,
@@ -170,6 +171,13 @@ export const CanvasTopbar: React.FC = () => {
         >
           Export to PNG
         </Button>
+        {collaborators.map(collaborator => {
+          return (
+            <Button key={collaborator.userId}>
+              {collaborator.userId}
+            </Button>
+          );
+        })}
         <label>
           <input
             type="checkbox"
