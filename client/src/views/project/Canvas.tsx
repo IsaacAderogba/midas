@@ -70,6 +70,29 @@ export const StatefulCanvas: React.FC = () => {
   console.log(canvasStore);
 
   const [updateProject] = useUpdateProjectMutation({ ignoreResults: true });
+  const mouseLocationThrottled = _.throttle(
+    ({
+      pointerCoordX,
+      pointerCoordY
+    }: {
+      pointerCoordX: number;
+      pointerCoordY: number;
+    }) => {
+      updateProject({
+        variables: {
+          where: { id: project?.id },
+          canvasPayloadInput: {
+            userId,
+            pointerCoordX,
+            pointerCoordY,
+            canvasScene: CanvasScene.MouseLocation
+          }
+        }
+      });
+    },
+    250
+  );
+
   const updateProjectDebounced = _.debounce(() => {
     localStorage.setItem(
       LOCAL_STORAGE_MIDAS_STATE_KEY,
@@ -101,11 +124,15 @@ export const StatefulCanvas: React.FC = () => {
     };
   }, [canvasStore]);
 
-  useEffect(() => {
+  useEffect(() => {}, [elements]);
 
-  }, [elements])
-
-  return <StatelessCanvas {...canvasStore} elements={elements} />;
+  return (
+    <StatelessCanvas
+      {...canvasStore}
+      mouseLocationThrottled={mouseLocationThrottled}
+      elements={elements}
+    />
+  );
 };
 
 let skipHistory = false;
@@ -117,6 +144,14 @@ let lastMouseUp: ((e: any) => void) | null = null;
 
 interface IStatelessCanvas extends ICanvasState {
   elements: MidasElement[];
+  mouseLocationThrottled: (({
+    pointerCoordX,
+    pointerCoordY
+  }: {
+    pointerCoordX: number;
+    pointerCoordY: number;
+  }) => void) &
+    _.Cancelable;
 }
 class StatelessCanvas extends React.Component<IStatelessCanvas> {
   public state = {

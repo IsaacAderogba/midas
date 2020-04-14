@@ -72,7 +72,7 @@ export const ProjectProvider: React.FC<IProjectProvider> = observer(
       updateCollaborator: collaborator => {
         store.collaborators = store.collaborators.map(c => {
           if (c.userId === collaborator.userId) {
-            return collaborator;
+            return { ...collaborator, ...c };
           }
           return c;
         });
