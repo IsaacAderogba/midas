@@ -121,6 +121,11 @@ const CanvasPayload = objectType({
   name: "CanvasPayload",
   definition(t) {
     t.string("userId", { nullable: false });
+    t.string("firstName", { nullable: true });
+    t.string("lastName", { nullable: true });
+    t.string("email", { nullable: true });
+    t.string("avatarURL", { nullable: true });
+    t.string("color", { nullable: true });
     t.field("canvasScene", { type: CanvasScene, nullable: false });
     t.int("pointerCoordX", { nullable: true });
     t.int("pointerCoordY", { nullable: true });
@@ -131,6 +136,11 @@ const CanvasPayloadInput = inputObjectType({
   name: "CanvasPayloadInput",
   definition(t) {
     t.string("userId", { required: true });
+    t.string("firstName", { required: false });
+    t.string("lastName", { required: false });
+    t.string("email", { required: false });
+    t.string("avatarURL", { required: false });
+    t.string("color", { required: false });
     t.field("canvasScene", { type: CanvasScene, required: true });
     t.int("pointerCoordX", { required: false });
     t.int("pointerCoordY", { required: false });
@@ -140,10 +150,10 @@ const CanvasPayloadInput = inputObjectType({
 const ProjectSubscriptionPayload = objectType({
   name: "ProjectSubscriptionPayload",
   definition(t) {
-    t.field("mutation", { type: MutationType, nullable: false });
+    t.field("mutation", { type: MutationType, nullable: true });
     t.field("canvasPayload", { type: CanvasPayload, nullable: true });
-    t.field("data", { type: Project, nullable: false });
-    t.list.string("updatedFields", { nullable: false });
+    t.field("data", { type: Project, nullable: true });
+    t.list.string("updatedFields", { nullable: true });
   },
 });
 
@@ -154,5 +164,5 @@ module.exports = {
   ProjectWhere,
   ProjectSubscriptionPayload,
   CanvasPayloadInput,
-  CanvasSceneEnum
+  CanvasSceneEnum,
 };

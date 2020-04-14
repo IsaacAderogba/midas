@@ -15,7 +15,12 @@ declare global {
 
 export interface NexusGenInputs {
   CanvasPayloadInput: { // input type
+    avatarURL?: string | null; // String
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
+    color?: string | null; // String
+    email?: string | null; // String
+    firstName?: string | null; // String
+    lastName?: string | null; // String
     pointerCoordX?: number | null; // Int
     pointerCoordY?: number | null; // Int
     userId: string; // String!
@@ -102,7 +107,12 @@ export interface NexusGenRootTypes {
     userId: string; // ID!
   }
   CanvasPayload: { // root type
+    avatarURL?: string | null; // String
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
+    color?: string | null; // String
+    email?: string | null; // String
+    firstName?: string | null; // String
+    lastName?: string | null; // String
     pointerCoordX?: number | null; // Int
     pointerCoordY?: number | null; // Int
     userId: string; // String!
@@ -123,9 +133,9 @@ export interface NexusGenRootTypes {
   }
   ProjectSubscriptionPayload: { // root type
     canvasPayload?: NexusGenRootTypes['CanvasPayload'] | null; // CanvasPayload
-    data: NexusGenRootTypes['Project']; // Project!
-    mutation: NexusGenEnums['MutationType']; // MutationType!
-    updatedFields: string[]; // [String!]!
+    data?: NexusGenRootTypes['Project'] | null; // Project
+    mutation?: NexusGenEnums['MutationType'] | null; // MutationType
+    updatedFields?: string[] | null; // [String!]
   }
   Query: {};
   Subscription: {};
@@ -194,7 +204,12 @@ export interface NexusGenFieldTypes {
     userId: string; // ID!
   }
   CanvasPayload: { // field return type
+    avatarURL: string | null; // String
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
+    color: string | null; // String
+    email: string | null; // String
+    firstName: string | null; // String
+    lastName: string | null; // String
     pointerCoordX: number | null; // Int
     pointerCoordY: number | null; // Int
     userId: string; // String!
@@ -231,9 +246,9 @@ export interface NexusGenFieldTypes {
   }
   ProjectSubscriptionPayload: { // field return type
     canvasPayload: NexusGenRootTypes['CanvasPayload'] | null; // CanvasPayload
-    data: NexusGenRootTypes['Project']; // Project!
-    mutation: NexusGenEnums['MutationType']; // MutationType!
-    updatedFields: string[]; // [String!]!
+    data: NexusGenRootTypes['Project'] | null; // Project
+    mutation: NexusGenEnums['MutationType'] | null; // MutationType
+    updatedFields: string[] | null; // [String!]
   }
   Query: { // field return type
     project: NexusGenRootTypes['Project'] | null; // Project

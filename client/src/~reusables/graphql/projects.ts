@@ -40,6 +40,11 @@ export const projectSubscription = gql`
       mutation
       canvasPayload {
         userId
+        firstName
+        lastName
+        email
+        avatarURL
+        color
         canvasScene
         pointerCoordX
         pointerCoordY

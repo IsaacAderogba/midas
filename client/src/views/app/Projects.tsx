@@ -34,7 +34,7 @@ export const Projects = () => {
         unsubscribeFromMore = subscribeToMore<ProjectsSubscription>({
           document: ProjectsDocument,
           updateQuery(prev, { subscriptionData: { data } }) {
-            if (!data.projects) return prev;
+            if (!data.projects || !data.projects.data) return prev;
 
             const projectData = data.projects.data;
             switch (data.projects.mutation) {

@@ -1,6 +1,6 @@
 // modules
 import React from "react";
-import { styled } from "../../~reusables/contexts/ThemeProvider";
+import { styled, useTheme } from "../../~reusables/contexts/ThemeProvider";
 import { css } from "styled-components/macro";
 import { useContextSelector } from "use-context-selector";
 
@@ -12,7 +12,7 @@ import {
   MenuOutlined
 } from "@ant-design/icons";
 import { CanvasIconWrapper } from "../../components/atoms/CanvasIconWrapper";
-import { Button } from "antd";
+import { Button, Avatar, Tooltip } from "antd";
 
 // helpers
 import { CANVAS_TOPBAR_HEIGHT } from "../../~reusables/constants/dimensions";
@@ -75,6 +75,7 @@ export const SHAPES = [
 ];
 
 export const CanvasTopbar: React.FC = () => {
+  const { space } = useTheme();
   const { elements, collaborators } = useProjectStore(state => ({
     elements: state.elements,
     collaborators: state.collaborators
@@ -157,6 +158,27 @@ export const CanvasTopbar: React.FC = () => {
           display: flex;
         `}
       >
+        {collaborators.map(({ avatarURL, firstName, lastName, color }) => {
+          return (
+            <Tooltip placement="bottom" title={`${firstName} ${lastName}`}>
+              {avatarURL ? (
+                <Avatar
+                  style={{
+                    marginRight: space[6],
+                    border: `2px solid ${color}`
+                  }}
+                  src={avatarURL}
+                />
+              ) : (
+                <Avatar
+                  style={{ marginRight: space[6], background: `${color}` }}
+                >
+                  {firstName ? firstName[0].toUpperCase() : ""}
+                </Avatar>
+              )}
+            </Tooltip>
+          );
+        })}
         <Button
           type="primary"
           onClick={() => {
@@ -171,13 +193,6 @@ export const CanvasTopbar: React.FC = () => {
         >
           Export to PNG
         </Button>
-        {collaborators.map(collaborator => {
-          return (
-            <Button key={collaborator.userId}>
-              {collaborator.userId}
-            </Button>
-          );
-        })}
         <label>
           <input
             type="checkbox"

@@ -1,5 +1,6 @@
 // modules
 import React, { useEffect } from "react";
+import _ from "lodash";
 
 // components
 import { CanvasTopbar } from "./CanvasTopbar";
@@ -15,10 +16,11 @@ import {
 } from "../../generated/graphql";
 import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
 import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
+import { getRandomColor } from "../../~reusables/utils/colors";
 
 export const Project: React.FC = () => {
-  const userId = useAuthStore(state => (state.user ? state.user.id : ""));
-  
+  const user = useAuthStore(state => state.user);
+
   let {
     project,
     removeCollaborator,
@@ -51,7 +53,7 @@ export const Project: React.FC = () => {
         switch (canvasScene) {
           case CanvasScene.ClientConnect:
             addCollaborator({
-              userId,
+              ...canvasPayload,
               pointerCoordX: 0,
               pointerCoordY: 0
             });
@@ -69,7 +71,7 @@ export const Project: React.FC = () => {
             }
             break;
           case CanvasScene.SceneUpdate:
-            if (data.elements) {
+            if (data && data.elements) {
               updateScene(JSON.parse(data.elements));
             }
             break;
@@ -84,7 +86,18 @@ export const Project: React.FC = () => {
     updateProject({
       variables: {
         where: { id: project?.id },
-        canvasPayloadInput: { userId, canvasScene: CanvasScene.ClientConnect }
+        canvasPayloadInput: {
+          userId: user ? user.id : "",
+          color: getRandomColor(),
+          ..._.omit(user, [
+            "__typename",
+            "workspaces",
+            "photoId",
+            "isVerified",
+            "id"
+          ]),
+          canvasScene: CanvasScene.ClientConnect
+        }
       }
     });
 
@@ -93,7 +106,7 @@ export const Project: React.FC = () => {
         variables: {
           where: { id: project?.id },
           canvasPayloadInput: {
-            userId,
+            userId: user ? user.id : "",
             canvasScene: CanvasScene.ClientDisconnect
           }
         }

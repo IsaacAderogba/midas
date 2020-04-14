@@ -25,6 +25,11 @@ export type AuthUser = {
 export type CanvasPayload = {
    __typename?: 'CanvasPayload';
   userId: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  avatarURL?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']>;
   canvasScene: CanvasScene;
   pointerCoordX?: Maybe<Scalars['Int']>;
   pointerCoordY?: Maybe<Scalars['Int']>;
@@ -32,6 +37,11 @@ export type CanvasPayload = {
 
 export type CanvasPayloadInput = {
   userId: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  avatarURL?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']>;
   canvasScene: CanvasScene;
   pointerCoordX?: Maybe<Scalars['Int']>;
   pointerCoordY?: Maybe<Scalars['Int']>;
@@ -188,10 +198,10 @@ export enum ProjectInviteShareStatus {
 
 export type ProjectSubscriptionPayload = {
    __typename?: 'ProjectSubscriptionPayload';
-  mutation: MutationType;
+  mutation?: Maybe<MutationType>;
   canvasPayload?: Maybe<CanvasPayload>;
-  data: Project;
-  updatedFields: Array<Scalars['String']>;
+  data?: Maybe<Project>;
+  updatedFields?: Maybe<Array<Scalars['String']>>;
 };
 
 export type ProjectWhere = {
@@ -348,10 +358,10 @@ export type ProjectsSubscription = (
   & { projects: (
     { __typename?: 'ProjectSubscriptionPayload' }
     & Pick<ProjectSubscriptionPayload, 'mutation'>
-    & { data: (
+    & { data?: Maybe<(
       { __typename?: 'Project' }
       & ProjectsAttributesFragment
-    ) }
+    )> }
   ) }
 );
 
@@ -365,12 +375,12 @@ export type ProjectSubscription = (
   & { project: (
     { __typename?: 'ProjectSubscriptionPayload' }
     & Pick<ProjectSubscriptionPayload, 'mutation'>
-    & { data: (
+    & { data?: Maybe<(
       { __typename?: 'Project' }
       & Pick<Project, 'elements'>
-    ), canvasPayload?: Maybe<(
+    )>, canvasPayload?: Maybe<(
       { __typename?: 'CanvasPayload' }
-      & Pick<CanvasPayload, 'userId' | 'canvasScene' | 'pointerCoordX' | 'pointerCoordY'>
+      & Pick<CanvasPayload, 'userId' | 'firstName' | 'lastName' | 'email' | 'avatarURL' | 'color' | 'canvasScene' | 'pointerCoordX' | 'pointerCoordY'>
     )> }
   ) }
 );
@@ -693,6 +703,11 @@ export const ProjectDocument = gql`
     mutation
     canvasPayload {
       userId
+      firstName
+      lastName
+      email
+      avatarURL
+      color
       canvasScene
       pointerCoordX
       pointerCoordY

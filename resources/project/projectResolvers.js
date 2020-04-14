@@ -88,10 +88,13 @@ const Mutation = extendType({
         { projectInput, where, canvasPayloadInput },
         { dataSources, user, pubsub }
       ) => {
-        const updatedProject = await dataSources.projectAPI.updateProject(
-          where,
-          projectInput ? projectInput : {}
-        );
+        let updatedProject = null;
+        if (projectInput) {
+          updatedProject = await dataSources.projectAPI.updateProject(
+            where,
+            projectInput ? projectInput : {}
+          );
+        }
 
         pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
           [projectSubscriptionKeys.projects]: {

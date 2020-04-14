@@ -13,14 +13,24 @@ type AuthUser {
 }
 
 type CanvasPayload {
+  avatarURL: String
   canvasScene: CanvasScene!
+  color: String
+  email: String
+  firstName: String
+  lastName: String
   pointerCoordX: Int
   pointerCoordY: Int
   userId: String!
 }
 
 input CanvasPayloadInput {
+  avatarURL: String
   canvasScene: CanvasScene!
+  color: String
+  email: String
+  firstName: String
+  lastName: String
   pointerCoordX: Int
   pointerCoordY: Int
   userId: String!
@@ -117,9 +127,9 @@ enum ProjectInviteShareStatus {
 
 type ProjectSubscriptionPayload {
   canvasPayload: CanvasPayload
-  data: Project!
-  mutation: MutationType!
-  updatedFields: [String!]!
+  data: Project
+  mutation: MutationType
+  updatedFields: [String!]
 }
 
 input ProjectWhere {

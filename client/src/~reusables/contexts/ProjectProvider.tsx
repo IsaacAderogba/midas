@@ -5,14 +5,19 @@ import { RouteComponentProps } from "react-router-dom";
 
 // helpers
 import { useStoreState } from "../hooks/useStoreState";
-import { MidasElement } from "../utils/types";
+import { MidasElement, Maybe } from "../utils/types";
 import { useGetProjectQuery, GetProjectQuery } from "../../generated/graphql";
 import { restore } from "../utils/saveAndRetrieval";
 
 interface ICollaborator {
   userId: string;
-  pointerCoordX: number;
-  pointerCoordY: number;
+  firstName?: Maybe<string>;
+  lastName?: Maybe<string>;
+  email?: Maybe<string>;
+  avatarURL?: Maybe<string>;
+  color?: Maybe<string>;
+  pointerCoordX?: Maybe<number>;
+  pointerCoordY?: Maybe<number>;
 }
 interface IElementsStore {
   elements: MidasElement[];

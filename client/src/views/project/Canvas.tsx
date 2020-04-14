@@ -5,9 +5,7 @@ import { css } from "styled-components/macro";
 import _ from "lodash";
 
 // components
-import { CanvasTopbar, SHAPES } from "./CanvasTopbar";
-import { AssetsSidebar } from "./AssetsSidebar";
-import { CustomizeSidebar } from "./CustomizeSidebar";
+import { SHAPES } from "./CanvasTopbar";
 
 // helpers
 import { MidasElement } from "../../~reusables/utils/types";
