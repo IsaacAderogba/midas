@@ -6,7 +6,7 @@ import _ from "lodash";
 import { CanvasTopbar } from "./CanvasTopbar";
 import { AssetsSidebar } from "./AssetsSidebar";
 import { CustomizeSidebar } from "./CustomizeSidebar";
-import { StatefulCanvas } from "./Canvas";
+import { StatefulCanvas } from "./StatefulCanvas";
 
 // helpers
 import {
@@ -40,7 +40,6 @@ export const Project: React.FC = () => {
   useProjectSubscription({
     variables: { where: { id: project?.id } },
     onSubscriptionData({ subscriptionData: { data: subData } }) {
-      console.log(subData);
       if (subData && subData.project && subData.project.canvasPayload) {
         const { data, canvasPayload } = subData.project;
         const {
@@ -54,8 +53,8 @@ export const Project: React.FC = () => {
           case CanvasScene.ClientConnect:
             addCollaborator({
               ...canvasPayload,
-              pointerCoordX: 0,
-              pointerCoordY: 0
+              pointerCoordX: null,
+              pointerCoordY: null
             });
             break;
           case CanvasScene.ClientDisconnect:
@@ -70,11 +69,11 @@ export const Project: React.FC = () => {
               });
             }
             break;
-          case CanvasScene.SceneUpdate:
-            if (data && data.elements) {
-              updateScene(JSON.parse(data.elements));
-            }
-            break;
+          // case CanvasScene.SceneUpdate:
+          //   if (data && data.elements) {
+          //     updateScene(JSON.parse(data.elements));
+          //   }
+          //   break;
           default:
             break;
         }

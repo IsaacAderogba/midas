@@ -31,8 +31,8 @@ export type CanvasPayload = {
   avatarURL?: Maybe<Scalars['String']>;
   color?: Maybe<Scalars['String']>;
   canvasScene: CanvasScene;
-  pointerCoordX?: Maybe<Scalars['Int']>;
-  pointerCoordY?: Maybe<Scalars['Int']>;
+  pointerCoordX?: Maybe<Scalars['Float']>;
+  pointerCoordY?: Maybe<Scalars['Float']>;
 };
 
 export type CanvasPayloadInput = {
@@ -43,8 +43,8 @@ export type CanvasPayloadInput = {
   avatarURL?: Maybe<Scalars['String']>;
   color?: Maybe<Scalars['String']>;
   canvasScene: CanvasScene;
-  pointerCoordX?: Maybe<Scalars['Int']>;
-  pointerCoordY?: Maybe<Scalars['Int']>;
+  pointerCoordX?: Maybe<Scalars['Float']>;
+  pointerCoordY?: Maybe<Scalars['Float']>;
 };
 
 export enum CanvasScene {

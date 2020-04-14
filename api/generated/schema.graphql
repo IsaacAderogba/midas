@@ -19,8 +19,8 @@ type CanvasPayload {
   email: String
   firstName: String
   lastName: String
-  pointerCoordX: Int
-  pointerCoordY: Int
+  pointerCoordX: Float
+  pointerCoordY: Float
   userId: String!
 }
 
@@ -31,8 +31,8 @@ input CanvasPayloadInput {
   email: String
   firstName: String
   lastName: String
-  pointerCoordX: Int
-  pointerCoordY: Int
+  pointerCoordX: Float
+  pointerCoordY: Float
   userId: String!
 }
 

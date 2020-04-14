@@ -127,8 +127,8 @@ const CanvasPayload = objectType({
     t.string("avatarURL", { nullable: true });
     t.string("color", { nullable: true });
     t.field("canvasScene", { type: CanvasScene, nullable: false });
-    t.int("pointerCoordX", { nullable: true });
-    t.int("pointerCoordY", { nullable: true });
+    t.float("pointerCoordX", { nullable: true });
+    t.float("pointerCoordY", { nullable: true });
   },
 });
 
@@ -142,8 +142,8 @@ const CanvasPayloadInput = inputObjectType({
     t.string("avatarURL", { required: false });
     t.string("color", { required: false });
     t.field("canvasScene", { type: CanvasScene, required: true });
-    t.int("pointerCoordX", { required: false });
-    t.int("pointerCoordY", { required: false });
+    t.float("pointerCoordX", { required: false });
+    t.float("pointerCoordY", { required: false });
   },
 });
 

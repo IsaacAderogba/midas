@@ -158,27 +158,33 @@ export const CanvasTopbar: React.FC = () => {
           display: flex;
         `}
       >
-        {collaborators.map(({ avatarURL, firstName, lastName, color }) => {
-          return (
-            <Tooltip placement="bottom" title={`${firstName} ${lastName}`}>
-              {avatarURL ? (
-                <Avatar
-                  style={{
-                    marginRight: space[6],
-                    border: `2px solid ${color}`
-                  }}
-                  src={avatarURL}
-                />
-              ) : (
-                <Avatar
-                  style={{ marginRight: space[6], background: `${color}` }}
-                >
-                  {firstName ? firstName[0].toUpperCase() : ""}
-                </Avatar>
-              )}
-            </Tooltip>
-          );
-        })}
+        {collaborators.map(
+          ({ userId, avatarURL, firstName, lastName, color }) => {
+            return (
+              <Tooltip
+                key={userId}
+                placement="bottom"
+                title={`${firstName} ${lastName}`}
+              >
+                {avatarURL ? (
+                  <Avatar
+                    style={{
+                      marginRight: space[6],
+                      border: `2px solid ${color}`
+                    }}
+                    src={avatarURL}
+                  />
+                ) : (
+                  <Avatar
+                    style={{ marginRight: space[6], background: `${color}` }}
+                  >
+                    {firstName ? firstName[0].toUpperCase() : ""}
+                  </Avatar>
+                )}
+              </Tooltip>
+            );
+          }
+        )}
         <Button
           type="primary"
           onClick={() => {

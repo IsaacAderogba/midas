@@ -21,8 +21,8 @@ export interface NexusGenInputs {
     email?: string | null; // String
     firstName?: string | null; // String
     lastName?: string | null; // String
-    pointerCoordX?: number | null; // Int
-    pointerCoordY?: number | null; // Int
+    pointerCoordX?: number | null; // Float
+    pointerCoordY?: number | null; // Float
     userId: string; // String!
   }
   LoginInput: { // input type
@@ -113,8 +113,8 @@ export interface NexusGenRootTypes {
     email?: string | null; // String
     firstName?: string | null; // String
     lastName?: string | null; // String
-    pointerCoordX?: number | null; // Int
-    pointerCoordY?: number | null; // Int
+    pointerCoordX?: number | null; // Float
+    pointerCoordY?: number | null; // Float
     userId: string; // String!
   }
   Mutation: {};
@@ -210,8 +210,8 @@ export interface NexusGenFieldTypes {
     email: string | null; // String
     firstName: string | null; // String
     lastName: string | null; // String
-    pointerCoordX: number | null; // Int
-    pointerCoordY: number | null; // Int
+    pointerCoordX: number | null; // Float
+    pointerCoordY: number | null; // Float
     userId: string; // String!
   }
   Mutation: { // field return type

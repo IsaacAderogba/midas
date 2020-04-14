@@ -1,8 +1,6 @@
 // modules
-import React, { useEffect } from "react";
-import { useContextSelector } from "use-context-selector";
+import React from "react";
 import { css } from "styled-components/macro";
-import _ from "lodash";
 
 // components
 import { SHAPES } from "./CanvasTopbar";
@@ -22,17 +20,13 @@ import {
   pushHistoryEntry
 } from "../../~reusables/utils/history";
 import { randomSeed } from "../../~reusables/utils/seed";
-import { canvasStoreWhiteList } from "../../~reusables/utils/saveAndRetrieval";
 import {
   hitTest,
   resizeTest,
   resetCursor,
   renderScene
 } from "../../~reusables/utils/canvas";
-import {
-  KEYS,
-  LOCAL_STORAGE_MIDAS_STATE_KEY
-} from "../../~reusables/constants/constants";
+import { KEYS } from "../../~reusables/constants/constants";
 import {
   getSelectedIndices,
   clearSelection,
@@ -56,84 +50,7 @@ import {
   ELEMENT_SHIFT_TRANSLATE_AMOUNT,
   ELEMENT_TRANSLATE_AMOUNT
 } from "../../~reusables/constants/dimensions";
-import { useUpdateProjectMutation, CanvasScene } from "../../generated/graphql";
-import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
-import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
-
-export const StatefulCanvas: React.FC = () => {
-  const userId = useAuthStore(state => (state.user ? state.user.id : ""));
-  const { elements, project } = useProjectStore(state => ({
-    elements: state.elements,
-    project: state.project
-  }));
-  const canvasStore = useContextSelector(CanvasContext, state => state);
-  console.log(canvasStore);
-
-  const [updateProject] = useUpdateProjectMutation({ ignoreResults: true });
-  const mouseLocationThrottled = _.throttle(
-    ({
-      pointerCoordX,
-      pointerCoordY
-    }: {
-      pointerCoordX: number;
-      pointerCoordY: number;
-    }) => {
-      updateProject({
-        variables: {
-          where: { id: project?.id },
-          canvasPayloadInput: {
-            userId,
-            pointerCoordX,
-            pointerCoordY,
-            canvasScene: CanvasScene.MouseLocation
-          }
-        }
-      });
-    },
-    250
-  );
-
-  const updateProjectDebounced = _.debounce(() => {
-    localStorage.setItem(
-      LOCAL_STORAGE_MIDAS_STATE_KEY,
-      JSON.stringify(_.pick(canvasStore, canvasStoreWhiteList))
-    );
-    updateProject({
-      variables: {
-        projectInput: {
-          elements: JSON.stringify(elements)
-        },
-        where: { id: project?.id },
-        canvasPayloadInput: {
-          userId,
-          canvasScene: CanvasScene.SceneUpdate
-        }
-      }
-    });
-  }, 1000);
-
-  useEffect(() => {
-    /**
-     * Anytime canvasStore changes, make a write to the
-     * database after a debounced 1 second pause. Cancel and restart
-     * the debounce if the dependency variables change
-     */
-    updateProjectDebounced();
-    return () => {
-      updateProjectDebounced.cancel();
-    };
-  }, [canvasStore]);
-
-  useEffect(() => {}, [elements]);
-
-  return (
-    <StatelessCanvas
-      {...canvasStore}
-      mouseLocationThrottled={mouseLocationThrottled}
-      elements={elements}
-    />
-  );
-};
+import { ICollaborator } from "../../~reusables/contexts/ProjectProvider";
 
 let skipHistory = false;
 const stateHistory: string[] = [];
@@ -144,7 +61,8 @@ let lastMouseUp: ((e: any) => void) | null = null;
 
 interface IStatelessCanvas extends ICanvasState {
   elements: MidasElement[];
-  mouseLocationThrottled: (({
+  collaborators: ICollaborator[];
+  throttleMouseLocation: (({
     pointerCoordX,
     pointerCoordY
   }: {
@@ -153,7 +71,8 @@ interface IStatelessCanvas extends ICanvasState {
   }) => void) &
     _.Cancelable;
 }
-class StatelessCanvas extends React.Component<IStatelessCanvas> {
+
+export class StatelessCanvas extends React.Component<IStatelessCanvas> {
   public state = {
     scrollX: 0,
     scrollY: 0
@@ -171,6 +90,17 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
 
   private onResize = () => {
     this.forceUpdate();
+  };
+
+  private handleCanvasPointerMove = (
+    event: React.PointerEvent<HTMLCanvasElement>
+  ) => {
+    const x = event.clientX - CANVAS_SIDEBAR_WIDTH - this.state.scrollX;
+    const y = event.clientY - CANVAS_TOPBAR_HEIGHT - this.state.scrollY;
+    this.props.throttleMouseLocation({
+      pointerCoordX: x,
+      pointerCoordY: y
+    });
   };
 
   private onKeyDown = (event: KeyboardEvent) => {
@@ -348,6 +278,7 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
           }}
           width={canvasWidth * window.devicePixelRatio}
           height={canvasHeight * window.devicePixelRatio}
+          onPointerMove={this.handleCanvasPointerMove}
           ref={canvas => {
             this.props.canvasRef.current = canvas;
             if (this.removeWheelEventListener) {
@@ -682,7 +613,8 @@ class StatelessCanvas extends React.Component<IStatelessCanvas> {
           scrollY: this.state.scrollY,
           viewBackgroundColor: this.props.viewBackgroundColor
         },
-        this.props.elements
+        this.props.elements,
+        this.props.collaborators
       );
       if (!skipHistory) {
         pushHistoryEntry(

@@ -5,15 +5,16 @@ import {
   getElementAbsoluteY1,
   getElementAbsoluteY2,
   distanceBetweenPointAndSegment,
-  getArrowPoints,
+  getArrowPoints
 } from "./coords";
 import {
   SCROLLBAR_MARGIN,
   SCROLLBAR_WIDTH,
-  SCROLLBAR_COLOR,
+  SCROLLBAR_COLOR
 } from "../constants/dimensions";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { getSelectedIndices } from "./element";
+import { ICollaborator } from "../contexts/ProjectProvider";
 
 export function hitTest(element: MidasElement, x: number, y: number): boolean {
   // For shapes that are composed of lines, we only enable point-selection when the distance
@@ -31,7 +32,7 @@ export function hitTest(element: MidasElement, x: number, y: number): boolean {
     const a = element.width / 2;
     const b = element.height / 2;
 
-    [0, 1, 2, 3].forEach((x) => {
+    [0, 1, 2, 3].forEach(x => {
       const xx = a * tx;
       const yy = b * ty;
 
@@ -109,7 +110,7 @@ export function resizeTest(
 
   const handlers = handlerRectangles(element, sceneState);
 
-  const filter = Object.keys(handlers).filter((key) => {
+  const filter = Object.keys(handlers).filter(key => {
     const handler = handlers[key];
 
     return (
@@ -141,7 +142,7 @@ export function getScrollbars(
     x: scrollBarX + SCROLLBAR_MARGIN,
     y: canvasHeight - SCROLLBAR_WIDTH - SCROLLBAR_MARGIN,
     width: scrollBarWidth - SCROLLBAR_MARGIN * 2,
-    height: SCROLLBAR_WIDTH,
+    height: SCROLLBAR_WIDTH
   };
 
   // vertical scrollbar
@@ -152,12 +153,12 @@ export function getScrollbars(
     x: canvasWidth - SCROLLBAR_WIDTH - SCROLLBAR_MARGIN,
     y: scrollBarY + SCROLLBAR_MARGIN,
     width: SCROLLBAR_WIDTH,
-    height: scrollBarHeight - SCROLLBAR_WIDTH * 2,
+    height: scrollBarHeight - SCROLLBAR_WIDTH * 2
   };
 
   return {
     horizontal: horizontalScrollBar,
-    vertical: verticalScrollBar,
+    vertical: verticalScrollBar
   };
 }
 
@@ -182,14 +183,14 @@ export function handlerRectangles(
       elementX1 + (elementX2 - elementX1) / 2 + sceneState.scrollX - 4,
       elementY1 - margin + sceneState.scrollY + marginY,
       8,
-      8,
+      8
     ];
 
     handlers["s"] = [
       elementX1 + (elementX2 - elementX1) / 2 + sceneState.scrollX - 4,
       elementY2 - margin + sceneState.scrollY - marginY,
       8,
-      8,
+      8
     ];
   }
 
@@ -198,14 +199,14 @@ export function handlerRectangles(
       elementX1 - margin + sceneState.scrollX + marginX,
       elementY1 + (elementY2 - elementY1) / 2 + sceneState.scrollY - 4,
       8,
-      8,
+      8
     ];
 
     handlers["e"] = [
       elementX2 - margin + sceneState.scrollX - marginX,
       elementY1 + (elementY2 - elementY1) / 2 + sceneState.scrollY - 4,
       8,
-      8,
+      8
     ];
   }
 
@@ -213,25 +214,25 @@ export function handlerRectangles(
     elementX1 - margin + sceneState.scrollX + marginX,
     elementY1 - margin + sceneState.scrollY + marginY,
     8,
-    8,
+    8
   ]; // nw
   handlers["ne"] = [
     elementX2 - margin + sceneState.scrollX - marginX,
     elementY1 - margin + sceneState.scrollY + marginY,
     8,
-    8,
+    8
   ]; // ne
   handlers["sw"] = [
     elementX1 - margin + sceneState.scrollX + marginX,
     elementY2 - margin + sceneState.scrollY - marginY,
     8,
-    8,
+    8
   ]; // sw
   handlers["se"] = [
     elementX2 - margin + sceneState.scrollX - marginX,
     elementY2 - margin + sceneState.scrollY - marginY,
     8,
-    8,
+    8
   ]; // se
 
   return handlers;
@@ -242,12 +243,13 @@ export function renderScene(
   canvas: HTMLCanvasElement,
   sceneState: SceneState,
   elements: MidasElement[],
+  collaborators: ICollaborator[],
   // extra options, currently passed by export helper
   {
     offsetX,
     offsetY,
     renderScrollbars = true,
-    renderSelection = true,
+    renderSelection = true
   }: {
     offsetX?: number;
     offsetY?: number;
@@ -272,10 +274,28 @@ export function renderScene(
   sceneState = {
     ...sceneState,
     scrollX: typeof offsetX === "number" ? offsetX : sceneState.scrollX,
-    scrollY: typeof offsetY === "number" ? offsetY : sceneState.scrollY,
+    scrollY: typeof offsetY === "number" ? offsetY : sceneState.scrollY
   };
 
-  elements.forEach((element) => {
+  collaborators.forEach(({ pointerCoordX, pointerCoordY, color }) => {
+    if (pointerCoordX === null || pointerCoordY === null) {
+      // sometimes the pointer goes off screen
+    } else {
+      const x = pointerCoordX as number;
+      const y = pointerCoordY as number;
+      context.beginPath();
+      context.moveTo(x, y);
+      context.lineTo(x + 1, y + 14);
+      context.lineTo(x + 4, y + 9);
+      context.lineTo(x + 9, y + 10);
+      context.lineTo(x, y);
+      context.fillStyle = color!;
+      context.fill();
+      context.stroke();
+    }
+  });
+
+  elements.forEach(element => {
     element.draw(rc, context, sceneState);
     if (renderSelection && element.isSelected) {
       const margin = 4;
@@ -300,7 +320,7 @@ export function renderScene(
         selectedIndices.length === 1
       ) {
         const handlers = handlerRectangles(element, sceneState);
-        Object.values(handlers).forEach((handler) => {
+        Object.values(handlers).forEach(handler => {
           context.strokeRect(handler[0], handler[1], handler[2], handler[3]);
         });
       }

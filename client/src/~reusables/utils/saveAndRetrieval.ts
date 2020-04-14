@@ -102,6 +102,7 @@ export function exportAsPNG(
       scrollY: 0
     },
     elements,
+    [],
     {
       offsetX: -subCanvasX1 + exportPadding,
       offsetY: -subCanvasY1 + exportPadding,
@@ -134,7 +135,7 @@ export const canvasStoreWhiteList: (keyof ICanvasStore)[] = [
   "exportBackground",
   "currentItemStrokeColor",
   "currentItemBackgroundColor",
-  "viewBackgroundColor",
+  "viewBackgroundColor"
 ];
 
 export function save(state: ICanvasStore, elements: MidasElement[]) {
@@ -161,7 +162,9 @@ export function restore(
       elements.forEach((element: MidasElement) => generateDraw(element));
     }
 
-    return savedState ? _.pick(JSON.parse(savedState), canvasStoreWhiteList) : null;
+    return savedState
+      ? _.pick(JSON.parse(savedState), canvasStoreWhiteList)
+      : null;
   } catch (e) {
     elements.splice(0, elements.length);
     return null;

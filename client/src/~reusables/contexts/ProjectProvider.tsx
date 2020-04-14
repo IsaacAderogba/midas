@@ -9,7 +9,7 @@ import { MidasElement, Maybe } from "../utils/types";
 import { useGetProjectQuery, GetProjectQuery } from "../../generated/graphql";
 import { restore } from "../utils/saveAndRetrieval";
 
-interface ICollaborator {
+export interface ICollaborator {
   userId: string;
   firstName?: Maybe<string>;
   lastName?: Maybe<string>;
@@ -72,7 +72,7 @@ export const ProjectProvider: React.FC<IProjectProvider> = observer(
       updateCollaborator: collaborator => {
         store.collaborators = store.collaborators.map(c => {
           if (c.userId === collaborator.userId) {
-            return { ...collaborator, ...c };
+            return { ...c, ...collaborator };
           }
           return c;
         });
