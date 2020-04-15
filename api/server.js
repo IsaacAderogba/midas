@@ -6,22 +6,23 @@ const helmet = require("helmet");
 const { makeSchema } = require("nexus");
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
-const { RedisPubSub } = require("graphql-redis-subscriptions");
-const { RedisCache } = require("apollo-server-cache-redis");
-const Redis = require("ioredis");
 const { applyMiddleware } = require("graphql-middleware");
 const path = require("path");
 const app = express();
 const httpServer = require("http").createServer(app);
+const {
+  redisCache,
+  redisClient,
+  redisPubSub,
+} = require("./services/redis/redis");
 
-const UserAPI = require("../resources/user/userDataSource");
-const WorkspaceAPI = require("../resources/workspace/workspaceDataSource");
-const WorkspaceUserAPI = require("../resources/workspace_user/workspaceUserDataSource");
-const ProjectAPI = require("../resources/project/projectDataSource");
+const UserAPI = require("./resources/user/userDataSource");
+const WorkspaceAPI = require("./resources/workspace/workspaceDataSource");
+const WorkspaceUserAPI = require("./resources/workspace_user/workspaceUserDataSource");
+const ProjectAPI = require("./resources/project/projectDataSource");
 
-const { Query, Mutation, Middleware, Subscription } = require("../resources");
+const { Query, Mutation, Middleware, Subscription } = require("./resources");
 
-// schema setup
 const schema = makeSchema({
   types: [Query, Mutation, Subscription],
   outputs: {
@@ -30,17 +31,9 @@ const schema = makeSchema({
   },
 });
 
-// app middlewares
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-
-const redisCache = new RedisCache(process.env.REDIS_URL);
-const redisPubSub = new RedisPubSub({
-  publisher: new Redis(process.env.REDIS_URL),
-  subscriber: new Redis(process.env.REDIS_URL),
-});
-const redisClient = new Redis(process.env.REDIS_URL);
 
 const schemaWithMiddleware = applyMiddleware(schema, ...Middleware);
 const apolloServer = new ApolloServer({

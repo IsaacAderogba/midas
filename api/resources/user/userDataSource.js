@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { SQLDataSource } = require("datasource-sql");
 const { generateToken } = require("./userUtils");
-const { knexConfig } = require("../../db/dbConfig");
+const { knexConfig } = require("../../../db/dbConfig");
 const WorkspaceUserAPI = require("../workspace_user/workspaceUserDataSource");
 
 // const MINUTE = 60;

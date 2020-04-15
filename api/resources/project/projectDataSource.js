@@ -1,5 +1,5 @@
 const { SQLDataSource } = require("datasource-sql");
-const { knexConfig } = require("../../db/dbConfig");
+const { knexConfig } = require("../../../db/dbConfig");
 
 const PROJECT_TABLE = "Project";
 

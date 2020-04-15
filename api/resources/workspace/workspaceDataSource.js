@@ -1,5 +1,5 @@
 const { SQLDataSource } = require("datasource-sql");
-const { knexConfig } = require("../../db/dbConfig");
+const { knexConfig } = require("../../../db/dbConfig");
 const { ROLES } = require("../permissions");
 
 const WORKSPACE_TABLE = "Workspace";
