@@ -6,20 +6,22 @@ import { RouteComponentProps, Route, Switch, Redirect } from "react-router-dom";
 // components
 import { Button } from "antd";
 import { PageNav, PageNavItem } from "../../components/elements/PageNav";
-import { Projects } from "./Projects";
+import { Projects } from "../../components/molecules/Projects";
 
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
 import { H2 } from "../../components/atoms/Text";
 import { useAppStore } from "../../~reusables/contexts/AppProvider";
 import { useCreateProjectMutation } from "../../generated/graphql";
+import { Members } from "../../components/molecules/Members";
+import { Settings } from "../../components/molecules/Settings";
 
 export const Workspace: React.FC<RouteComponentProps> = () => {
   const { workspace, isWorkspaceLoading, workspaceUser } = useAppStore(
-    state => ({
+    (state) => ({
       workspace: state.workspace,
       isWorkspaceLoading: state.isWorkspaceLoading,
-      workspaceUser: state.workspaceUser
+      workspaceUser: state.workspaceUser,
     })
   );
 
@@ -27,27 +29,27 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
     variables: {
       newProjectInput: {
         title: "Untitled project",
-        workspaceUserId: workspaceUser ? workspaceUser.id : ""
-      }
+        workspaceUserId: workspaceUser ? workspaceUser.id : "",
+      },
     },
     update() {},
-    onError() {}
+    onError() {},
   });
 
   return (
     <StyledWorkspace>
       <header
         css={css`
-          background: ${p => p.theme.colors.white};
-          padding: ${p => `${p.theme.space[7]}px ${p.theme.space[8]}px 0`};
-          border-bottom: 1px solid ${p => p.theme.colors.greys[9]};
+          background: ${(p) => p.theme.colors.white};
+          padding: ${(p) => `${p.theme.space[7]}px ${p.theme.space[8]}px 0`};
+          border-bottom: 1px solid ${(p) => p.theme.colors.greys[9]};
         `}
       >
         {workspace ? (
           <div
             css={css`
               display: flex;
-              background: ${p => p.theme.colors.white};
+              background: ${(p) => p.theme.colors.white};
               align-items: center;
               justify-content: space-between;
             `}
@@ -64,7 +66,7 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
         ) : (
           <div
             css={css`
-              background: ${p => p.theme.colors.white};
+              background: ${(p) => p.theme.colors.white};
             `}
           >
             <H2>{isWorkspaceLoading ? "" : "No workspace selected"}</H2>
@@ -72,7 +74,7 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
         )}
         <PageNav
           css={css`
-            margin-top: ${p => p.theme.space[7]}px;
+            margin-top: ${(p) => p.theme.space[7]}px;
           `}
         >
           <PageNavItem name="Projects" link="/app/workspace" />
@@ -82,7 +84,7 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
       </header>
       <section
         css={css`
-          padding: ${p => `${p.theme.space[7]}px 0 0 ${p.theme.space[8]}px`};
+          padding: ${(p) => `${p.theme.space[7]}px 0 0 ${p.theme.space[8]}px`};
         `}
       >
         <Switch>
@@ -90,12 +92,12 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
           <Route
             exact
             path="/app/workspace/members"
-            render={() => <div>members</div>}
+            render={() => <Members />}
           />
           <Route
             exact
             path="/app/workspace/settings"
-            render={() => <div>settings</div>}
+            render={() => <Settings />}
           />
           <Redirect to="/app/workspace" />
         </Switch>

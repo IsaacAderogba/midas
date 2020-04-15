@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { css } from "styled-components/macro";
 
 // components
-import { H5, P3 } from "../../components/atoms/Text";
+import { H5, P3 } from "../atoms/Text";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { Card } from "antd";
 import { Link } from "react-router-dom";

@@ -54,6 +54,21 @@ export type CollaboratorPayloadInput = {
   pointerCoordY?: Maybe<Scalars['Float']>;
 };
 
+export type InvitedWorkspaceUser = {
+   __typename?: 'InvitedWorkspaceUser';
+  workspaceUserId: Scalars['Int'];
+  workspaceId: Scalars['Int'];
+  email: Scalars['String'];
+  role: WorkspaceUserRoles;
+};
+
+export type InvitedWorkspaceUserInput = {
+  workspaceUserId: Scalars['Int'];
+  workspaceId: Scalars['Int'];
+  email: Scalars['String'];
+  role: WorkspaceUserRoles;
+};
+
 export type LoginInput = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -71,6 +86,8 @@ export type Mutation = {
   createWorkspaceUser?: Maybe<WorkspaceUser>;
   updateWorkspaceUser?: Maybe<WorkspaceUser>;
   deleteWorkspaceUser: Scalars['Boolean'];
+  createInvitedWorkspaceUser: InvitedWorkspaceUser;
+  acceptWorkspaceUserInvite?: Maybe<WorkspaceUser>;
   createProject?: Maybe<Project>;
   updateProject?: Maybe<Project>;
   deleteProject?: Maybe<Project>;
@@ -115,6 +132,16 @@ export type MutationUpdateWorkspaceUserArgs = {
 
 export type MutationDeleteWorkspaceUserArgs = {
   where?: Maybe<WorkspaceUserWhere>;
+};
+
+
+export type MutationCreateInvitedWorkspaceUserArgs = {
+  invitedWorkspaceUserInput?: Maybe<InvitedWorkspaceUserInput>;
+};
+
+
+export type MutationAcceptWorkspaceUserInviteArgs = {
+  invitedWorkspaceUserInput?: Maybe<InvitedWorkspaceUserInput>;
 };
 
 
@@ -505,6 +532,21 @@ export type GetWorkspacesQuery = (
     { __typename?: 'Workspace' }
     & WorkspacesAttributesFragment
   )> }
+);
+
+export type WorkspaceUsersQueryVariables = {};
+
+
+export type WorkspaceUsersQuery = (
+  { __typename?: 'Query' }
+  & { workspaceUsers?: Maybe<Array<(
+    { __typename?: 'WorkspaceUser' }
+    & Pick<WorkspaceUser, 'role'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'firstName' | 'lastName' | 'email' | 'avatarURL'>
+    ) }
+  )>> }
 );
 
 export type WorkspaceAttributesFragment = (
@@ -1044,3 +1086,41 @@ export function useGetWorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type GetWorkspacesQueryHookResult = ReturnType<typeof useGetWorkspacesQuery>;
 export type GetWorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspacesLazyQuery>;
 export type GetWorkspacesQueryResult = ApolloReactCommon.QueryResult<GetWorkspacesQuery, GetWorkspacesQueryVariables>;
+export const WorkspaceUsersDocument = gql`
+    query workspaceUsers {
+  workspaceUsers {
+    role
+    user {
+      firstName
+      lastName
+      email
+      avatarURL
+    }
+  }
+}
+    `;
+
+/**
+ * __useWorkspaceUsersQuery__
+ *
+ * To run a query within a React component, call `useWorkspaceUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useWorkspaceUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useWorkspaceUsersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useWorkspaceUsersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<WorkspaceUsersQuery, WorkspaceUsersQueryVariables>) {
+        return ApolloReactHooks.useQuery<WorkspaceUsersQuery, WorkspaceUsersQueryVariables>(WorkspaceUsersDocument, baseOptions);
+      }
+export function useWorkspaceUsersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<WorkspaceUsersQuery, WorkspaceUsersQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<WorkspaceUsersQuery, WorkspaceUsersQueryVariables>(WorkspaceUsersDocument, baseOptions);
+        }
+export type WorkspaceUsersQueryHookResult = ReturnType<typeof useWorkspaceUsersQuery>;
+export type WorkspaceUsersLazyQueryHookResult = ReturnType<typeof useWorkspaceUsersLazyQuery>;
+export type WorkspaceUsersQueryResult = ApolloReactCommon.QueryResult<WorkspaceUsersQuery, WorkspaceUsersQueryVariables>;
