@@ -28,6 +28,8 @@ export interface NexusGenInputs {
   InvitedWorkspaceUserInput: { // input type
     email: string; // String!
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
+    workspaceId: number; // Int!
+    workspaceUserId: number; // Int!
   }
   LoginInput: { // input type
     email: string; // String!
@@ -124,8 +126,8 @@ export interface NexusGenRootTypes {
   InvitedWorkspaceUser: { // root type
     email: string; // String!
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
-    workspaceId: string; // String!
-    workspaceUserId: string; // String!
+    workspaceId: number; // Int!
+    workspaceUserId: number; // Int!
   }
   Mutation: {};
   Project: { // root type
@@ -229,10 +231,11 @@ export interface NexusGenFieldTypes {
   InvitedWorkspaceUser: { // field return type
     email: string; // String!
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
-    workspaceId: string; // String!
-    workspaceUserId: string; // String!
+    workspaceId: number; // Int!
+    workspaceUserId: number; // Int!
   }
   Mutation: { // field return type
+    acceptWorkspaceUserInvite: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
     createInvitedWorkspaceUser: NexusGenRootTypes['InvitedWorkspaceUser']; // InvitedWorkspaceUser!
     createProject: NexusGenRootTypes['Project'] | null; // Project
     createWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
@@ -317,6 +320,9 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    acceptWorkspaceUserInvite: { // args
+      invitedWorkspaceUserInput?: NexusGenInputs['InvitedWorkspaceUserInput'] | null; // InvitedWorkspaceUserInput
+    }
     createInvitedWorkspaceUser: { // args
       invitedWorkspaceUserInput?: NexusGenInputs['InvitedWorkspaceUserInput'] | null; // InvitedWorkspaceUserInput
     }

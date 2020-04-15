@@ -46,13 +46,15 @@ input CollaboratorPayloadInput {
 type InvitedWorkspaceUser {
   email: String!
   role: WorkspaceUserRoles!
-  workspaceId: String!
-  workspaceUserId: String!
+  workspaceId: Int!
+  workspaceUserId: Int!
 }
 
 input InvitedWorkspaceUserInput {
   email: String!
   role: WorkspaceUserRoles!
+  workspaceId: Int!
+  workspaceUserId: Int!
 }
 
 input LoginInput {
@@ -61,6 +63,7 @@ input LoginInput {
 }
 
 type Mutation {
+  acceptWorkspaceUserInvite(invitedWorkspaceUserInput: InvitedWorkspaceUserInput): WorkspaceUser
   createInvitedWorkspaceUser(invitedWorkspaceUserInput: InvitedWorkspaceUserInput): InvitedWorkspaceUser!
   createProject(newProjectInput: NewProjectInput!): Project
   createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace

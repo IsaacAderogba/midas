@@ -95,6 +95,7 @@ class UserAPI extends SQLDataSource {
   async authenticateUser(authorization) {
     // authheader looks like: 'workspaceId-jwtToken'
     const authHeader = authorization;
+    // TODO - make this failure proof
     const [workspaceId, token] = authHeader
       ? authHeader.split(" ")
       : [false, false];

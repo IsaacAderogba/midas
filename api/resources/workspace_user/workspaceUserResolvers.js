@@ -118,6 +118,35 @@ const Mutation = extendType({
         return invitedUser;
       },
     });
+    t.field(workspaceUserMutationKeys.acceptWorkspaceUserInvite, {
+      type: WorkspaceUser,
+      nullable: true,
+      args: {
+        invitedWorkspaceUserInput: InvitedWorkspaceUserInput,
+      },
+      resolve: async (
+        parent,
+        { invitedWorkspaceUserInput },
+        { dataSources, user }
+      ) => {
+        // try to see if that invited workspace user does indeed exist
+        const validInvitee = await dataSources.workspaceUserAPI.readInvitedWorkspaceUser(
+          invitedWorkspaceUserInput
+        );
+
+        if (!validInvitee) {
+          return new Error("No invited user - make middleware");
+        }
+
+        // must be a user to accept this request - middleware should check
+        const userToInsert = {
+          workspaceId: validInvitee.workspaceId,
+          role: validInvitee.role,
+          userId: user.id,
+        };
+        return dataSources.workspaceUserAPI.createWorkspaceUser(userToInsert);
+      },
+    });
   },
 });
 

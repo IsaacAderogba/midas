@@ -10,6 +10,7 @@ const workspaceUserMutationKeys = {
   updateWorkspaceUser: "updateWorkspaceUser",
   deleteWorkspaceUser: "deleteWorkspaceUser",
   createInvitedWorkspaceUser: "createInvitedWorkspaceUser",
+  acceptWorkspaceUserInvite: "acceptWorkspaceUserInvite"
 };
 
 const workspaceUserErrors = {
