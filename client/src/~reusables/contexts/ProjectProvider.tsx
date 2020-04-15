@@ -83,8 +83,11 @@ export const ProjectProvider: React.FC<IProjectProvider> = observer(
     }));
 
     useEffect(() => {
-      if (data) {
+      if (data && data['project']) {
         store.project = data["project"];
+        if(data['project'].collaborators) {
+          store.collaborators = data['project'].collaborators
+        }
       }
     }, [data, loading]);
 

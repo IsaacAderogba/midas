@@ -57,6 +57,16 @@ export const Project = {
         inviteShareStatus
         inviteSharePrivileges
         elements
+        collaborators {
+          userId
+          firstName
+          lastName
+          email
+          avatarURL
+          color
+          pointerCoordX
+          pointerCoordY
+        }
         createdAt
         updatedAt
       }

@@ -46,7 +46,7 @@ export const StatefulCanvas: React.FC = () => {
         updateProject({
           variables: {
             where: { id: project?.id },
-            canvasPayloadInput: {
+            collaboratorPayloadInput: {
               userId,
               pointerCoordX,
               pointerCoordY,
@@ -73,7 +73,7 @@ export const StatefulCanvas: React.FC = () => {
             elements: JSON.stringify(elements)
           },
           where: { id: project?.id },
-          canvasPayloadInput: {
+          collaboratorPayloadInput: {
             userId,
             canvasScene: CanvasScene.SceneUpdate
           }

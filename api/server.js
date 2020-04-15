@@ -40,6 +40,7 @@ const redisPubSub = new RedisPubSub({
   publisher: new Redis(process.env.REDIS_URL),
   subscriber: new Redis(process.env.REDIS_URL),
 });
+const redisClient = new Redis(process.env.REDIS_URL);
 
 const schemaWithMiddleware = applyMiddleware(schema, ...Middleware);
 const apolloServer = new ApolloServer({
@@ -48,10 +49,12 @@ const apolloServer = new ApolloServer({
     if (connection) {
       return {
         ...connection.context,
+        redisClient,
         pubsub: redisPubSub,
-        user: payload && payload.authorization
-          ? await UserAPI.authenticateUser(payload.authorization)
-          : connection.context.user,
+        user:
+          payload && payload.authorization
+            ? await UserAPI.authenticateUser(payload.authorization)
+            : connection.context.user,
         dataSources: {
           userAPI: UserAPI,
           workspaceAPI: WorkspaceAPI,
@@ -63,6 +66,7 @@ const apolloServer = new ApolloServer({
 
     return {
       req,
+      redisClient,
       pubsub: redisPubSub,
       user: await UserAPI.authenticateUser(req.headers.authorization),
     };

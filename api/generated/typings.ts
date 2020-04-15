@@ -14,7 +14,7 @@ declare global {
 }
 
 export interface NexusGenInputs {
-  CanvasPayloadInput: { // input type
+  CollaboratorPayloadInput: { // input type
     avatarURL?: string | null; // String
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     color?: string | null; // String
@@ -106,7 +106,7 @@ export interface NexusGenRootTypes {
     token: string; // String!
     userId: string; // ID!
   }
-  CanvasPayload: { // root type
+  CollaboratorPayload: { // root type
     avatarURL?: string | null; // String
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     color?: string | null; // String
@@ -119,6 +119,7 @@ export interface NexusGenRootTypes {
   }
   Mutation: {};
   Project: { // root type
+    collaborators?: NexusGenRootTypes['CollaboratorPayload'][] | null; // [CollaboratorPayload!]
     createdAt: string; // String!
     elements?: string | null; // String
     id: string; // ID!
@@ -132,7 +133,7 @@ export interface NexusGenRootTypes {
     workspaceUserId: string; // ID!
   }
   ProjectSubscriptionPayload: { // root type
-    canvasPayload?: NexusGenRootTypes['CanvasPayload'] | null; // CanvasPayload
+    collaboratorPayload?: NexusGenRootTypes['CollaboratorPayload'] | null; // CollaboratorPayload
     data?: NexusGenRootTypes['Project'] | null; // Project
     mutation?: NexusGenEnums['MutationType'] | null; // MutationType
     updatedFields?: string[] | null; // [String!]
@@ -173,7 +174,7 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
-  CanvasPayloadInput: NexusGenInputs['CanvasPayloadInput'];
+  CollaboratorPayloadInput: NexusGenInputs['CollaboratorPayloadInput'];
   LoginInput: NexusGenInputs['LoginInput'];
   NewProjectInput: NexusGenInputs['NewProjectInput'];
   NewWorkspaceInput: NexusGenInputs['NewWorkspaceInput'];
@@ -203,7 +204,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
     userId: string; // ID!
   }
-  CanvasPayload: { // field return type
+  CollaboratorPayload: { // field return type
     avatarURL: string | null; // String
     canvasScene: NexusGenEnums['CanvasScene']; // CanvasScene!
     color: string | null; // String
@@ -230,6 +231,7 @@ export interface NexusGenFieldTypes {
     updateWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
   }
   Project: { // field return type
+    collaborators: NexusGenRootTypes['CollaboratorPayload'][] | null; // [CollaboratorPayload!]
     createdAt: string; // String!
     elements: string | null; // String
     id: string; // ID!
@@ -245,7 +247,7 @@ export interface NexusGenFieldTypes {
     workspaceUserId: string; // ID!
   }
   ProjectSubscriptionPayload: { // field return type
-    canvasPayload: NexusGenRootTypes['CanvasPayload'] | null; // CanvasPayload
+    collaboratorPayload: NexusGenRootTypes['CollaboratorPayload'] | null; // CollaboratorPayload
     data: NexusGenRootTypes['Project'] | null; // Project
     mutation: NexusGenEnums['MutationType'] | null; // MutationType
     updatedFields: string[] | null; // [String!]
@@ -319,7 +321,7 @@ export interface NexusGenArgTypes {
       registerInput?: NexusGenInputs['RegisterInput'] | null; // RegisterInput
     }
     updateProject: { // args
-      canvasPayloadInput?: NexusGenInputs['CanvasPayloadInput'] | null; // CanvasPayloadInput
+      collaboratorPayloadInput?: NexusGenInputs['CollaboratorPayloadInput'] | null; // CollaboratorPayloadInput
       projectInput?: NexusGenInputs['ProjectInput'] | null; // ProjectInput
       where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
     }
@@ -357,9 +359,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthUser" | "CanvasPayload" | "Mutation" | "Project" | "ProjectSubscriptionPayload" | "Query" | "Subscription" | "User" | "Workspace" | "WorkspaceUser";
+export type NexusGenObjectNames = "AuthUser" | "CollaboratorPayload" | "Mutation" | "Project" | "ProjectSubscriptionPayload" | "Query" | "Subscription" | "User" | "Workspace" | "WorkspaceUser";
 
-export type NexusGenInputNames = "CanvasPayloadInput" | "LoginInput" | "NewProjectInput" | "NewWorkspaceInput" | "NewWorkspaceUserInput" | "ProjectInput" | "ProjectWhere" | "RegisterInput" | "UserInput" | "WorkspaceInput" | "WorkspaceUserInput" | "WorkspaceUserWhere";
+export type NexusGenInputNames = "CollaboratorPayloadInput" | "LoginInput" | "NewProjectInput" | "NewWorkspaceInput" | "NewWorkspaceUserInput" | "ProjectInput" | "ProjectWhere" | "RegisterInput" | "UserInput" | "WorkspaceInput" | "WorkspaceUserInput" | "WorkspaceUserWhere";
 
 export type NexusGenEnumNames = "CanvasScene" | "MutationType" | "ProjectInviteSharePrivileges" | "ProjectInviteShareStatus" | "WorkspaceUserRoles" | "WorkspaceUserStatus";
 

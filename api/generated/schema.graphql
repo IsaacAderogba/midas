@@ -12,35 +12,35 @@ type AuthUser {
   userId: ID!
 }
 
-type CanvasPayload {
-  avatarURL: String
-  canvasScene: CanvasScene!
-  color: String
-  email: String
-  firstName: String
-  lastName: String
-  pointerCoordX: Float
-  pointerCoordY: Float
-  userId: String!
-}
-
-input CanvasPayloadInput {
-  avatarURL: String
-  canvasScene: CanvasScene!
-  color: String
-  email: String
-  firstName: String
-  lastName: String
-  pointerCoordX: Float
-  pointerCoordY: Float
-  userId: String!
-}
-
 enum CanvasScene {
   CLIENT_CONNECT
   CLIENT_DISCONNECT
   MOUSE_LOCATION
   SCENE_UPDATE
+}
+
+type CollaboratorPayload {
+  avatarURL: String
+  canvasScene: CanvasScene!
+  color: String
+  email: String
+  firstName: String
+  lastName: String
+  pointerCoordX: Float
+  pointerCoordY: Float
+  userId: String!
+}
+
+input CollaboratorPayloadInput {
+  avatarURL: String
+  canvasScene: CanvasScene!
+  color: String
+  email: String
+  firstName: String
+  lastName: String
+  pointerCoordX: Float
+  pointerCoordY: Float
+  userId: String!
 }
 
 input LoginInput {
@@ -58,7 +58,7 @@ type Mutation {
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   loginUser(loginInput: LoginInput): AuthUser!
   registerUser(registerInput: RegisterInput): AuthUser!
-  updateProject(canvasPayloadInput: CanvasPayloadInput, projectInput: ProjectInput, where: ProjectWhere!): Project
+  updateProject(collaboratorPayloadInput: CollaboratorPayloadInput, projectInput: ProjectInput, where: ProjectWhere!): Project
   updateUser(userInput: UserInput): User
   updateWorkspace(workspaceInput: WorkspaceInput): Workspace
   updateWorkspaceUser(where: WorkspaceUserWhere, workspaceUserInput: WorkspaceUserInput): WorkspaceUser
@@ -92,6 +92,7 @@ input NewWorkspaceUserInput {
 }
 
 type Project {
+  collaborators: [CollaboratorPayload!]
   createdAt: String!
   elements: String
   id: ID!
@@ -126,7 +127,7 @@ enum ProjectInviteShareStatus {
 }
 
 type ProjectSubscriptionPayload {
-  canvasPayload: CanvasPayload
+  collaboratorPayload: CollaboratorPayload
   data: Project
   mutation: MutationType
   updatedFields: [String!]

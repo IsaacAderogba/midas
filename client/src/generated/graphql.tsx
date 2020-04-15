@@ -22,37 +22,37 @@ export type AuthUser = {
   user: User;
 };
 
-export type CanvasPayload = {
-   __typename?: 'CanvasPayload';
-  userId: Scalars['String'];
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  avatarURL?: Maybe<Scalars['String']>;
-  color?: Maybe<Scalars['String']>;
-  canvasScene: CanvasScene;
-  pointerCoordX?: Maybe<Scalars['Float']>;
-  pointerCoordY?: Maybe<Scalars['Float']>;
-};
-
-export type CanvasPayloadInput = {
-  userId: Scalars['String'];
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  avatarURL?: Maybe<Scalars['String']>;
-  color?: Maybe<Scalars['String']>;
-  canvasScene: CanvasScene;
-  pointerCoordX?: Maybe<Scalars['Float']>;
-  pointerCoordY?: Maybe<Scalars['Float']>;
-};
-
 export enum CanvasScene {
   SceneUpdate = 'SCENE_UPDATE',
   MouseLocation = 'MOUSE_LOCATION',
   ClientConnect = 'CLIENT_CONNECT',
   ClientDisconnect = 'CLIENT_DISCONNECT'
 }
+
+export type CollaboratorPayload = {
+   __typename?: 'CollaboratorPayload';
+  userId: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  avatarURL?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']>;
+  canvasScene: CanvasScene;
+  pointerCoordX?: Maybe<Scalars['Float']>;
+  pointerCoordY?: Maybe<Scalars['Float']>;
+};
+
+export type CollaboratorPayloadInput = {
+  userId: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  avatarURL?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']>;
+  canvasScene: CanvasScene;
+  pointerCoordX?: Maybe<Scalars['Float']>;
+  pointerCoordY?: Maybe<Scalars['Float']>;
+};
 
 export type LoginInput = {
   email: Scalars['String'];
@@ -124,7 +124,7 @@ export type MutationCreateProjectArgs = {
 
 
 export type MutationUpdateProjectArgs = {
-  canvasPayloadInput?: Maybe<CanvasPayloadInput>;
+  collaboratorPayloadInput?: Maybe<CollaboratorPayloadInput>;
   projectInput?: Maybe<ProjectInput>;
   where: ProjectWhere;
 };
@@ -174,6 +174,7 @@ export type Project = {
   elements?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  collaborators?: Maybe<Array<CollaboratorPayload>>;
   workspace: Workspace;
   workspaceUser: WorkspaceUser;
 };
@@ -199,7 +200,7 @@ export enum ProjectInviteShareStatus {
 export type ProjectSubscriptionPayload = {
    __typename?: 'ProjectSubscriptionPayload';
   mutation?: Maybe<MutationType>;
-  canvasPayload?: Maybe<CanvasPayload>;
+  collaboratorPayload?: Maybe<CollaboratorPayload>;
   data?: Maybe<Project>;
   updatedFields?: Maybe<Array<Scalars['String']>>;
 };
@@ -378,16 +379,16 @@ export type ProjectSubscription = (
     & { data?: Maybe<(
       { __typename?: 'Project' }
       & Pick<Project, 'elements'>
-    )>, canvasPayload?: Maybe<(
-      { __typename?: 'CanvasPayload' }
-      & Pick<CanvasPayload, 'userId' | 'firstName' | 'lastName' | 'email' | 'avatarURL' | 'color' | 'canvasScene' | 'pointerCoordX' | 'pointerCoordY'>
+    )>, collaboratorPayload?: Maybe<(
+      { __typename?: 'CollaboratorPayload' }
+      & Pick<CollaboratorPayload, 'userId' | 'firstName' | 'lastName' | 'email' | 'avatarURL' | 'color' | 'canvasScene' | 'pointerCoordX' | 'pointerCoordY'>
     )> }
   ) }
 );
 
 export type UpdateProjectMutationVariables = {
   projectInput?: Maybe<ProjectInput>;
-  canvasPayloadInput?: Maybe<CanvasPayloadInput>;
+  collaboratorPayloadInput?: Maybe<CollaboratorPayloadInput>;
   where: ProjectWhere;
 };
 
@@ -528,6 +529,10 @@ export type UserAttributesFragment = (
 export type ProjectAttributesFragment = (
   { __typename?: 'Project' }
   & Pick<Project, 'id' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'elements' | 'createdAt' | 'updatedAt'>
+  & { collaborators?: Maybe<Array<(
+    { __typename?: 'CollaboratorPayload' }
+    & Pick<CollaboratorPayload, 'userId' | 'firstName' | 'lastName' | 'email' | 'avatarURL' | 'color' | 'pointerCoordX' | 'pointerCoordY'>
+  )>> }
 );
 
 export type ProjectsAttributesFragment = (
@@ -579,6 +584,16 @@ export const ProjectAttributesFragmentDoc = gql`
   inviteShareStatus
   inviteSharePrivileges
   elements
+  collaborators {
+    userId
+    firstName
+    lastName
+    email
+    avatarURL
+    color
+    pointerCoordX
+    pointerCoordY
+  }
   createdAt
   updatedAt
 }
@@ -701,7 +716,7 @@ export const ProjectDocument = gql`
       elements
     }
     mutation
-    canvasPayload {
+    collaboratorPayload {
       userId
       firstName
       lastName
@@ -738,8 +753,8 @@ export function useProjectSubscription(baseOptions?: ApolloReactHooks.Subscripti
 export type ProjectSubscriptionHookResult = ReturnType<typeof useProjectSubscription>;
 export type ProjectSubscriptionResult = ApolloReactCommon.SubscriptionResult<ProjectSubscription>;
 export const UpdateProjectDocument = gql`
-    mutation updateProject($projectInput: ProjectInput, $canvasPayloadInput: CanvasPayloadInput, $where: ProjectWhere!) {
-  updateProject(projectInput: $projectInput, canvasPayloadInput: $canvasPayloadInput, where: $where) {
+    mutation updateProject($projectInput: ProjectInput, $collaboratorPayloadInput: CollaboratorPayloadInput, $where: ProjectWhere!) {
+  updateProject(projectInput: $projectInput, collaboratorPayloadInput: $collaboratorPayloadInput, where: $where) {
     ...projectAttributes
   }
 }
@@ -760,7 +775,7 @@ export type UpdateProjectMutationFn = ApolloReactCommon.MutationFunction<UpdateP
  * const [updateProjectMutation, { data, loading, error }] = useUpdateProjectMutation({
  *   variables: {
  *      projectInput: // value for 'projectInput'
- *      canvasPayloadInput: // value for 'canvasPayloadInput'
+ *      collaboratorPayloadInput: // value for 'collaboratorPayloadInput'
  *      where: // value for 'where'
  *   },
  * });

@@ -40,19 +40,19 @@ export const Project: React.FC = () => {
   useProjectSubscription({
     variables: { where: { id: project?.id } },
     onSubscriptionData({ subscriptionData: { data: subData } }) {
-      if (subData && subData.project && subData.project.canvasPayload) {
-        const { data, canvasPayload } = subData.project;
+      if (subData && subData.project && subData.project.collaboratorPayload) {
+        const { data, collaboratorPayload } = subData.project;
         const {
           pointerCoordX,
           pointerCoordY,
           canvasScene,
           userId
-        } = canvasPayload;
+        } = collaboratorPayload;
 
         switch (canvasScene) {
           case CanvasScene.ClientConnect:
             addCollaborator({
-              ...canvasPayload,
+              ...collaboratorPayload,
               pointerCoordX: null,
               pointerCoordY: null
             });
@@ -85,7 +85,7 @@ export const Project: React.FC = () => {
     updateProject({
       variables: {
         where: { id: project?.id },
-        canvasPayloadInput: {
+        collaboratorPayloadInput: {
           userId: user ? user.id : "",
           color: getRandomColor(),
           ..._.omit(user, [
@@ -104,7 +104,7 @@ export const Project: React.FC = () => {
       updateProject({
         variables: {
           where: { id: project?.id },
-          canvasPayloadInput: {
+          collaboratorPayloadInput: {
             userId: user ? user.id : "",
             canvasScene: CanvasScene.ClientDisconnect
           }

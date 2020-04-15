@@ -38,7 +38,7 @@ export const projectSubscription = gql`
         elements
       }
       mutation
-      canvasPayload {
+      collaboratorPayload {
         userId
         firstName
         lastName
@@ -56,12 +56,12 @@ export const projectSubscription = gql`
 export const updateProject = gql`
   mutation updateProject(
     $projectInput: ProjectInput
-    $canvasPayloadInput: CanvasPayloadInput
+    $collaboratorPayloadInput: CollaboratorPayloadInput
     $where: ProjectWhere!
   ) {
     updateProject(
       projectInput: $projectInput
-      canvasPayloadInput: $canvasPayloadInput
+      collaboratorPayloadInput: $collaboratorPayloadInput
       where: $where
     ) {
       ...projectAttributes

@@ -23,6 +23,11 @@ const projectSubscriptionChannels = {
     `workspace-${workspaceId}:${projectSubscriptionKeys.project}-${projectId}`,
 };
 
+const projectRedisKeys = {
+  "projectCollaborators": (workspaceId, projectId) =>
+  `workspace-${workspaceId}:${projectSubscriptionKeys.project}-${projectId}-collaborators`
+}
+
 const projectErrors = {
   ProjectNotFound: new UserInputError("Project not found"),
 };
@@ -33,4 +38,5 @@ module.exports = {
   projectSubscriptionKeys,
   projectErrors,
   projectSubscriptionChannels,
+  projectRedisKeys
 };
