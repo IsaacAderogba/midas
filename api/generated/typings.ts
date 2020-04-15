@@ -25,6 +25,10 @@ export interface NexusGenInputs {
     pointerCoordY?: number | null; // Float
     userId: string; // String!
   }
+  InvitedWorkspaceUserInput: { // input type
+    email: string; // String!
+    role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
+  }
   LoginInput: { // input type
     email: string; // String!
     password: string; // String!
@@ -117,6 +121,12 @@ export interface NexusGenRootTypes {
     pointerCoordY?: number | null; // Float
     userId: string; // String!
   }
+  InvitedWorkspaceUser: { // root type
+    email: string; // String!
+    role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
+    workspaceId: string; // String!
+    workspaceUserId: string; // String!
+  }
   Mutation: {};
   Project: { // root type
     collaborators?: NexusGenRootTypes['CollaboratorPayload'][] | null; // [CollaboratorPayload!]
@@ -175,6 +185,7 @@ export interface NexusGenRootTypes {
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   CollaboratorPayloadInput: NexusGenInputs['CollaboratorPayloadInput'];
+  InvitedWorkspaceUserInput: NexusGenInputs['InvitedWorkspaceUserInput'];
   LoginInput: NexusGenInputs['LoginInput'];
   NewProjectInput: NexusGenInputs['NewProjectInput'];
   NewWorkspaceInput: NexusGenInputs['NewWorkspaceInput'];
@@ -215,7 +226,14 @@ export interface NexusGenFieldTypes {
     pointerCoordY: number | null; // Float
     userId: string; // String!
   }
+  InvitedWorkspaceUser: { // field return type
+    email: string; // String!
+    role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
+    workspaceId: string; // String!
+    workspaceUserId: string; // String!
+  }
   Mutation: { // field return type
+    createInvitedWorkspaceUser: NexusGenRootTypes['InvitedWorkspaceUser']; // InvitedWorkspaceUser!
     createProject: NexusGenRootTypes['Project'] | null; // Project
     createWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     createWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
@@ -299,6 +317,9 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createInvitedWorkspaceUser: { // args
+      invitedWorkspaceUserInput?: NexusGenInputs['InvitedWorkspaceUserInput'] | null; // InvitedWorkspaceUserInput
+    }
     createProject: { // args
       newProjectInput: NexusGenInputs['NewProjectInput']; // NewProjectInput!
     }
@@ -359,9 +380,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthUser" | "CollaboratorPayload" | "Mutation" | "Project" | "ProjectSubscriptionPayload" | "Query" | "Subscription" | "User" | "Workspace" | "WorkspaceUser";
+export type NexusGenObjectNames = "AuthUser" | "CollaboratorPayload" | "InvitedWorkspaceUser" | "Mutation" | "Project" | "ProjectSubscriptionPayload" | "Query" | "Subscription" | "User" | "Workspace" | "WorkspaceUser";
 
-export type NexusGenInputNames = "CollaboratorPayloadInput" | "LoginInput" | "NewProjectInput" | "NewWorkspaceInput" | "NewWorkspaceUserInput" | "ProjectInput" | "ProjectWhere" | "RegisterInput" | "UserInput" | "WorkspaceInput" | "WorkspaceUserInput" | "WorkspaceUserWhere";
+export type NexusGenInputNames = "CollaboratorPayloadInput" | "InvitedWorkspaceUserInput" | "LoginInput" | "NewProjectInput" | "NewWorkspaceInput" | "NewWorkspaceUserInput" | "ProjectInput" | "ProjectWhere" | "RegisterInput" | "UserInput" | "WorkspaceInput" | "WorkspaceUserInput" | "WorkspaceUserWhere";
 
 export type NexusGenEnumNames = "CanvasScene" | "MutationType" | "ProjectInviteSharePrivileges" | "ProjectInviteShareStatus" | "WorkspaceUserRoles" | "WorkspaceUserStatus";
 

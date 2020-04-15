@@ -8,7 +8,8 @@ const workspaceUserQueryKeys = {
 const workspaceUserMutationKeys = {
   createWorkspaceUser: "createWorkspaceUser",
   updateWorkspaceUser: "updateWorkspaceUser",
-  deleteWorkspaceUser: "deleteWorkspaceUser"
+  deleteWorkspaceUser: "deleteWorkspaceUser",
+  createInvitedWorkspaceUser: "createInvitedWorkspaceUser",
 };
 
 const workspaceUserErrors = {

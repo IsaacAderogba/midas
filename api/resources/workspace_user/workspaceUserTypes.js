@@ -5,12 +5,30 @@ const { ROLES } = require("../permissions");
 
 const WorkspaceUserRoles = enumType({
   name: "WorkspaceUserRoles",
-  members: [...Object.keys(ROLES)]
+  members: [...Object.keys(ROLES)],
 });
 
 const WorkspaceUserStatus = enumType({
   name: "WorkspaceUserStatus",
-  members: ["active"]
+  members: ["active"],
+});
+
+const InvitedWorkspaceUser = objectType({
+  name: "InvitedWorkspaceUser",
+  definition(t) {
+    t.string("workspaceUserId", { nullable: false });
+    t.string("workspaceId", { nullable: false });
+    t.string("email", { nullable: false });
+    t.field("role", { type: WorkspaceUserRoles, nullable: false });
+  },
+});
+
+const InvitedWorkspaceUserInput = inputObjectType({
+  name: "InvitedWorkspaceUserInput",
+  definition(t) {
+    t.string("email", { required: true });
+    t.field("role", { type: WorkspaceUserRoles, required: true });
+  },
 });
 
 const WorkspaceUser = objectType({
@@ -26,17 +44,17 @@ const WorkspaceUser = objectType({
       type: User,
       resolve: async (workspaceUser, args, { dataSources }) => {
         return dataSources.userAPI.readUser({ id: workspaceUser.userId });
-      }
+      },
     });
     t.field("workspace", {
       type: Workspace,
       resolve: async (workspaceUser, args, { dataSources }) => {
         return dataSources.workspaceAPI.readWorkspace({
-          id: workspaceUser.workspaceId
+          id: workspaceUser.workspaceId,
         });
-      }
+      },
     });
-  }
+  },
 });
 
 // write middleware to check that where isn't empty
@@ -44,7 +62,7 @@ const WorkspaceUserWhere = inputObjectType({
   name: "WorkspaceUserWhere",
   definition(t) {
     t.id("userId", { required: false });
-  }
+  },
 });
 
 const WorkspaceUserInput = inputObjectType({
@@ -52,7 +70,7 @@ const WorkspaceUserInput = inputObjectType({
   definition(t) {
     t.field("role", { type: WorkspaceUserRoles });
     t.field("status", { type: WorkspaceUserStatus });
-  }
+  },
 });
 
 const NewWorkspaceUserInput = inputObjectType({
@@ -61,7 +79,7 @@ const NewWorkspaceUserInput = inputObjectType({
     t.int("workspaceId", { required: true });
     t.int("userId", { required: true });
     t.field("role", { type: WorkspaceUserRoles, required: true });
-  }
+  },
 });
 
 module.exports = {
@@ -70,5 +88,7 @@ module.exports = {
   WorkspaceUser,
   WorkspaceUserInput,
   NewWorkspaceUserInput,
-  WorkspaceUserWhere
+  WorkspaceUserWhere,
+  InvitedWorkspaceUser,
+  InvitedWorkspaceUserInput,
 };

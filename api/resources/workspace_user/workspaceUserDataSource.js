@@ -54,8 +54,12 @@ class WorkspaceUserAPI extends SQLDataSource {
   }
 
   async createInvitedWorkspaceUser(invitedWorkspaceUser) {
-    await this.deleteInvitedWorkspaceUser(invitedWorkspaceUser);
-    return this.createInvitedWorkspaceUser(invitedWorkspaceUser);
+    try {
+      await this._deleteInvitedWorkspaceUser(invitedWorkspaceUser);
+      return this._createInvitedWorkspaceUser(invitedWorkspaceUser);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   readInvitedWorkspaceUser(whereObj) {

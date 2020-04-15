@@ -1,13 +1,13 @@
 const { shield, and } = require("graphql-shield");
 const {
   workspaceUserQueryKeys,
-  workspaceUserMutationKeys
+  workspaceUserMutationKeys,
 } = require("./workspaceUserUtils");
 const {
   isAuthenticated,
   hasWorkspacePrivileges,
   hasViewerPrivileges,
-  hasAdminPrivileges
+  hasAdminPrivileges,
 } = require("../permissions");
 
 // validWorkspaceUserPermissions isAuthenticated,
@@ -22,7 +22,7 @@ const WorkspaceUserPermissions = shield(
       [workspaceUserQueryKeys.workspaceUsers]: and(
         isAuthenticated,
         hasViewerPrivileges
-      )
+      ),
     },
     Mutation: {
       [workspaceUserMutationKeys.createWorkspaceUser]: and(
@@ -39,20 +39,25 @@ const WorkspaceUserPermissions = shield(
         isAuthenticated,
         hasWorkspacePrivileges,
         hasAdminPrivileges
-      )
-    }
+      ),
+      [workspaceUserMutationKeys.createInvitedWorkspaceUser]: and(
+        isAuthenticated,
+        hasWorkspacePrivileges,
+        hasAdminPrivileges
+      ),
+    },
   },
   {
-    debug: process.env.DB_ENV === "development" ? true : false
+    debug: process.env.DB_ENV === "development" ? true : false,
   }
 );
 
 const WorkspaceUserMiddleware = {
   Query: {},
-  Mutation: {}
+  Mutation: {},
 };
 
 module.exports = {
   WorkspaceUserPermissions,
-  WorkspaceUserMiddleware
+  WorkspaceUserMiddleware,
 };

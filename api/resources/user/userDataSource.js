@@ -104,7 +104,11 @@ class UserAPI extends SQLDataSource {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const user = await this._readUser({ id: decodedToken.userId });
         if (user) {
-          const authUser = { id: user.id };
+          const authUser = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          };
           const workspaceUser = await WorkspaceUserAPI._readWorkspaceUser({
             userId: user.id,
             workspaceId,
@@ -112,6 +116,7 @@ class UserAPI extends SQLDataSource {
 
           if (workspaceUser) {
             authUser.role = workspaceUser.role;
+            authUser.workspaceUserId = workspaceUser.id;
             authUser.workspaceId = workspaceUser.workspaceId;
           }
 

@@ -5,9 +5,9 @@ module.exports = (inviteDetails, invitedUser) => {
         <body>
           <div style="text-align: center;">
             <h2>${inviteDetails.firstName} ${inviteDetails.lastName} has invited you to ${inviteDetails.workspaceName}'s workspace</h2>
-            <p style="margin: 16px; font-size: 16px">There you will be able to collaborate on products, suggest features and more.</p>
+            <p style="margin: 16px; font-size: 16px">There you will be able to collaborate on wireframes.</p>
             <div style="margin: 16px;">
-                <a style="color:#4551B5; font-size: 16px;" href="${process.env.REDIRECT_DOMAIN}/invite/${invitedUser.email}/${invitedUser.role}/${invitedUser.userId}/${invitedUser.workspaceId}">Accept Invite</a>
+                <a style="color:#4551B5; font-size: 16px;" href="${process.env.REDIRECT_DOMAIN}/invite/${invitedUser.email}/${invitedUser.role}/${invitedUser.workspaceUserId}/${invitedUser.workspaceId}">Accept Invite</a>
             </div>
           </div>
         </body>
