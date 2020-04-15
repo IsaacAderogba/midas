@@ -11,10 +11,12 @@ import {
 // helpers
 import { useStoreState } from "../hooks/useStoreState";
 import { ICreateWorkspaceModalAction } from "../../components/~modals/CreateWorkspaceModal";
+import { IInviteWorkspaceUserModalAction } from "../../components/~modals/InviteWorkspaceUserModal";
 
 type IModalTypes =
   | IAuthModalAction
   | ICreateWorkspaceModalAction
+  | IInviteWorkspaceUserModalAction
   | null;
 
 export interface IUIStore {

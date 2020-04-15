@@ -6,7 +6,7 @@ import {
   useGetWorkspaceQuery,
   Workspace as WorkspaceType,
   useGetWorkspacesQuery,
-  GetWorkspacesQuery
+  GetWorkspacesQuery,
 } from "../../generated/graphql";
 
 // helpers
@@ -15,6 +15,7 @@ import { setLocalStorageWorkspaceKey } from "../utils/localStorage";
 import { useUIStore } from "./UIProvider";
 import { CreateWorkspaceModal } from "../../components/~modals/CreateWorkspaceModal";
 import { useAuthStore } from "./AuthProvider";
+import { InviteWorkspaceUserModal } from "../../components/~modals/InviteWorkspaceUserModal";
 
 /**
  * Heavy duty
@@ -41,17 +42,17 @@ export const AppContext = createContext<IAppStore>({
   workspaces: [],
   isWorkspaceLoading: false,
   setWorkspace: () => {},
-  createWorkspace: () => {}
+  createWorkspace: () => {},
 });
 
 export const useAppStore = <S,>(dataSelector: (store: IAppStore) => S) =>
-  useStoreState(AppContext, contextData => contextData!, dataSelector);
+  useStoreState(AppContext, (contextData) => contextData!, dataSelector);
 
 export const AppProvider: React.FC = ({ children }) => {
-  const userId = useAuthStore(state => state.user?.id);
-  const modalState = useUIStore(state => state.modalState);
+  const userId = useAuthStore((state) => state.user?.id);
+  const modalState = useUIStore((state) => state.modalState);
   const workspace = useGetWorkspaceQuery({
-    variables: { where: { userId: userId } }
+    variables: { where: { userId: userId } },
   });
   const workspaces = useGetWorkspacesQuery();
   const store = useLocalStore<IAppStore>(() => ({
@@ -59,7 +60,7 @@ export const AppProvider: React.FC = ({ children }) => {
     workspaceUser: null,
     workspaces: [],
     isWorkspaceLoading: true,
-    setWorkspace: workspaceId => {
+    setWorkspace: (workspaceId) => {
       /**
        * for security reasons, we pass the workspace ID in the auth header
        * itself. So in order to chose a set up a new workspace as currently
@@ -68,10 +69,10 @@ export const AppProvider: React.FC = ({ children }) => {
       setLocalStorageWorkspaceKey(workspaceId);
       workspace.refetch();
     },
-    createWorkspace: createdWorkspaceId => {
+    createWorkspace: (createdWorkspaceId) => {
       workspaces.refetch();
       store.setWorkspace(createdWorkspaceId);
-    }
+    },
   }));
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export const AppProvider: React.FC = ({ children }) => {
     workspace.data,
     store.isWorkspaceLoading,
     store.workspace,
-    store.workspaceUser
+    store.workspaceUser,
   ]);
 
   useEffect(() => {
@@ -100,6 +101,9 @@ export const AppProvider: React.FC = ({ children }) => {
     <AppContext.Provider value={store}>
       {modalState && modalState.modal === "create-workspace-modal" ? (
         <CreateWorkspaceModal />
+      ) : null}
+      {modalState && modalState.modal === "invite-workspace-user-modal" ? (
+        <InviteWorkspaceUserModal />
       ) : null}
       {children}
     </AppContext.Provider>

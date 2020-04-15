@@ -4,24 +4,26 @@ import { css } from "styled-components/macro";
 
 // components
 import { List, Avatar, Button } from "antd";
-import { H5 } from "../atoms/Text";
 
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
 import { useWorkspaceUsersLazyQuery } from "../../generated/graphql";
 import { useAppStore } from "../../~reusables/contexts/AppProvider";
+import { useUIStore } from "../../~reusables/contexts/UIProvider";
 
 export const Members = () => {
   const workspace = useAppStore((state) => state.workspace);
+  const setModalState = useUIStore((state) => state.setModalState);
   const [getWorkspaceUsers, { data, loading }] = useWorkspaceUsersLazyQuery({
     fetchPolicy: "network-only",
   });
 
   useEffect(() => {
-    if (workspace) getWorkspaceUsers();
-  }, [workspace, getWorkspaceUsers]);
-
-  console.log(data);
+    if (workspace?.id) {
+      console.log('exec')
+      getWorkspaceUsers();
+    }
+  }, [workspace?.id]);
 
   if (loading) return <div>Loading</div>;
   if (!data?.workspaceUsers) return <div>Users don't exist</div>;
@@ -34,7 +36,13 @@ export const Members = () => {
           justify-content: flex-end;
         `}
       >
-        <Button>Add member</Button>
+        <Button
+          onClick={() =>
+            setModalState({ modal: "invite-workspace-user-modal", props: {} })
+          }
+        >
+          Add member
+        </Button>
       </div>
       <List
         itemLayout="horizontal"
