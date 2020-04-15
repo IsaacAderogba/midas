@@ -5,8 +5,10 @@ const {
   LoginInput,
   RegisterInput,
   User,
-  UserInput
+  UserInput,
 } = require("./userTypes");
+const Mailer = require("../../services/email/Mailer");
+const verificationTemplate = require("../../services/email/verificationTemplate");
 
 const Query = extendType({
   type: "Query",
@@ -16,9 +18,9 @@ const Query = extendType({
       nullable: true,
       resolve: (parent, args, { user, dataSources }) => {
         return dataSources.userAPI.readUser({ id: user.id });
-      }
+      },
     });
-  }
+  },
 });
 
 const Mutation = extendType({
@@ -28,50 +30,58 @@ const Mutation = extendType({
       type: AuthUser,
       nullable: false,
       args: {
-        loginInput: LoginInput
+        loginInput: LoginInput,
       },
       resolve: async (parent, args, { dataSources }) => {
         const user = await dataSources.userAPI.loginUser({
-          ...args.loginInput
+          ...args.loginInput,
         });
-        if(!user) throw userErrors.EmailPasswordWrong
+        if (!user) throw userErrors.EmailPasswordWrong;
         return user;
-      }
+      },
     });
     t.field(userMutationKeys.registerUser, {
       type: AuthUser,
       nullable: false,
       args: {
-        registerInput: arg({ type: RegisterInput })
+        registerInput: arg({ type: RegisterInput }),
       },
-      resolve: (parent, args, { dataSources }) => {
-        return dataSources.userAPI.registerUser(args.registerInput);
-      }
+      resolve: async (parent, args, { dataSources }) => {
+        const user = await dataSources.userAPI.registerUser(args.registerInput);
+        const subject = "Please confirm your email";
+        const mailer = new Mailer(
+          { subject, email: args.registerInput.email },
+          verificationTemplate(user.token)
+        );
+
+        await mailer.send();
+        return user;
+      },
     });
     t.field(userMutationKeys.updateUser, {
       type: User,
       nullable: true,
       args: {
-        userInput: arg({ type: UserInput })
+        userInput: arg({ type: UserInput }),
       },
       resolve: (parent, args, { dataSources, user }) => {
         return dataSources.userAPI.updateUser(
           { id: user.id },
           { ...args.userInput }
         );
-      }
+      },
     });
     t.field(userMutationKeys.deleteUser, {
       type: "Boolean",
       nullable: false,
       resolve: (parent, args, { dataSources, user }) => {
         return dataSources.userAPI.deleteUser({ id: user.id });
-      }
+      },
     });
-  }
+  },
 });
 
 module.exports = {
   UserQuery: Query,
-  UserMutation: Mutation
+  UserMutation: Mutation,
 };
