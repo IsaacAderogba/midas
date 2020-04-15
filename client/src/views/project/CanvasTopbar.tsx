@@ -9,7 +9,7 @@ import {
   ClearOutlined,
   DownloadOutlined,
   UploadOutlined,
-  MenuOutlined
+  MenuOutlined,
 } from "@ant-design/icons";
 import { CanvasIconWrapper } from "../../components/atoms/CanvasIconWrapper";
 import { Button, Avatar, Tooltip } from "antd";
@@ -21,7 +21,7 @@ import { CanvasContext } from "../../~reusables/contexts/CanvasProvider";
 import {
   saveAsJSON,
   loadFromJSON,
-  exportAsPNG
+  exportAsPNG,
 } from "../../~reusables/utils/saveAndRetrieval";
 import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
 
@@ -34,7 +34,7 @@ export const SHAPES = [
         <path d="M302.189 329.126H196.105l55.831 135.993c3.889 9.428-.555 19.999-9.444 23.999l-49.165 21.427c-9.165 4-19.443-.571-23.332-9.714l-53.053-129.136-86.664 89.138C18.729 472.71 0 463.554 0 447.977V18.299C0 1.899 19.921-6.096 30.277 5.443l284.412 292.542c11.472 11.179 3.007 31.141-12.5 31.141z" />
       </svg>
     ),
-    value: "selection"
+    value: "selection",
   },
   {
     icon: (
@@ -43,7 +43,7 @@ export const SHAPES = [
         <path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48z" />
       </svg>
     ),
-    value: "rectangle"
+    value: "rectangle",
   },
   {
     icon: (
@@ -52,7 +52,7 @@ export const SHAPES = [
         <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8z" />
       </svg>
     ),
-    value: "ellipse"
+    value: "ellipse",
   },
   {
     icon: (
@@ -61,7 +61,7 @@ export const SHAPES = [
         <path d="M313.941 216H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12h301.941v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.569 0-33.941l-86.059-86.059c-15.119-15.119-40.971-4.411-40.971 16.971V216z" />
       </svg>
     ),
-    value: "arrow"
+    value: "arrow",
   },
   {
     icon: (
@@ -70,38 +70,38 @@ export const SHAPES = [
         <path d="M432 416h-23.41L277.88 53.69A32 32 0 0 0 247.58 32h-47.16a32 32 0 0 0-30.3 21.69L39.41 416H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16h-19.58l23.3-64h152.56l23.3 64H304a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM176.85 272L224 142.51 271.15 272z" />
       </svg>
     ),
-    value: "text"
-  }
+    value: "text",
+  },
 ];
 
 export const CanvasTopbar: React.FC = () => {
   const { space } = useTheme();
-  const { elements, collaborators } = useProjectStore(state => ({
+  const { elements, collaborators } = useProjectStore((state) => ({
     elements: state.elements,
-    collaborators: state.collaborators
+    collaborators: state.collaborators,
   }));
   const {
     setCanvasState,
     elementType,
     canvasRef,
     exportBackground,
-    viewBackgroundColor
-  } = useContextSelector(CanvasContext, state => ({
+    viewBackgroundColor,
+  } = useContextSelector(CanvasContext, (state) => ({
     setCanvasState: state.setCanvasState,
     elementType: state.elementType,
     canvasRef: state.canvasRef,
     exportBackground: state.exportBackground,
-    viewBackgroundColor: state.viewBackgroundColor
+    viewBackgroundColor: state.viewBackgroundColor,
   }));
 
   const clearCanvas = () => {
     if (window.confirm("This will clear the whole canvas. Are you sure?")) {
       elements.splice(0, elements.length);
-      setCanvasState(prevState => ({
+      setCanvasState((prevState) => ({
         ...prevState,
         viewBackgroundColor: "#ffffff",
         scrollX: 0,
-        scrollY: 0
+        scrollY: 0,
       }));
       // forceUpdate();
     }
@@ -142,9 +142,9 @@ export const CanvasTopbar: React.FC = () => {
             svgIcon={icon}
             checked={elementType === value}
             onClick={() => {
-              setCanvasState(prevState => ({
+              setCanvasState((prevState) => ({
                 ...prevState,
-                elementType: value
+                elementType: value,
               }));
               clearSelection(elements);
               document.documentElement.style.cursor =
@@ -170,13 +170,17 @@ export const CanvasTopbar: React.FC = () => {
                   <Avatar
                     style={{
                       marginRight: space[6],
-                      border: `2px solid ${color}`
+                      border: `2px solid ${color}`,
                     }}
                     src={avatarURL}
                   />
                 ) : (
                   <Avatar
-                    style={{ marginRight: space[6], background: `${color}` }}
+                    style={{
+                      marginRight: space[6],
+                      background: `${color}`,
+                      fontWeight: "bold",
+                    }}
                   >
                     {firstName ? firstName[0].toUpperCase() : ""}
                   </Avatar>
@@ -187,6 +191,7 @@ export const CanvasTopbar: React.FC = () => {
         )}
         <Button
           type="primary"
+          style={{ marginRight: space[6] }}
           onClick={() => {
             if (canvasRef.current) {
               exportAsPNG(
@@ -199,7 +204,7 @@ export const CanvasTopbar: React.FC = () => {
         >
           Export to PNG
         </Button>
-        <label>
+        {/* <label>
           <input
             type="checkbox"
             checked={exportBackground}
@@ -211,7 +216,7 @@ export const CanvasTopbar: React.FC = () => {
             }}
           />
           background
-        </label>
+        </label> */}
       </section>
     </StyledCanvasTopbar>
   );
@@ -228,5 +233,5 @@ const StyledCanvasTopbar = styled.header`
   align-items: center;
   overflow-x: scroll;
   top: 0;
-  border-bottom: 1px solid ${p => p.theme.colors.greys[8]};
+  border-bottom: 1px solid ${(p) => p.theme.colors.greys[8]};
 `;
