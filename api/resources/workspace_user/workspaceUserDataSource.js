@@ -3,6 +3,7 @@ const { knexConfig } = require("../../../db/dbConfig");
 
 // const WORKSPACE_TABLE = "Workspace";
 const WORKSPACE_USER_TABLE = "Workspace_User";
+const INVITED_WORKSPACE_USER_TABLE = "InvitedWorkspaceUser";
 
 class WorkspaceUserAPI extends SQLDataSource {
   async createWorkspaceUser(workspaceUser) {
@@ -52,8 +53,21 @@ class WorkspaceUserAPI extends SQLDataSource {
     }
   }
 
+  async createInvitedWorkspaceUser(invitedWorkspaceUser) {
+    await this.deleteInvitedWorkspaceUser(invitedWorkspaceUser);
+    return this.createInvitedWorkspaceUser(invitedWorkspaceUser);
+  }
+
+  readInvitedWorkspaceUser(whereObj) {
+    return this._readInvitedWorkspaceUser(whereObj);
+  }
+
+  deleteInvitedWorkspaceUser(whereObj) {
+    return this._deleteInvitedWorkspaceUser(whereObj);
+  }
+
   async _createWorkspaceUser(workspaceUser) {
-    return this.db(WORKSPACE_USER_TABLE)
+    return this.knex(WORKSPACE_USER_TABLE)
       .insert(workspaceUser)
       .returning("*")
       .then(([workspaceUserDetails]) => workspaceUserDetails);
@@ -64,9 +78,7 @@ class WorkspaceUserAPI extends SQLDataSource {
   }
 
   _readWorkspaceUser(whereObj) {
-    return this.knex(WORKSPACE_USER_TABLE)
-      .where(whereObj)
-      .first();
+    return this.knex(WORKSPACE_USER_TABLE).where(whereObj).first();
   }
 
   async _updateWorkspaceUser(whereObj, workspaceUser) {
@@ -78,9 +90,22 @@ class WorkspaceUserAPI extends SQLDataSource {
   }
 
   _deleteWorkspaceUser(whereObj) {
-    return this.knex(WORKSPACE_USER_TABLE)
-      .where(whereObj)
-      .del();
+    return this.knex(WORKSPACE_USER_TABLE).where(whereObj).del();
+  }
+
+  async _createInvitedWorkspaceUser(invitedWorkspaceUser) {
+    return this.knex(INVITED_WORKSPACE_USER_TABLE)
+      .insert(invitedWorkspaceUser)
+      .returning("*")
+      .then(([invitedUserDetails]) => invitedUserDetails);
+  }
+
+  _readInvitedWorkspaceUser(whereObj) {
+    return this.knex(INVITED_WORKSPACE_USER_TABLE).where(whereObj).first();
+  }
+
+  _deleteInvitedWorkspaceUser(whereObj) {
+    return this.knex(INVITED_WORKSPACE_USER_TABLE).where(whereObj).del();
   }
 }
 
