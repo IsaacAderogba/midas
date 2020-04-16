@@ -16,8 +16,8 @@ const WorkspaceUserStatus = enumType({
 const InvitedWorkspaceUser = objectType({
   name: "InvitedWorkspaceUser",
   definition(t) {
-    t.int("workspaceUserId", { nullable: false });
-    t.int("workspaceId", { nullable: false });
+    t.string("workspaceUserId", { nullable: false });
+    t.string("workspaceId", { nullable: false });
     t.string("email", { nullable: false });
     t.field("role", { type: WorkspaceUserRoles, nullable: false });
   },
@@ -26,8 +26,8 @@ const InvitedWorkspaceUser = objectType({
 const InvitedWorkspaceUserInput = inputObjectType({
   name: "InvitedWorkspaceUserInput",
   definition(t) {
-    t.int("workspaceUserId", { required: true });
-    t.int("workspaceId", { required: true });
+    t.string("workspaceUserId", { required: true });
+    t.string("workspaceId", { required: true });
     t.string("email", { required: true });
     t.field("role", { type: WorkspaceUserRoles, required: true });
   },

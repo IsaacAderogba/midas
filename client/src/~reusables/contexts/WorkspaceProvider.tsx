@@ -27,7 +27,7 @@ import { InviteWorkspaceUserModal } from "../../components/~modals/InviteWorkspa
  * else set it to null
  */
 
-export interface IAppStore {
+export interface IWorkspaceStore {
   workspace: GetWorkspaceQuery["workspace"];
   workspaceUser: GetWorkspaceQuery["workspaceUser"];
   workspaces: GetWorkspacesQuery["workspaces"];
@@ -36,7 +36,7 @@ export interface IAppStore {
   createWorkspace: (createdWorkspaceId: WorkspaceType["id"]) => void;
 }
 
-export const AppContext = createContext<IAppStore>({
+export const WorkspaceContext = createContext<IWorkspaceStore>({
   workspace: null,
   workspaceUser: null,
   workspaces: [],
@@ -45,17 +45,17 @@ export const AppContext = createContext<IAppStore>({
   createWorkspace: () => {},
 });
 
-export const useAppStore = <S,>(dataSelector: (store: IAppStore) => S) =>
-  useStoreState(AppContext, (contextData) => contextData!, dataSelector);
+export const useWorkspaceStore = <S,>(dataSelector: (store: IWorkspaceStore) => S) =>
+  useStoreState(WorkspaceContext, (contextData) => contextData!, dataSelector);
 
-export const AppProvider: React.FC = ({ children }) => {
+export const WorkspaceProvider: React.FC = ({ children }) => {
   const userId = useAuthStore((state) => state.user?.id);
   const modalState = useUIStore((state) => state.modalState);
   const workspace = useGetWorkspaceQuery({
     variables: { where: { userId: userId } },
   });
   const workspaces = useGetWorkspacesQuery();
-  const store = useLocalStore<IAppStore>(() => ({
+  const store = useLocalStore<IWorkspaceStore>(() => ({
     workspace: null,
     workspaceUser: null,
     workspaces: [],
@@ -98,7 +98,7 @@ export const AppProvider: React.FC = ({ children }) => {
   }, [store.workspaces, workspaces.loading, workspaces.data]);
 
   return (
-    <AppContext.Provider value={store}>
+    <WorkspaceContext.Provider value={store}>
       {modalState && modalState.modal === "create-workspace-modal" ? (
         <CreateWorkspaceModal />
       ) : null}
@@ -106,6 +106,6 @@ export const AppProvider: React.FC = ({ children }) => {
         <InviteWorkspaceUserModal />
       ) : null}
       {children}
-    </AppContext.Provider>
+    </WorkspaceContext.Provider>
   );
 };

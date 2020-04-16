@@ -10,7 +10,7 @@ import { P2 } from "../atoms/Text";
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
 import { useCreateWorkspaceMutation } from "../../generated/graphql";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
-import { useAppStore } from "../../~reusables/contexts/AppProvider";
+import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 
 export interface ICreateWorkspaceModalAction {
   modal: "create-workspace-modal";
@@ -19,7 +19,7 @@ export interface ICreateWorkspaceModalAction {
 
 export const CreateWorkspaceModal = () => {
   const { space } = useTheme();
-  const createNewWorkspace = useAppStore(state => state.createWorkspace);
+  const createNewWorkspace = useWorkspaceStore(state => state.createWorkspace);
   const [isModalVisible, setModalVisibility] = useState(true);
   const resetModalState = useUIStore(state => state.resetModalState);
   const [createWorkspace, { loading, error }] = useCreateWorkspaceMutation({

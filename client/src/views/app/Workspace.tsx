@@ -11,13 +11,13 @@ import { Projects } from "../../components/molecules/Projects";
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
 import { H2 } from "../../components/atoms/Text";
-import { useAppStore } from "../../~reusables/contexts/AppProvider";
+import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 import { useCreateProjectMutation } from "../../generated/graphql";
 import { Members } from "../../components/molecules/Members";
 import { Settings } from "../../components/molecules/Settings";
 
 export const Workspace: React.FC<RouteComponentProps> = () => {
-  const { workspace, isWorkspaceLoading, workspaceUser } = useAppStore(
+  const { workspace, isWorkspaceLoading, workspaceUser } = useWorkspaceStore(
     (state) => ({
       workspace: state.workspace,
       isWorkspaceLoading: state.isWorkspaceLoading,

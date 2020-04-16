@@ -12,12 +12,12 @@ import { Avatar } from "antd";
 import { styled, useTheme } from "../../~reusables/contexts/ThemeProvider";
 import { SIDEBAR_WIDTH } from "../../~reusables/constants/dimensions";
 import { GetWorkspacesQuery } from "../../generated/graphql";
-import { useAppStore } from "../../~reusables/contexts/AppProvider";
+import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
 
 export const Sidebar = () => {
   const { colors, fontSizes, space } = useTheme();
-  const workspaces = useAppStore((state) => state.workspaces);
+  const workspaces = useWorkspaceStore((state) => state.workspaces);
   const setModalState = useUIStore((state) => state.setModalState);
 
   return (
@@ -91,7 +91,7 @@ const WorkspaceItem: React.FC<{
   workspace: GetWorkspacesQuery["workspaces"][0];
 }> = ({ workspace: { id, name, photoURL } }) => {
   const { fontSizes, colors, radii } = useTheme();
-  const { workspace, setWorkspace } = useAppStore((state) => ({
+  const { workspace, setWorkspace } = useWorkspaceStore((state) => ({
     workspace: state.workspace,
     setWorkspace: state.setWorkspace,
   }));

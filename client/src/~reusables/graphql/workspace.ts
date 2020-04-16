@@ -46,16 +46,3 @@ export const getWorkspaces = gql`
   ${Workspace.fragments.workspacesAttributes}
 `;
 
-export const workspaceUsers = gql`
-  query workspaceUsers {
-    workspaceUsers {
-      role
-      user {
-        firstName
-        lastName
-        email
-        avatarURL
-      }
-    }
-  }
-`;

@@ -28,8 +28,8 @@ export interface NexusGenInputs {
   InvitedWorkspaceUserInput: { // input type
     email: string; // String!
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
-    workspaceId: number; // Int!
-    workspaceUserId: number; // Int!
+    workspaceId: string; // String!
+    workspaceUserId: string; // String!
   }
   LoginInput: { // input type
     email: string; // String!
@@ -126,8 +126,8 @@ export interface NexusGenRootTypes {
   InvitedWorkspaceUser: { // root type
     email: string; // String!
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
-    workspaceId: number; // Int!
-    workspaceUserId: number; // Int!
+    workspaceId: string; // String!
+    workspaceUserId: string; // String!
   }
   Mutation: {};
   Project: { // root type
@@ -231,8 +231,8 @@ export interface NexusGenFieldTypes {
   InvitedWorkspaceUser: { // field return type
     email: string; // String!
     role: NexusGenEnums['WorkspaceUserRoles']; // WorkspaceUserRoles!
-    workspaceId: number; // Int!
-    workspaceUserId: number; // Int!
+    workspaceId: string; // String!
+    workspaceUserId: string; // String!
   }
   Mutation: { // field return type
     acceptWorkspaceUserInvite: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser

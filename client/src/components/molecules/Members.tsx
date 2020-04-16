@@ -8,11 +8,11 @@ import { List, Avatar, Button } from "antd";
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
 import { useWorkspaceUsersLazyQuery } from "../../generated/graphql";
-import { useAppStore } from "../../~reusables/contexts/AppProvider";
+import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
 
 export const Members = () => {
-  const workspace = useAppStore((state) => state.workspace);
+  const workspace = useWorkspaceStore((state) => state.workspace);
   const setModalState = useUIStore((state) => state.setModalState);
   const [getWorkspaceUsers, { data, loading }] = useWorkspaceUsersLazyQuery({
     fetchPolicy: "network-only",

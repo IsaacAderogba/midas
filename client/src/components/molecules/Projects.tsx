@@ -16,12 +16,12 @@ import {
   GetProjectsQuery,
   MutationType,
 } from "../../generated/graphql";
-import { useAppStore } from "../../~reusables/contexts/AppProvider";
+import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 import { Maybe } from "../../~reusables/utils/types";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 
 export const Projects = () => {
-  const workspace = useAppStore((state) => state.workspace);
+  const workspace = useWorkspaceStore((state) => state.workspace);
   let unsubscribeFromMore: Maybe<() => void> = null;
 
   const [

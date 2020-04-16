@@ -56,15 +56,15 @@ export type CollaboratorPayloadInput = {
 
 export type InvitedWorkspaceUser = {
    __typename?: 'InvitedWorkspaceUser';
-  workspaceUserId: Scalars['Int'];
-  workspaceId: Scalars['Int'];
+  workspaceUserId: Scalars['String'];
+  workspaceId: Scalars['String'];
   email: Scalars['String'];
   role: WorkspaceUserRoles;
 };
 
 export type InvitedWorkspaceUserInput = {
-  workspaceUserId: Scalars['Int'];
-  workspaceId: Scalars['Int'];
+  workspaceUserId: Scalars['String'];
+  workspaceId: Scalars['String'];
   email: Scalars['String'];
   role: WorkspaceUserRoles;
 };
@@ -547,6 +547,19 @@ export type WorkspaceUsersQuery = (
       & Pick<User, 'firstName' | 'lastName' | 'email' | 'avatarURL'>
     ) }
   )>> }
+);
+
+export type CreateInvitedWorkspaceUserMutationVariables = {
+  invitedWorkspaceUserInput?: Maybe<InvitedWorkspaceUserInput>;
+};
+
+
+export type CreateInvitedWorkspaceUserMutation = (
+  { __typename?: 'Mutation' }
+  & { createInvitedWorkspaceUser: (
+    { __typename?: 'InvitedWorkspaceUser' }
+    & Pick<InvitedWorkspaceUser, 'workspaceUserId' | 'workspaceId' | 'email' | 'role'>
+  ) }
 );
 
 export type WorkspaceAttributesFragment = (
@@ -1124,3 +1137,38 @@ export function useWorkspaceUsersLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type WorkspaceUsersQueryHookResult = ReturnType<typeof useWorkspaceUsersQuery>;
 export type WorkspaceUsersLazyQueryHookResult = ReturnType<typeof useWorkspaceUsersLazyQuery>;
 export type WorkspaceUsersQueryResult = ApolloReactCommon.QueryResult<WorkspaceUsersQuery, WorkspaceUsersQueryVariables>;
+export const CreateInvitedWorkspaceUserDocument = gql`
+    mutation createInvitedWorkspaceUser($invitedWorkspaceUserInput: InvitedWorkspaceUserInput) {
+  createInvitedWorkspaceUser(invitedWorkspaceUserInput: $invitedWorkspaceUserInput) {
+    workspaceUserId
+    workspaceId
+    email
+    role
+  }
+}
+    `;
+export type CreateInvitedWorkspaceUserMutationFn = ApolloReactCommon.MutationFunction<CreateInvitedWorkspaceUserMutation, CreateInvitedWorkspaceUserMutationVariables>;
+
+/**
+ * __useCreateInvitedWorkspaceUserMutation__
+ *
+ * To run a mutation, you first call `useCreateInvitedWorkspaceUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateInvitedWorkspaceUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createInvitedWorkspaceUserMutation, { data, loading, error }] = useCreateInvitedWorkspaceUserMutation({
+ *   variables: {
+ *      invitedWorkspaceUserInput: // value for 'invitedWorkspaceUserInput'
+ *   },
+ * });
+ */
+export function useCreateInvitedWorkspaceUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateInvitedWorkspaceUserMutation, CreateInvitedWorkspaceUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateInvitedWorkspaceUserMutation, CreateInvitedWorkspaceUserMutationVariables>(CreateInvitedWorkspaceUserDocument, baseOptions);
+      }
+export type CreateInvitedWorkspaceUserMutationHookResult = ReturnType<typeof useCreateInvitedWorkspaceUserMutation>;
+export type CreateInvitedWorkspaceUserMutationResult = ApolloReactCommon.MutationResult<CreateInvitedWorkspaceUserMutation>;
+export type CreateInvitedWorkspaceUserMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateInvitedWorkspaceUserMutation, CreateInvitedWorkspaceUserMutationVariables>;

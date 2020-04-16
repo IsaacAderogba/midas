@@ -6,7 +6,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { Landing } from "./views/marketing/Landing";
 import ProtectedRoute from "./components/organisms/ProtectedRoute";
 import { Sidebar } from "./components/~layout/Sidebar";
-import { AppProvider } from "./~reusables/contexts/AppProvider";
+import { WorkspaceProvider } from "./~reusables/contexts/WorkspaceProvider";
 import { CanvasProvider } from "./~reusables/contexts/CanvasProvider";
 import { ProjectProvider } from "./~reusables/contexts/ProjectProvider";
 import { Workspace } from "./views/app/Workspace";
@@ -33,7 +33,7 @@ export const AppRouter = () => {
 const ProtectedAppRouter: React.FC = () => {
   // provider for deciding which app?
   return (
-    <AppProvider>
+    <WorkspaceProvider>
       <Switch>
         <Route
           exact
@@ -72,7 +72,7 @@ const ProtectedAppRouter: React.FC = () => {
         />
         <Redirect to="/app/workspace" />
       </Switch>
-    </AppProvider>
+    </WorkspaceProvider>
   );
 };
 

@@ -46,15 +46,15 @@ input CollaboratorPayloadInput {
 type InvitedWorkspaceUser {
   email: String!
   role: WorkspaceUserRoles!
-  workspaceId: Int!
-  workspaceUserId: Int!
+  workspaceId: String!
+  workspaceUserId: String!
 }
 
 input InvitedWorkspaceUserInput {
   email: String!
   role: WorkspaceUserRoles!
-  workspaceId: Int!
-  workspaceUserId: Int!
+  workspaceId: String!
+  workspaceUserId: String!
 }
 
 input LoginInput {
