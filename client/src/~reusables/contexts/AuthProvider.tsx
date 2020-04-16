@@ -1,6 +1,7 @@
 // modules
 import React, { createContext, useEffect } from "react";
 import { useLocalStore } from "mobx-react";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 // helpers
 import { useGetUserQuery, GetUserQuery } from "../../generated/graphql";
@@ -15,20 +16,21 @@ export interface IAuthStore {
 export const AuthContext = createContext<IAuthStore>({
   user: null,
   isUserLoading: false,
-  setUser: () => {}
+  setUser: () => {},
 });
 
 export const useAuthStore = <S,>(dataSelector: (store: IAuthStore) => S) =>
-  useStoreState(AuthContext, contextData => contextData!, dataSelector);
+  useStoreState(AuthContext, (contextData) => contextData!, dataSelector);
 
-export const AuthProvider: React.FC = ({ children }) => {
+const AuthProvider: React.FC<RouteComponentProps> = ({ children, history }) => {
   const { data, loading } = useGetUserQuery();
   const store = useLocalStore<IAuthStore>(() => ({
     user: null,
-    setUser: user => {
+    setUser: (user) => {
       store.user = user;
+      history.push("/app/workspace");
     },
-    isUserLoading: true
+    isUserLoading: true,
   }));
 
   useEffect(() => {
@@ -42,3 +44,5 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   return <AuthContext.Provider value={store}>{children}</AuthContext.Provider>;
 };
+
+export default withRouter(AuthProvider);

@@ -13,20 +13,20 @@ import { AppRouter } from "./AppRouter";
 // helpers
 import * as serviceWorker from "./serviceWorker";
 import "./index.css";
-import { AuthProvider } from "./~reusables/contexts/AuthProvider";
+import AuthProvider from "./~reusables/contexts/AuthProvider";
 import { UIProvider } from "./~reusables/contexts/UIProvider";
 
 ReactDOM.render(
   <ApolloProvider>
-    <AuthProvider>
-      <ThemeProvider>
-        <RouterProvider>
+    <RouterProvider>
+      <AuthProvider>
+        <ThemeProvider>
           <UIProvider>
             <AppRouter />
           </UIProvider>
-        </RouterProvider>
-      </ThemeProvider>
-    </AuthProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </RouterProvider>
   </ApolloProvider>,
   document.getElementById("root")
 );

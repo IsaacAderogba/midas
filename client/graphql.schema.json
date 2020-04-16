@@ -1449,12 +1449,36 @@
                   "ofType": null
                 },
                 "defaultValue": null
+              },
+              {
+                "name": "registerInput",
+                "description": "",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "RegisterInput",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "loginInput",
+                "description": "",
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "LoginInput",
+                  "ofType": null
+                },
+                "defaultValue": null
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "WorkspaceUser",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "AuthUser",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null

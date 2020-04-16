@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { User } from "../utils/fragments";
 
 export const workspaceUsers = gql`
   query workspaceUsers {
@@ -27,4 +28,24 @@ export const createInvitedWorkspaceUser = gql`
       role
     }
   }
+`;
+
+export const acceptWorkspaceUserInvite = gql`
+  mutation acceptWorkspaceUserInvite(
+    $invitedWorkspaceUserInput: InvitedWorkspaceUserInput!
+    $registerInput: RegisterInput
+    $loginInput: LoginInput
+  ) {
+    acceptWorkspaceUserInvite(
+      invitedWorkspaceUserInput: $invitedWorkspaceUserInput
+      registerInput: $registerInput
+      loginInput: $loginInput
+    ) {
+      token
+      user {
+        ...userAttributes
+      }
+    }
+  }
+  ${User.fragments.attributes}
 `;

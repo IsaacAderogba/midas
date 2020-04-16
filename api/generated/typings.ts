@@ -235,7 +235,7 @@ export interface NexusGenFieldTypes {
     workspaceUserId: string; // String!
   }
   Mutation: { // field return type
-    acceptWorkspaceUserInvite: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
+    acceptWorkspaceUserInvite: NexusGenRootTypes['AuthUser']; // AuthUser!
     createInvitedWorkspaceUser: NexusGenRootTypes['InvitedWorkspaceUser']; // InvitedWorkspaceUser!
     createProject: NexusGenRootTypes['Project'] | null; // Project
     createWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
@@ -322,6 +322,8 @@ export interface NexusGenArgTypes {
   Mutation: {
     acceptWorkspaceUserInvite: { // args
       invitedWorkspaceUserInput?: NexusGenInputs['InvitedWorkspaceUserInput'] | null; // InvitedWorkspaceUserInput
+      loginInput?: NexusGenInputs['LoginInput'] | null; // LoginInput
+      registerInput?: NexusGenInputs['RegisterInput'] | null; // RegisterInput
     }
     createInvitedWorkspaceUser: { // args
       invitedWorkspaceUserInput?: NexusGenInputs['InvitedWorkspaceUserInput'] | null; // InvitedWorkspaceUserInput

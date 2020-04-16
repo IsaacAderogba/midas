@@ -5,6 +5,8 @@ const { SQLDataSource } = require("datasource-sql");
 const { generateToken } = require("./userUtils");
 const { knexConfig } = require("../../../db/dbConfig");
 const WorkspaceUserAPI = require("../workspace_user/workspaceUserDataSource");
+const Mailer = require("../../services/email/Mailer");
+const verificationTemplate = require("../../services/email/verificationTemplate");
 
 // const MINUTE = 60;
 const USER_TABLE = "User";
@@ -23,6 +25,15 @@ class UserAPI extends SQLDataSource {
       const userId = await this._createUser(user);
       if (userId) {
         let userDetails = await this._readUser({ id: userId });
+
+        const subject = "Please confirm your email";
+        const mailer = new Mailer(
+          { subject, email: userDetails.email },
+          verificationTemplate(userDetails.token)
+        );
+
+        await mailer.send();
+
         return {
           userId: userDetails.id.toString(),
           firstName: userDetails.firstName,

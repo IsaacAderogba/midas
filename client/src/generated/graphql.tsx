@@ -87,7 +87,7 @@ export type Mutation = {
   updateWorkspaceUser?: Maybe<WorkspaceUser>;
   deleteWorkspaceUser: Scalars['Boolean'];
   createInvitedWorkspaceUser: InvitedWorkspaceUser;
-  acceptWorkspaceUserInvite?: Maybe<WorkspaceUser>;
+  acceptWorkspaceUserInvite: AuthUser;
   createProject?: Maybe<Project>;
   updateProject?: Maybe<Project>;
   deleteProject?: Maybe<Project>;
@@ -142,6 +142,8 @@ export type MutationCreateInvitedWorkspaceUserArgs = {
 
 export type MutationAcceptWorkspaceUserInviteArgs = {
   invitedWorkspaceUserInput?: Maybe<InvitedWorkspaceUserInput>;
+  registerInput?: Maybe<RegisterInput>;
+  loginInput?: Maybe<LoginInput>;
 };
 
 
@@ -559,6 +561,25 @@ export type CreateInvitedWorkspaceUserMutation = (
   & { createInvitedWorkspaceUser: (
     { __typename?: 'InvitedWorkspaceUser' }
     & Pick<InvitedWorkspaceUser, 'workspaceUserId' | 'workspaceId' | 'email' | 'role'>
+  ) }
+);
+
+export type AcceptWorkspaceUserInviteMutationVariables = {
+  invitedWorkspaceUserInput: InvitedWorkspaceUserInput;
+  registerInput?: Maybe<RegisterInput>;
+  loginInput?: Maybe<LoginInput>;
+};
+
+
+export type AcceptWorkspaceUserInviteMutation = (
+  { __typename?: 'Mutation' }
+  & { acceptWorkspaceUserInvite: (
+    { __typename?: 'AuthUser' }
+    & Pick<AuthUser, 'token'>
+    & { user: (
+      { __typename?: 'User' }
+      & UserAttributesFragment
+    ) }
   ) }
 );
 
@@ -1172,3 +1193,40 @@ export function useCreateInvitedWorkspaceUserMutation(baseOptions?: ApolloReactH
 export type CreateInvitedWorkspaceUserMutationHookResult = ReturnType<typeof useCreateInvitedWorkspaceUserMutation>;
 export type CreateInvitedWorkspaceUserMutationResult = ApolloReactCommon.MutationResult<CreateInvitedWorkspaceUserMutation>;
 export type CreateInvitedWorkspaceUserMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateInvitedWorkspaceUserMutation, CreateInvitedWorkspaceUserMutationVariables>;
+export const AcceptWorkspaceUserInviteDocument = gql`
+    mutation acceptWorkspaceUserInvite($invitedWorkspaceUserInput: InvitedWorkspaceUserInput!, $registerInput: RegisterInput, $loginInput: LoginInput) {
+  acceptWorkspaceUserInvite(invitedWorkspaceUserInput: $invitedWorkspaceUserInput, registerInput: $registerInput, loginInput: $loginInput) {
+    token
+    user {
+      ...userAttributes
+    }
+  }
+}
+    ${UserAttributesFragmentDoc}`;
+export type AcceptWorkspaceUserInviteMutationFn = ApolloReactCommon.MutationFunction<AcceptWorkspaceUserInviteMutation, AcceptWorkspaceUserInviteMutationVariables>;
+
+/**
+ * __useAcceptWorkspaceUserInviteMutation__
+ *
+ * To run a mutation, you first call `useAcceptWorkspaceUserInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAcceptWorkspaceUserInviteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [acceptWorkspaceUserInviteMutation, { data, loading, error }] = useAcceptWorkspaceUserInviteMutation({
+ *   variables: {
+ *      invitedWorkspaceUserInput: // value for 'invitedWorkspaceUserInput'
+ *      registerInput: // value for 'registerInput'
+ *      loginInput: // value for 'loginInput'
+ *   },
+ * });
+ */
+export function useAcceptWorkspaceUserInviteMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AcceptWorkspaceUserInviteMutation, AcceptWorkspaceUserInviteMutationVariables>) {
+        return ApolloReactHooks.useMutation<AcceptWorkspaceUserInviteMutation, AcceptWorkspaceUserInviteMutationVariables>(AcceptWorkspaceUserInviteDocument, baseOptions);
+      }
+export type AcceptWorkspaceUserInviteMutationHookResult = ReturnType<typeof useAcceptWorkspaceUserInviteMutation>;
+export type AcceptWorkspaceUserInviteMutationResult = ApolloReactCommon.MutationResult<AcceptWorkspaceUserInviteMutation>;
+export type AcceptWorkspaceUserInviteMutationOptions = ApolloReactCommon.BaseMutationOptions<AcceptWorkspaceUserInviteMutation, AcceptWorkspaceUserInviteMutationVariables>;

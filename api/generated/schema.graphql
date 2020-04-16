@@ -63,7 +63,7 @@ input LoginInput {
 }
 
 type Mutation {
-  acceptWorkspaceUserInvite(invitedWorkspaceUserInput: InvitedWorkspaceUserInput): WorkspaceUser
+  acceptWorkspaceUserInvite(invitedWorkspaceUserInput: InvitedWorkspaceUserInput, loginInput: LoginInput, registerInput: RegisterInput): AuthUser!
   createInvitedWorkspaceUser(invitedWorkspaceUserInput: InvitedWorkspaceUserInput): InvitedWorkspaceUser!
   createProject(newProjectInput: NewProjectInput!): Project
   createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace

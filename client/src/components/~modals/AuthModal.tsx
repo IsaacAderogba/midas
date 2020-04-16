@@ -1,31 +1,31 @@
 // modules
 import React, { useState } from "react";
-import { css } from "styled-components/macro";
 
 // components
-import { Modal, Tabs, Input, Form, Button, Alert } from "antd";
+import { Modal, Tabs } from "antd";
+import { LoginForm, RegisterForm } from "../elements/AuthForms";
 
 // helpers
 import { useUIStore, IUIStore } from "../../~reusables/contexts/UIProvider";
-import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 import {
   useLoginUserMutation,
   useRegisterUserMutation,
   LoginUserMutation,
-  RegisterUserMutation
+  RegisterUserMutation,
+  AcceptWorkspaceUserInviteMutation,
 } from "../../generated/graphql";
 import {
   useAuthStore,
-  IAuthStore
+  IAuthStore,
 } from "../../~reusables/contexts/AuthProvider";
 import {
   setLocalStorageTokenKey,
-  setLocalStorageWorkspaceKey
+  setLocalStorageWorkspaceKey,
 } from "../../~reusables/utils/localStorage";
 
 enum AuthModalTabs {
   Signup = "Signup",
-  Login = "Login"
+  Login = "Login",
 }
 
 export interface IAuthModal {
@@ -42,7 +42,7 @@ export const AuthModal: React.FC<IAuthModal> = ({ type }) => {
   const [activeTab, setActiveTab] = useState<AuthModalTabs>(
     type === "signup" ? AuthModalTabs.Signup : AuthModalTabs.Login
   );
-  const resetModalState = useUIStore(state => state.resetModalState);
+  const resetModalState = useUIStore((state) => state.resetModalState);
 
   return (
     <Modal
@@ -55,7 +55,7 @@ export const AuthModal: React.FC<IAuthModal> = ({ type }) => {
     >
       <Tabs
         activeKey={activeTab}
-        onChange={key => setActiveTab(key as AuthModalTabs)}
+        onChange={(key) => setActiveTab(key as AuthModalTabs)}
       >
         <Tabs.TabPane tab="Sign up" key={AuthModalTabs.Signup}>
           <RegisterFields />
@@ -69,10 +69,9 @@ export const AuthModal: React.FC<IAuthModal> = ({ type }) => {
 };
 
 export const RegisterFields: React.FC = () => {
-  const { space } = useTheme();
-  const resetModalState = useUIStore(state => state.resetModalState);
-  const { setUser } = useAuthStore(state => ({
-    setUser: state.setUser
+  const resetModalState = useUIStore((state) => state.resetModalState);
+  const { setUser } = useAuthStore((state) => ({
+    setUser: state.setUser,
   }));
 
   const [registerUser, { loading, error }] = useRegisterUserMutation({
@@ -80,110 +79,23 @@ export const RegisterFields: React.FC = () => {
       if (data) {
         setUserAndToken(data.registerUser, {
           resetModalState,
-          setUser
+          setUser,
         });
       }
     },
-    onError() {}
+    onError() {},
   });
 
   const onFinish = (values: any) =>
     registerUser({ variables: { registerInput: { ...values } } });
 
-  return (
-    <Form layout="vertical" onFinish={onFinish}>
-      <section
-        css={css`
-          display: flex;
-          justify-content: space-between;
-        `}
-      >
-        <div
-          css={css`
-            margin-right: ${space[4]}px;
-            width: 100%;
-          `}
-        >
-          <Form.Item
-            label="First name"
-            name="firstName"
-            rules={[
-              {
-                required: true,
-                type: "string",
-                message: "Please input your first name"
-              }
-            ]}
-          >
-            <Input placeholder="John" />
-          </Form.Item>
-        </div>
-        <div
-          css={css`
-            margin-left: ${space[4]}px;
-            width: 100%;
-          `}
-        >
-          <Form.Item
-            label="Last name"
-            name="lastName"
-            rules={[
-              {
-                required: true,
-                type: "string",
-                message: "Please input your last name"
-              }
-            ]}
-          >
-            <Input placeholder="Doe" />
-          </Form.Item>
-        </div>
-      </section>
-      <Form.Item
-        label="Email"
-        name="email"
-        rules={[
-          { required: true, type: "email", message: "Please input your email" }
-        ]}
-      >
-        <Input placeholder="johndoe@gmail.com" />
-      </Form.Item>
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[
-          {
-            required: true,
-            type: "string",
-            message: "Please input your password"
-          }
-        ]}
-      >
-        <Input.Password placeholder="password" />
-      </Form.Item>
-      <Form.Item>
-        <Button
-          loading={loading}
-          type="primary"
-          htmlType="submit"
-          style={{ width: "100%", marginTop: `${space[5]}px` }}
-        >
-          Sign up
-        </Button>
-      </Form.Item>
-      {error &&
-        error.graphQLErrors.map(({ message }, i) => (
-          <Alert closable key={i} message={message} type="error" showIcon />
-        ))}
-    </Form>
-  );
+  return <RegisterForm loading={loading} error={error} onFinish={onFinish} />;
 };
 
 export const LoginFields: React.FC = () => {
-  const { space } = useTheme();
-  const resetModalState = useUIStore(state => state.resetModalState);
-  const { setUser } = useAuthStore(state => ({
-    setUser: state.setUser
+  const resetModalState = useUIStore((state) => state.resetModalState);
+  const { setUser } = useAuthStore((state) => ({
+    setUser: state.setUser,
   }));
 
   const [loginUser, { loading, error }] = useLoginUserMutation({
@@ -191,65 +103,27 @@ export const LoginFields: React.FC = () => {
       if (data) {
         setUserAndToken(data.loginUser, {
           resetModalState,
-          setUser
+          setUser,
         });
       }
     },
-    onError() {}
+    onError() {},
   });
 
   const onFinish = (values: any) =>
     loginUser({ variables: { loginInput: { ...values } } });
 
-  return (
-    <Form layout="vertical" onFinish={onFinish}>
-      <Form.Item
-        label="Email"
-        name="email"
-        rules={[
-          { required: true, type: "email", message: "Please input your email" }
-        ]}
-      >
-        <Input placeholder="johndoe@gmail.com" />
-      </Form.Item>
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[
-          {
-            required: true,
-            type: "string",
-            message: "Please input your password"
-          }
-        ]}
-      >
-        <Input.Password placeholder="password" />
-      </Form.Item>
-      <Form.Item>
-        <Button
-          loading={loading}
-          type="primary"
-          htmlType="submit"
-          style={{ width: "100%", marginTop: `${space[5]}px` }}
-        >
-          Log in
-        </Button>
-      </Form.Item>
-      {error &&
-        error.graphQLErrors.map(({ message }, i) => (
-          <Alert closable key={i} message={message} type="error" showIcon />
-        ))}
-    </Form>
-  );
+  return <LoginForm loading={loading} error={error} onFinish={onFinish} />;
 };
 
-function setUserAndToken(
+export function setUserAndToken(
   authUser:
     | RegisterUserMutation["registerUser"]
-    | LoginUserMutation["loginUser"],
+    | LoginUserMutation["loginUser"]
+    | AcceptWorkspaceUserInviteMutation["acceptWorkspaceUserInvite"],
   functions: {
     setUser: IAuthStore["setUser"];
-    resetModalState: IUIStore["resetModalState"];
+    resetModalState?: IUIStore["resetModalState"];
   }
 ) {
   const { setUser, resetModalState } = functions;
@@ -261,5 +135,5 @@ function setUserAndToken(
   setLocalStorageTokenKey(token);
   setLocalStorageWorkspaceKey(workspaceId);
   setUser(user);
-  resetModalState();
+  if (resetModalState) resetModalState();
 }

@@ -7,8 +7,6 @@ const {
   User,
   UserInput,
 } = require("./userTypes");
-const Mailer = require("../../services/email/Mailer");
-const verificationTemplate = require("../../services/email/verificationTemplate");
 
 const Query = extendType({
   type: "Query",
@@ -47,15 +45,7 @@ const Mutation = extendType({
         registerInput: arg({ type: RegisterInput }),
       },
       resolve: async (parent, args, { dataSources }) => {
-        const user = await dataSources.userAPI.registerUser(args.registerInput);
-        const subject = "Please confirm your email";
-        const mailer = new Mailer(
-          { subject, email: args.registerInput.email },
-          verificationTemplate(user.token)
-        );
-
-        await mailer.send();
-        return user;
+        return dataSources.userAPI.registerUser(args.registerInput);
       },
     });
     t.field(userMutationKeys.updateUser, {

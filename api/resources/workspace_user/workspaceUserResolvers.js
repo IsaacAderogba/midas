@@ -1,4 +1,4 @@
-const { extendType } = require("nexus");
+const { extendType, arg } = require("nexus");
 const {
   workspaceUserQueryKeys,
   workspaceUserMutationKeys,
@@ -11,6 +11,7 @@ const {
   InvitedWorkspaceUser,
   InvitedWorkspaceUserInput,
 } = require("./workspaceUserTypes");
+const { AuthUser, RegisterInput, LoginInput } = require("../user/userTypes");
 const Mailer = require("../../services/email/Mailer");
 const inviteTemplate = require("../../services/email/inviteTemplate");
 
@@ -119,17 +120,27 @@ const Mutation = extendType({
       },
     });
     t.field(workspaceUserMutationKeys.acceptWorkspaceUserInvite, {
-      type: WorkspaceUser,
-      nullable: true,
+      type: AuthUser,
+      nullable: false,
       args: {
         invitedWorkspaceUserInput: InvitedWorkspaceUserInput,
+        registerInput: arg({ type: RegisterInput, required: false }),
+        loginInput: arg({ type: LoginInput, required: false }),
       },
       resolve: async (
         parent,
-        { invitedWorkspaceUserInput },
-        { dataSources, user }
+        { invitedWorkspaceUserInput, registerInput, loginInput },
+        { dataSources }
       ) => {
-        // try to see if that invited workspace user does indeed exist
+        let authUser;
+
+        // ITODO - middleware to check that both aren't empty
+        if (registerInput) {
+          authUser = await dataSources.userAPI.registerUser(registerInput);
+        } else {
+          authUser = await dataSources.userAPI.loginUser(loginInput);
+        }
+
         const validInvitee = await dataSources.workspaceUserAPI.readInvitedWorkspaceUser(
           invitedWorkspaceUserInput
         );
@@ -142,9 +153,11 @@ const Mutation = extendType({
         const userToInsert = {
           workspaceId: validInvitee.workspaceId,
           role: validInvitee.role,
-          userId: user.id,
+          userId: authUser.userId,
         };
-        return dataSources.workspaceUserAPI.createWorkspaceUser(userToInsert);
+
+        await dataSources.workspaceUserAPI.createWorkspaceUser(userToInsert);
+        return authUser;
       },
     });
   },
