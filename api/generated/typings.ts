@@ -338,7 +338,7 @@ export interface NexusGenArgTypes {
       newWorkspaceUserInput?: NexusGenInputs['NewWorkspaceUserInput'] | null; // NewWorkspaceUserInput
     }
     deleteProject: { // args
-      projectId: string; // ID!
+      where: NexusGenInputs['ProjectWhere']; // ProjectWhere!
     }
     deleteWorkspaceUser: { // args
       where?: NexusGenInputs['WorkspaceUserWhere'] | null; // WorkspaceUserWhere

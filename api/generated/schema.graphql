@@ -68,7 +68,7 @@ type Mutation {
   createProject(newProjectInput: NewProjectInput!): Project
   createWorkspace(newWorkspaceInput: NewWorkspaceInput): Workspace
   createWorkspaceUser(newWorkspaceUserInput: NewWorkspaceUserInput): WorkspaceUser
-  deleteProject(projectId: ID!): Project
+  deleteProject(where: ProjectWhere!): Project
   deleteUser: Boolean!
   deleteWorkspace: Boolean!
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!

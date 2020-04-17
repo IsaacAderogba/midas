@@ -4,6 +4,7 @@ const {
   projectSubscriptionKeys,
   projectQueryKeys,
   projectMutationKeys,
+  projectErrors,
 } = require("./projectUtils");
 const {
   isAuthenticated,
@@ -14,6 +15,13 @@ const {
 } = require("../permissions");
 
 // TODO - Need to create custom privileges for interacting with project
+async function validProjectMiddleware(resolve, parent, args, context, info) {
+  const { dataSources } = context;
+  const project = await dataSources.projectAPI.readProject(args.where);
+  if (!project) throw projectErrors.ProjectNotFound;
+
+  return resolve(parent, args, context, info);
+}
 
 const ProjectPermissions = shield({
   Query: {
@@ -51,13 +59,25 @@ const ProjectPermissions = shield({
       hasWorkspacePrivileges,
       hasViewerPrivileges
     ),
+    [projectSubscriptionKeys.project]: and(
+      isAuthenticated,
+      hasWorkspacePrivileges,
+      hasViewerPrivileges
+    ),
   },
 });
 
 const ProjectMiddleware = shield({
-  Query: {},
-  Mutation: {},
-  Subscription: {},
+  Query: {
+    [projectQueryKeys.project]: validProjectMiddleware,
+  },
+  Mutation: {
+    [projectMutationKeys.updateProject]: validProjectMiddleware,
+    [projectMutationKeys.deleteProject]: validProjectMiddleware,
+  },
+  Subscription: {
+    [projectSubscriptionKeys.project]: validProjectMiddleware,
+  },
 });
 
 module.exports = {

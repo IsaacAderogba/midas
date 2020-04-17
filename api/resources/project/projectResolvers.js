@@ -1,4 +1,4 @@
-const { extendType, idArg, arg } = require("nexus");
+const { extendType, arg } = require("nexus");
 const {
   projectMutationKeys,
   projectQueryKeys,
@@ -46,7 +46,7 @@ const Query = extendType({
             );
           }
         } catch (err) {
-          console.log(err);
+          return new Error(err);
         }
         const project = await dataSources.projectAPI.readProject(where);
 
@@ -161,7 +161,7 @@ const Mutation = extendType({
                   );
                 }
               } catch (err) {
-                throw new Error(err);
+                return new Error(err);
               }
               break;
             case CanvasSceneEnum.CLIENT_DISCONNECT:
@@ -171,7 +171,7 @@ const Mutation = extendType({
                   user.workspaceId
                 );
               } catch (err) {
-                throw new Error(err);
+                return new Error(err);
               }
               break;
             default:
@@ -197,12 +197,10 @@ const Mutation = extendType({
       type: Project,
       nullable: true,
       args: {
-        projectId: idArg({ required: true }),
+        where: arg({ type: ProjectWhere, required: true }),
       },
-      resolve: async (parent, { projectId }, { dataSources, pubsub, user }) => {
-        const deletedProject = await dataSources.projectAPI.deleteProject({
-          id: projectId,
-        });
+      resolve: async (parent, { where }, { dataSources, pubsub, user }) => {
+        const deletedProject = await dataSources.projectAPI.deleteProject(where);
 
         pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
           [projectSubscriptionKeys.projects]: {
