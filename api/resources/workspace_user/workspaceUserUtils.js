@@ -10,15 +10,19 @@ const workspaceUserMutationKeys = {
   updateWorkspaceUser: "updateWorkspaceUser",
   deleteWorkspaceUser: "deleteWorkspaceUser",
   createInvitedWorkspaceUser: "createInvitedWorkspaceUser",
-  acceptWorkspaceUserInvite: "acceptWorkspaceUserInvite"
+  acceptWorkspaceUserInvite: "acceptWorkspaceUserInvite",
 };
 
 const workspaceUserErrors = {
-  WorkspaceUserNotFound: new UserInputError("Workspace user not found")
+  WorkspaceUserNotFound: new UserInputError("Workspace user not found"),
+  InvitedUserNotFound: new UserInputError("Invited user not found"),
+  RegisterAndLoginInputEmpty: new UserInputError(
+    "Input for register or login fields must exist"
+  ),
 };
 
 module.exports = {
   workspaceUserQueryKeys,
   workspaceUserMutationKeys,
-  workspaceUserErrors
+  workspaceUserErrors,
 };

@@ -134,7 +134,6 @@ const Mutation = extendType({
       ) => {
         let authUser;
 
-        // ITODO - middleware to check that both aren't empty
         if (registerInput) {
           authUser = await dataSources.userAPI.registerUser(registerInput);
         } else {
@@ -149,7 +148,6 @@ const Mutation = extendType({
           return new Error("No invited user - make middleware");
         }
 
-        // must be a user to accept this request - middleware should check
         const userToInsert = {
           workspaceId: validInvitee.workspaceId,
           role: validInvitee.role,
