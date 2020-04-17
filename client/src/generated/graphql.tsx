@@ -160,7 +160,7 @@ export type MutationUpdateProjectArgs = {
 
 
 export type MutationDeleteProjectArgs = {
-  projectId: Scalars['ID'];
+  where: ProjectWhere;
 };
 
 export enum MutationType {

@@ -1,5 +1,5 @@
 // modules
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { css } from "styled-components/macro";
 
 // components
@@ -7,6 +7,7 @@ import { H5, P3 } from "../atoms/Text";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { Card } from "antd";
 import { Link } from "react-router-dom";
+import { Empty } from "antd";
 
 // helpers
 import {
@@ -21,6 +22,7 @@ import { Maybe } from "../../~reusables/utils/types";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 
 export const Projects = () => {
+  const [initLoading, setInitLoading] = useState(true);
   const workspace = useWorkspaceStore((state) => state.workspace);
   let unsubscribeFromMore: Maybe<() => void> = null;
 
@@ -30,6 +32,7 @@ export const Projects = () => {
   ] = useGetProjectsLazyQuery({
     fetchPolicy: "network-only",
     onCompleted(data) {
+      setInitLoading(false);
       if (data && data.projects) {
         unsubscribeFromMore = subscribeToMore<ProjectsSubscription>({
           document: ProjectsDocument,
@@ -59,6 +62,7 @@ export const Projects = () => {
             }
           },
           onError(err) {
+            setInitLoading(false);
             console.log(err);
           },
         });
@@ -67,40 +71,54 @@ export const Projects = () => {
   });
 
   useEffect(() => {
-    if (workspace?.id) getProjects();
-  }, [workspace?.id, getProjects]);
-
-  useEffect(() => {
+    if (workspace?.id) {
+      getProjects();
+    }
     return () => {
       if (unsubscribeFromMore) unsubscribeFromMore();
     };
-  }, [unsubscribeFromMore]);
+  }, [workspace?.id, getProjects, unsubscribeFromMore]);
 
-  if (loading) return <div>loading</div>;
-  if (!data || !data.projects.length) return <div>No projects</div>;
+  if (initLoading || loading || (data && data.projects.length)) {
+    return (
+      <section
+        css={css`
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-evenly;
+        `}
+      >
+        {data
+          ? data.projects.map((project) => (
+              <ProjectItem key={project.id} project={project} />
+            ))
+          : [1, 2, 3].map((num) => <ProjectItem key={num} loading={true} />)}
+      </section>
+    );
+  }
 
   return (
-    <section
+    <div
       css={css`
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
+        justify-content: center;
+        align-items: center;
       `}
     >
-      {data.projects.map((project) => (
-        <ProjectItem key={project.id} project={project} />
-      ))}
-    </section>
+      <Empty />
+    </div>
   );
 };
 
-const ProjectItem: React.FC<{ project: GetProjectsQuery["projects"][0] }> = ({
-  project: { title, updatedAt, id },
-}) => {
+const ProjectItem: React.FC<{
+  project?: GetProjectsQuery["projects"][0];
+  loading?: boolean;
+}> = ({ project, loading }) => {
   const { fontSizes, colors } = useTheme();
 
   return (
     <Card
+      loading={loading}
       bodyStyle={{ padding: 0 }}
       css={css`
         flex: 1 1 280px;
@@ -116,43 +134,50 @@ const ProjectItem: React.FC<{ project: GetProjectsQuery["projects"][0] }> = ({
         }
       `}
     >
-      <Link to={`/app/project/${id}`}>
-        <section
-          css={css`
-            width: 100%;
-            height: 160px;
-          `}
-        >
-          <img
+      {project ? (
+        <Link to={`/app/project/${project.id}`}>
+          <section
             css={css`
               width: 100%;
-              height: 100%;
-              object-fit: cover;
-            `}
-            alt="dummy"
-            src={"https://via.placeholder.com/150"}
-          />
-        </section>
-        <section
-          css={css`
-            padding: ${(p) => `${p.theme.space[5]}px ${p.theme.space[5]}px`};
-          `}
-        >
-          <div>
-            <H5>{title}</H5>
-          </div>
-          <div
-            css={css`
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
+              height: 160px;
             `}
           >
-            <P3 color={colors.lightText}>{updatedAt}</P3>
-            <EllipsisOutlined style={{ fontSize: fontSizes[4] }} rotate={90} />
-          </div>
-        </section>
-      </Link>
+            <img
+              css={css`
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              `}
+              alt="dummy"
+              src={"https://via.placeholder.com/150"}
+            />
+          </section>
+          <section
+            css={css`
+              padding: ${(p) => `${p.theme.space[5]}px ${p.theme.space[5]}px`};
+            `}
+          >
+            <div>
+              <H5>{project.title}</H5>
+            </div>
+            <div
+              css={css`
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              `}
+            >
+              <P3 color={colors.lightText}>{project.updatedAt}</P3>
+              <EllipsisOutlined
+                style={{ fontSize: fontSizes[4] }}
+                rotate={90}
+              />
+            </div>
+          </section>
+        </Link>
+      ) : (
+        <div></div>
+      )}
     </Card>
   );
 };

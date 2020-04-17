@@ -1562,14 +1562,14 @@
             "description": "",
             "args": [
               {
-                "name": "projectId",
+                "name": "where",
                 "description": "",
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
+                    "kind": "INPUT_OBJECT",
+                    "name": "ProjectWhere",
                     "ofType": null
                   }
                 },
