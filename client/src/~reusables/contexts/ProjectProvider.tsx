@@ -2,6 +2,7 @@
 import React, { createContext, useEffect } from "react";
 import { useLocalStore, observer } from "mobx-react";
 import { RouteComponentProps } from "react-router-dom";
+import { FullPageSpinner, FullPageNoData } from "../../components/atoms/FullPageUtils";
 
 // helpers
 import { useStoreState } from "../hooks/useStoreState";
@@ -91,8 +92,8 @@ export const ProjectProvider: React.FC<IProjectProvider> = observer(
       }
     }, [data, loading]);
 
-    if (loading) return <div>loading</div>;
-    if (!store.project) return <div>Project doesn't exist</div>;
+    if (loading) return <FullPageSpinner />;
+    if (!store.project) return <FullPageNoData />;
 
     return (
       <ProjectContext.Provider value={store}>

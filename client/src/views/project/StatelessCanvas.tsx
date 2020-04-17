@@ -11,20 +11,20 @@ import {
   moveOneLeft,
   moveAllLeft,
   moveOneRight,
-  moveAllRight
+  moveAllRight,
 } from "../../~reusables/utils/zindex";
 import "./styles.css";
 import {
   generateHistoryCurrentEntry,
   restoreHistoryEntry,
-  pushHistoryEntry
+  pushHistoryEntry,
 } from "../../~reusables/utils/history";
 import { randomSeed } from "../../~reusables/utils/seed";
 import {
   hitTest,
   resizeTest,
   resetCursor,
-  renderScene
+  renderScene,
 } from "../../~reusables/utils/canvas";
 import { KEYS } from "../../~reusables/constants/constants";
 import {
@@ -38,23 +38,23 @@ import {
   generateDraw,
   isTextElement,
   newElement,
-  isArrowKey
+  isArrowKey,
 } from "../../~reusables/utils/element";
 import {
   CanvasContext,
-  ICanvasState
+  ICanvasState,
 } from "../../~reusables/contexts/CanvasProvider";
 import {
   CANVAS_SIDEBAR_WIDTH,
   CANVAS_TOPBAR_HEIGHT,
   ELEMENT_SHIFT_TRANSLATE_AMOUNT,
-  ELEMENT_TRANSLATE_AMOUNT
+  ELEMENT_TRANSLATE_AMOUNT,
 } from "../../~reusables/constants/dimensions";
 import { ICollaborator } from "../../~reusables/contexts/ProjectProvider";
 
 let skipHistory = false;
 const stateHistory: string[] = [];
-const shapesShortcutKeys = SHAPES.map(shape => shape.value[0]);
+const shapesShortcutKeys = SHAPES.map((shape) => shape.value[0]);
 let lastCanvasWidth = -1;
 let lastCanvasHeight = -1;
 let lastMouseUp: ((e: any) => void) | null = null;
@@ -64,7 +64,7 @@ interface IStatelessCanvas extends ICanvasState {
   collaborators: ICollaborator[];
   throttleMouseLocation: (({
     pointerCoordX,
-    pointerCoordY
+    pointerCoordY,
   }: {
     pointerCoordX: number;
     pointerCoordY: number;
@@ -72,11 +72,16 @@ interface IStatelessCanvas extends ICanvasState {
     _.Cancelable;
 }
 
-export class StatelessCanvas extends React.Component<IStatelessCanvas> {
-  public state = {
-    scrollX: 0,
-    scrollY: 0
-  };
+export class StatelessCanvas extends React.Component<IStatelessCanvas, {scrollX: number; scrollY: number;}> {
+  constructor(props: IStatelessCanvas) {
+    super(props);
+    lastCanvasWidth = -1;
+    lastCanvasHeight = -1;
+    this.state = {
+      scrollX: 0,
+      scrollY: 0,
+    };
+  }
 
   public componentDidMount() {
     document.addEventListener("keydown", this.onKeyDown, false);
@@ -99,7 +104,7 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
     const y = event.clientY - CANVAS_TOPBAR_HEIGHT - this.state.scrollY;
     this.props.throttleMouseLocation({
       pointerCoordX: x,
-      pointerCoordY: y
+      pointerCoordY: y,
     });
   };
 
@@ -118,7 +123,7 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
       const step = event.shiftKey
         ? ELEMENT_SHIFT_TRANSLATE_AMOUNT
         : ELEMENT_TRANSLATE_AMOUNT;
-      this.props.elements.forEach(element => {
+      this.props.elements.forEach((element) => {
         if (element.isSelected) {
           if (event.key === KEYS.ARROW_LEFT) element.x -= step;
           else if (event.key === KEYS.ARROW_RIGHT) element.x += step;
@@ -177,15 +182,15 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
 
       // Select all: Cmd-A
     } else if (event.metaKey && event.code === "KeyA") {
-      this.props.elements.forEach(element => {
+      this.props.elements.forEach((element) => {
         element.isSelected = true;
       });
       this.forceUpdate();
       event.preventDefault();
     } else if (shapesShortcutKeys.includes(event.key.toLowerCase())) {
-      this.props.setCanvasState(prevState => ({
+      this.props.setCanvasState((prevState) => ({
         ...prevState,
-        elementType: findElementByKey(event.key)
+        elementType: findElementByKey(event.key),
       }));
     } else if (event.metaKey && event.code === "KeyZ") {
       let lastEntry = stateHistory.pop();
@@ -213,7 +218,7 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
     const { deltaX, deltaY } = e;
     this.setState({
       scrollX: this.state.scrollX - deltaX,
-      scrollY: this.state.scrollY - deltaY
+      scrollY: this.state.scrollY - deltaY,
     });
   };
 
@@ -231,22 +236,22 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
           left: ${CANVAS_SIDEBAR_WIDTH}px;
           right: ${CANVAS_SIDEBAR_WIDTH}px;
         `}
-        onCut={e => {
+        onCut={(e) => {
           e.clipboardData.setData(
             "text/plain",
-            JSON.stringify(elements.filter(element => element.isSelected))
+            JSON.stringify(elements.filter((element) => element.isSelected))
           );
           deleteSelectedElements(elements, this.props.forceCanvasUpdate);
           e.preventDefault();
         }}
-        onCopy={e => {
+        onCopy={(e) => {
           e.clipboardData.setData(
             "text/plain",
-            JSON.stringify(elements.filter(element => element.isSelected))
+            JSON.stringify(elements.filter((element) => element.isSelected))
           );
           e.preventDefault();
         }}
-        onPaste={e => {
+        onPaste={(e) => {
           const paste = e.clipboardData.getData("text");
           let parsedElements;
           try {
@@ -258,7 +263,7 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
             parsedElements[0].type // need to implement a better check here...
           ) {
             clearSelection(elements);
-            parsedElements.forEach(parsedElement => {
+            parsedElements.forEach((parsedElement) => {
               parsedElement.x += 10;
               parsedElement.y += 10;
               parsedElement.seed = randomSeed();
@@ -274,12 +279,13 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
           id="canvas"
           style={{
             width: canvasWidth,
-            height: canvasHeight
+            height: canvasHeight,
+            border: "1px solid red",
           }}
           width={canvasWidth * window.devicePixelRatio}
           height={canvasHeight * window.devicePixelRatio}
           onPointerMove={this.handleCanvasPointerMove}
-          ref={canvas => {
+          ref={(canvas) => {
             this.props.canvasRef.current = canvas;
             if (this.removeWheelEventListener) {
               this.removeWheelEventListener();
@@ -287,13 +293,15 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
             }
             if (canvas) {
               canvas.addEventListener("wheel", this.handleWheel, {
-                passive: false
+                passive: false,
               });
               this.removeWheelEventListener = () =>
                 canvas.removeEventListener("wheel", this.handleWheel);
 
               // Whenever React sets the width/height of the canvas element,
               // the context loses the scale transform. We need to re-apply it
+              console.log(canvasWidth);
+              console.log(lastCanvasWidth);
               if (
                 canvasWidth !== lastCanvasWidth ||
                 canvasHeight !== lastCanvasHeight
@@ -306,7 +314,7 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
               }
             }
           }}
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             if (lastMouseUp !== null) {
               // Unfortunately, sometimes we don't get a mouseup after a mousedown,
               // this can happen when a contextual menu or alert is triggered. In order to avoid
@@ -337,24 +345,24 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
             let isDraggingElements = false;
             let isResizingElements = false;
             if (this.props.elementType === "selection") {
-              const resizeElement = elements.find(element => {
+              const resizeElement = elements.find((element) => {
                 return resizeTest(element, x, y, {
                   scrollX: this.state.scrollX,
                   scrollY: this.state.scrollY,
-                  viewBackgroundColor: this.props.viewBackgroundColor
+                  viewBackgroundColor: this.props.viewBackgroundColor,
                 });
               });
 
-              this.props.setCanvasState(prevState => ({
+              this.props.setCanvasState((prevState) => ({
                 ...prevState,
-                resizingElement: resizeElement ? resizeElement : null
+                resizingElement: resizeElement ? resizeElement : null,
               }));
 
               if (resizeElement) {
                 resizeHandle = resizeTest(resizeElement, x, y, {
                   scrollX: this.state.scrollX,
                   scrollY: this.state.scrollY,
-                  viewBackgroundColor: this.props.viewBackgroundColor
+                  viewBackgroundColor: this.props.viewBackgroundColor,
                 });
                 document.documentElement.style.cursor = `${resizeHandle}-resize`;
                 isResizingElements = true;
@@ -408,7 +416,7 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
               const {
                 actualBoundingBoxAscent,
                 actualBoundingBoxDescent,
-                width
+                width,
               } = context.measureText(element.text);
               element.actualBoundingBoxAscent = actualBoundingBoxAscent;
               context.font = font;
@@ -423,16 +431,16 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
             generateDraw(element);
             elements.push(element);
             if (this.props.elementType === "text") {
-              this.props.setCanvasState(prevState => ({
+              this.props.setCanvasState((prevState) => ({
                 ...prevState,
                 draggingElement: null,
-                elementType: "selection"
+                elementType: "selection",
               }));
               element.isSelected = true;
             } else {
-              this.props.setCanvasState(prevState => ({
+              this.props.setCanvasState((prevState) => ({
                 ...prevState,
-                draggingElement: element
+                draggingElement: element,
               }));
             }
 
@@ -447,13 +455,13 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
 
               if (isResizingElements && this.props.resizingElement) {
                 const el = this.props.resizingElement;
-                const selectedElements = elements.filter(el => el.isSelected);
+                const selectedElements = elements.filter((el) => el.isSelected);
                 if (selectedElements.length === 1) {
                   const x =
                     e.clientX - CANVAS_SIDEBAR_WIDTH - this.state.scrollX;
                   const y =
                     e.clientY - CANVAS_TOPBAR_HEIGHT - this.state.scrollY;
-                  selectedElements.forEach(element => {
+                  selectedElements.forEach((element) => {
                     switch (resizeHandle) {
                       case "nw":
                         element.width += element.x - lastX;
@@ -509,13 +517,13 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
               }
 
               if (isDraggingElements) {
-                const selectedElements = elements.filter(el => el.isSelected);
+                const selectedElements = elements.filter((el) => el.isSelected);
                 if (selectedElements.length) {
                   const x =
                     e.clientX - CANVAS_SIDEBAR_WIDTH - this.state.scrollX;
                   const y =
                     e.clientY - CANVAS_TOPBAR_HEIGHT - this.state.scrollY;
-                  selectedElements.forEach(element => {
+                  selectedElements.forEach((element) => {
                     element.x += x - lastX;
                     element.y += y - lastY;
                   });
@@ -581,10 +589,10 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
                 draggingElement.isSelected = true;
               }
 
-              this.props.setCanvasState(prevState => ({
+              this.props.setCanvasState((prevState) => ({
                 ...prevState,
                 draggingElement: null,
-                elementType: "selection"
+                elementType: "selection",
               }));
               this.forceUpdate();
             };
@@ -611,7 +619,7 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas> {
         {
           scrollX: this.state.scrollX,
           scrollY: this.state.scrollY,
-          viewBackgroundColor: this.props.viewBackgroundColor
+          viewBackgroundColor: this.props.viewBackgroundColor,
         },
         this.props.elements,
         this.props.collaborators

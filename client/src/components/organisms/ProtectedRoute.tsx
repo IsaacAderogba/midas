@@ -11,7 +11,7 @@ import {
 
 // helpers
 import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
-import { FullPageSpinner } from "../atoms/FullPageSpinner";
+import { FullPageSpinner } from "../atoms/FullPageUtils";
 
 interface IProtectedRoute extends RouteComponentProps {
   component: React.FC<RouteComponentProps>;

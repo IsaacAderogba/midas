@@ -8,7 +8,7 @@ import { LOCAL_STORAGE_TOKEN_KEY } from "../../~reusables/constants/constants";
 
 // helpers
 import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
-import { FullPageSpinner } from "../../components/atoms/FullPageSpinner";
+import { FullPageSpinner } from "../../components/atoms/FullPageUtils";
 import { StripedLanding } from "../../components/~layout/StripedLanding";
 
 export const Landing: React.FC<RouteComponentProps> = () => {

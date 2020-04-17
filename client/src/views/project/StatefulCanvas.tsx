@@ -79,7 +79,7 @@ export const StatefulCanvas: React.FC = () => {
           }
         }
       });
-    }, 3000),
+    }, 1500),
     []
   );
 
