@@ -1,9 +1,9 @@
 // modules
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { css } from "styled-components/macro";
 
 // components
-import { List, Avatar, Button } from "antd";
+import { List, Avatar, Button, Empty } from "antd";
 
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
@@ -12,61 +12,80 @@ import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
 
 export const Members = () => {
+  const [initLoading, setInitLoading] = useState(true);
   const workspace = useWorkspaceStore((state) => state.workspace);
   const setModalState = useUIStore((state) => state.setModalState);
   const [getWorkspaceUsers, { data, loading }] = useWorkspaceUsersLazyQuery({
     fetchPolicy: "network-only",
+    onCompleted() {
+      setInitLoading(false);
+    },
+    onError() {},
   });
 
   useEffect(() => {
     if (workspace?.id) {
-      console.log('exec')
+      console.log("exec");
       getWorkspaceUsers();
     }
   }, [workspace?.id]);
 
-  if (loading) return <div>Loading</div>;
-  if (!data?.workspaceUsers) return <div>Users don't exist</div>;
+  if (initLoading || loading || (data && data.workspaceUsers)) {
+    return (
+      <StyledMembers>
+        <div
+          css={css`
+            display: flex;
+            justify-content: flex-end;
+          `}
+        >
+          <Button
+            onClick={() =>
+              setModalState({ modal: "invite-workspace-user-modal", props: {} })
+            }
+          >
+            Add member
+          </Button>
+        </div>
+        <List
+          itemLayout="horizontal"
+          loading={initLoading || loading}
+          dataSource={data && data.workspaceUsers ? data.workspaceUsers : []}
+          renderItem={({
+            role,
+            user: { firstName, lastName, email, avatarURL },
+          }) => (
+            <List.Item>
+              <List.Item.Meta
+                avatar={
+                  avatarURL ? (
+                    <Avatar src={avatarURL} />
+                  ) : (
+                    <Avatar>
+                      {firstName ? firstName[0].toUpperCase() : ""}
+                    </Avatar>
+                  )
+                }
+                title={`${firstName} ${lastName}`}
+                description={`${role} - ${email}`}
+              />
+            </List.Item>
+          )}
+        />
+      </StyledMembers>
+    );
+  }
 
   return (
-    <StyledMembers>
-      <div
-        css={css`
-          display: flex;
-          justify-content: flex-end;
-        `}
-      >
-        <Button
-          onClick={() =>
-            setModalState({ modal: "invite-workspace-user-modal", props: {} })
-          }
-        >
-          Add member
-        </Button>
-      </div>
-      <List
-        itemLayout="horizontal"
-        dataSource={data.workspaceUsers}
-        renderItem={({
-          role,
-          user: { firstName, lastName, email, avatarURL },
-        }) => (
-          <List.Item>
-            <List.Item.Meta
-              avatar={
-                avatarURL ? (
-                  <Avatar src={avatarURL} />
-                ) : (
-                  <Avatar>{firstName ? firstName[0].toUpperCase() : ""}</Avatar>
-                )
-              }
-              title={`${firstName} ${lastName}`}
-              description={`${role} - ${email}`}
-            />
-          </List.Item>
-        )}
-      />
-    </StyledMembers>
+    <div
+      css={css`
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      `}
+    >
+      <Empty />
+    </div>
   );
 };
 
