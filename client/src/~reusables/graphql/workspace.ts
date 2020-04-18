@@ -46,3 +46,16 @@ export const getWorkspaces = gql`
   ${Workspace.fragments.workspacesAttributes}
 `;
 
+export const updateWorkspace = gql`
+  mutation updateWorkspace($workspaceInput: WorkspaceInput) {
+    updateWorkspace(workspaceInput: $workspaceInput) {
+      id
+      name
+      url
+      photoURL
+      photoId
+      trialStartedAt
+      seats
+    }
+  }
+`;

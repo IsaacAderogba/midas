@@ -295,7 +295,7 @@ export type User = {
   email: Scalars['String'];
   avatarURL?: Maybe<Scalars['String']>;
   isVerified: Scalars['Boolean'];
-  photoId?: Maybe<Scalars['Boolean']>;
+  photoId?: Maybe<Scalars['String']>;
   workspaces?: Maybe<Array<Workspace>>;
 };
 
@@ -322,6 +322,8 @@ export type Workspace = {
 export type WorkspaceInput = {
   name?: Maybe<Scalars['String']>;
   photoURL?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
+  file?: Maybe<Scalars['Upload']>;
 };
 
 export type WorkspaceUser = {
@@ -548,6 +550,19 @@ export type GetWorkspacesQuery = (
   & { workspaces: Array<(
     { __typename?: 'Workspace' }
     & WorkspacesAttributesFragment
+  )> }
+);
+
+export type UpdateWorkspaceMutationVariables = {
+  workspaceInput?: Maybe<WorkspaceInput>;
+};
+
+
+export type UpdateWorkspaceMutation = (
+  { __typename?: 'Mutation' }
+  & { updateWorkspace?: Maybe<(
+    { __typename?: 'Workspace' }
+    & Pick<Workspace, 'id' | 'name' | 'url' | 'photoURL' | 'photoId' | 'trialStartedAt' | 'seats'>
   )> }
 );
 
@@ -1173,6 +1188,44 @@ export function useGetWorkspacesLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type GetWorkspacesQueryHookResult = ReturnType<typeof useGetWorkspacesQuery>;
 export type GetWorkspacesLazyQueryHookResult = ReturnType<typeof useGetWorkspacesLazyQuery>;
 export type GetWorkspacesQueryResult = ApolloReactCommon.QueryResult<GetWorkspacesQuery, GetWorkspacesQueryVariables>;
+export const UpdateWorkspaceDocument = gql`
+    mutation updateWorkspace($workspaceInput: WorkspaceInput) {
+  updateWorkspace(workspaceInput: $workspaceInput) {
+    id
+    name
+    url
+    photoURL
+    photoId
+    trialStartedAt
+    seats
+  }
+}
+    `;
+export type UpdateWorkspaceMutationFn = ApolloReactCommon.MutationFunction<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
+
+/**
+ * __useUpdateWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useUpdateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateWorkspaceMutation, { data, loading, error }] = useUpdateWorkspaceMutation({
+ *   variables: {
+ *      workspaceInput: // value for 'workspaceInput'
+ *   },
+ * });
+ */
+export function useUpdateWorkspaceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>(UpdateWorkspaceDocument, baseOptions);
+      }
+export type UpdateWorkspaceMutationHookResult = ReturnType<typeof useUpdateWorkspaceMutation>;
+export type UpdateWorkspaceMutationResult = ApolloReactCommon.MutationResult<UpdateWorkspaceMutation>;
+export type UpdateWorkspaceMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
 export const WorkspaceUsersDocument = gql`
     query workspaceUsers {
   workspaceUsers {

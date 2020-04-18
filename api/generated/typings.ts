@@ -90,8 +90,10 @@ export interface NexusGenInputs {
     photoId?: string | null; // String
   }
   WorkspaceInput: { // input type
+    file?: any | null; // Upload
     name?: string | null; // String
     photoURL?: string | null; // String
+    url?: string | null; // String
   }
   WorkspaceUserInput: { // input type
     role?: NexusGenEnums['WorkspaceUserRoles'] | null; // WorkspaceUserRoles

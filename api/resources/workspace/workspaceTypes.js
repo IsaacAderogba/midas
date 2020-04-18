@@ -12,15 +12,15 @@ const Workspace = objectType({
     t.string("trialStartedAt", { nullable: true });
     t.int("seats", { nullable: false });
     t.list.field("workspaceUsers", {
-      type: 'WorkspaceUser', // using the actual type introduces a circular dependecy
+      type: "WorkspaceUser", // using the actual type introduces a circular dependecy
       nullable: false,
       resolve: async (workspace, args, { dataSources }) => {
         return dataSources.workspaceUserAPI.readWorkspaceUsers({
-          workspaceId: workspace.id
+          workspaceId: workspace.id,
         });
-      }
+      },
     });
-  }
+  },
 });
 
 const NewWorkspaceInput = inputObjectType({
@@ -29,7 +29,7 @@ const NewWorkspaceInput = inputObjectType({
     t.string("name");
     t.string("url");
     t.string("photoURL", { required: false });
-  }
+  },
 });
 
 const WorkspaceInput = inputObjectType({
@@ -37,11 +37,13 @@ const WorkspaceInput = inputObjectType({
   definition(t) {
     t.string("name");
     t.string("photoURL", { required: false });
-  }
+    t.string("url", { required: false });
+    t.upload("file", { required: false });
+  },
 });
 
 module.exports = {
   Workspace,
   NewWorkspaceInput,
-  WorkspaceInput
+  WorkspaceInput,
 };

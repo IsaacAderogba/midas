@@ -87,7 +87,7 @@ class UserAPI extends SQLDataSource {
   async updateUser(whereObj, user) {
     try {
       if (user.file) {
-        const fetchedUser = await this._readUser(whereObj);
+        const fetchedUser = await this.readUser(whereObj);
         const public_id = fetchedUser.photoId ? fetchedUser.photoId : v4();
 
         const { createReadStream } = await user.file;

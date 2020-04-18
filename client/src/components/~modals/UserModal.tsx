@@ -4,6 +4,7 @@ import React, { useState } from "react";
 // components
 import { Modal, Tabs, Input, Form, Button, Alert } from "antd";
 import { UploadPhoto } from "../elements/UploadPhoto";
+import { Box } from "../atoms/Layout";
 
 // helpers
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
@@ -72,14 +73,13 @@ const GeneralSettings: React.FC = () => {
 
   const uploadPhoto = (e: RcCustomRequestOptions) => {
     setUploading(true);
-    console.log(e)
     updateUser({
       variables: { userInput: { file: e.file } },
     });
   };
 
   return (
-    <div>
+    <Box>
       <UploadPhoto
         imageUrl={user?.avatarURL}
         loading={isUploading}
@@ -131,7 +131,7 @@ const GeneralSettings: React.FC = () => {
             <Alert closable key={i} message={message} type="error" showIcon />
           ))}
       </Form>
-    </div>
+    </Box>
   );
 };
 

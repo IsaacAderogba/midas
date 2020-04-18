@@ -1,6 +1,8 @@
 const { SQLDataSource } = require("datasource-sql");
 const { knexConfig } = require("../../../db/dbConfig");
 const { ROLES } = require("../permissions");
+const { cloudinaryUpload } = require("../utils");
+const { v4 } = require("uuid");
 
 const WORKSPACE_TABLE = "Workspace";
 const WORKSPACE_USER_TABLE = "Workspace_User";
@@ -41,6 +43,21 @@ class WorkspaceAPI extends SQLDataSource {
 
   async updateWorkspace(whereObj, workspace) {
     try {
+      if (workspace.file) {
+        const fetchedWorkspace = await this.readWorkspace(whereObj);
+        const public_id = fetchedWorkspace.photoId
+          ? fetchedWorkspace.photoId
+          : v4();
+
+        const { createReadStream } = await workspace.file;
+        
+        const stream = createReadStream();
+        const image = await cloudinaryUpload({ stream, public_id });
+        workspace.photoId = image.public_id;
+        workspace.photoURL = image.secure_url;
+
+        delete workspace.file;
+      }
       return this._updateWorkspace(whereObj, workspace);
     } catch (err) {
       console.log(err);
@@ -64,7 +81,7 @@ class WorkspaceAPI extends SQLDataSource {
    * Creates workspace and a user for that workspace
    */
   async _createWorkspaceBatch(workspace, userId) {
-    return this.knex.transaction(async trx => {
+    return this.knex.transaction(async (trx) => {
       let workspaceToReturn;
 
       await trx
@@ -76,7 +93,7 @@ class WorkspaceAPI extends SQLDataSource {
           const workspaceUser = {
             workspaceId: workspace.id,
             userId,
-            role: ROLES.owner
+            role: ROLES.owner,
           };
           trx(WORKSPACE_USER_TABLE)
             .insert(workspaceUser)
@@ -107,9 +124,7 @@ class WorkspaceAPI extends SQLDataSource {
   }
 
   _readWorkspace(whereObj) {
-    return this.knex(WORKSPACE_TABLE)
-      .where(whereObj)
-      .first();
+    return this.knex(WORKSPACE_TABLE).where(whereObj).first();
   }
 
   _updateWorkspace(whereObj, workspace) {
@@ -121,9 +136,7 @@ class WorkspaceAPI extends SQLDataSource {
   }
 
   _deleteWorkspace(whereObj) {
-    return this.knex(WORKSPACE_TABLE)
-      .where(whereObj)
-      .del();
+    return this.knex(WORKSPACE_TABLE).where(whereObj).del();
   }
 }
 

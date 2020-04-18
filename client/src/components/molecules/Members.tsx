@@ -1,18 +1,19 @@
 // modules
 import React, { useEffect, useState } from "react";
-import { css } from "styled-components/macro";
 
 // components
 import { List, Button, Empty } from "antd";
 import { UserAvatar } from "../elements/UserAvatar";
+import { Flex, Container } from "../atoms/Layout";
 
 // helpers
-import { styled } from "../../~reusables/contexts/ThemeProvider";
 import { useWorkspaceUsersLazyQuery } from "../../generated/graphql";
 import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
+import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 
 export const Members = () => {
+  const { space, colors, radii } = useTheme();
   const [initLoading, setInitLoading] = useState(true);
   const workspace = useWorkspaceStore((state) => state.workspace);
   const setModalState = useUIStore((state) => state.setModalState);
@@ -33,13 +34,15 @@ export const Members = () => {
 
   if (initLoading || loading || (data && data.workspaceUsers)) {
     return (
-      <StyledMembers>
-        <div
-          css={css`
-            display: flex;
-            justify-content: flex-end;
-          `}
-        >
+      <Container
+        margin={`0 ${space[8]}px 0 0`}
+        padding={`${space[6]}px ${space[6]}px`}
+        backgroundColor={colors.white}
+        border={`1px solid ${colors.greys[9]}`}
+        borderRadius={`${radii[2]}px`}
+        flexDirection="column"
+      >
+        <Flex justifyContent="flex-end">
           <Button
             onClick={() =>
               setModalState({ modal: "invite-workspace-user-modal", props: {} })
@@ -47,7 +50,7 @@ export const Members = () => {
           >
             Add member
           </Button>
-        </div>
+        </Flex>
         <List
           itemLayout="horizontal"
           loading={initLoading || loading}
@@ -65,27 +68,13 @@ export const Members = () => {
             </List.Item>
           )}
         />
-      </StyledMembers>
+      </Container>
     );
   }
 
   return (
-    <div
-      css={css`
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      `}
-    >
+    <Flex justifyContent="center" alignItems="center">
       <Empty />
-    </div>
+    </Flex>
   );
 };
-
-const StyledMembers = styled.div`
-  margin: ${(props) => `0 ${props.theme.space[8]}px 0 0`};
-  padding: ${(props) => `${props.theme.space[6]}px ${props.theme.space[6]}px`};
-  background: ${(props) => props.theme.colors.white};
-  border: 1px solid ${(p) => p.theme.colors.greys[9]};
-  border-radius: ${(p) => p.theme.radii[2]}px;
-`;

@@ -212,8 +212,10 @@ type Workspace {
 }
 
 input WorkspaceInput {
+  file: Upload
   name: String
   photoURL: String
+  url: String
 }
 
 type WorkspaceUser {
