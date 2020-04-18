@@ -140,16 +140,20 @@ const ProjectItem: React.FC<{
             css={css`
               width: 100%;
               height: 160px;
+              border-bottom: 1px solid ${(p) => p.theme.colors.greys[9]};
             `}
           >
             <img
               css={css`
                 width: 100%;
                 height: 100%;
-                object-fit: cover;
+                object-fit: contain;
               `}
-              alt="dummy"
-              src={"https://via.placeholder.com/150"}
+              alt={project.title}
+              src={
+                project.thumbnailPhotoURL ||
+                "https://res.cloudinary.com/isaacaderogba/image/upload/v1587228543/plain-white-background-1480544970glP_hhtvgo.jpg"
+              }
             />
           </section>
           <section

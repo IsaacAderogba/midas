@@ -1921,16 +1921,6 @@
               "ofType": null
             },
             "defaultValue": null
-          },
-          {
-            "name": "photoURL",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -1945,16 +1935,6 @@
         "inputFields": [
           {
             "name": "name",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "photoURL",
             "description": "",
             "type": {
               "kind": "SCALAR",
@@ -2249,26 +2229,6 @@
             "defaultValue": null
           },
           {
-            "name": "thumbnailPhotoURL",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "thumbnailPhotoID",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
             "name": "inviteShareStatus",
             "description": "",
             "type": {
@@ -2429,17 +2389,7 @@
             "defaultValue": null
           },
           {
-            "name": "thumbnailPhotoURL",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "thumbnailPhotoID",
+            "name": "dataURL",
             "description": "",
             "type": {
               "kind": "SCALAR",

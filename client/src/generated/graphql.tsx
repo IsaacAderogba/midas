@@ -173,8 +173,6 @@ export enum MutationType {
 export type NewProjectInput = {
   workspaceUserId: Scalars['String'];
   title: Scalars['String'];
-  thumbnailPhotoURL?: Maybe<Scalars['String']>;
-  thumbnailPhotoID?: Maybe<Scalars['String']>;
   inviteShareStatus?: Maybe<ProjectInviteShareStatus>;
   inviteSharePrivileges?: Maybe<ProjectInviteSharePrivileges>;
 };
@@ -182,7 +180,6 @@ export type NewProjectInput = {
 export type NewWorkspaceInput = {
   name?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
-  photoURL?: Maybe<Scalars['String']>;
 };
 
 export type NewWorkspaceUserInput = {
@@ -212,8 +209,7 @@ export type Project = {
 export type ProjectInput = {
   workspaceUserId?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
-  thumbnailPhotoURL?: Maybe<Scalars['String']>;
-  thumbnailPhotoID?: Maybe<Scalars['String']>;
+  dataURL?: Maybe<Scalars['String']>;
   inviteShareStatus?: Maybe<ProjectInviteShareStatus>;
   inviteSharePrivileges?: Maybe<ProjectInviteSharePrivileges>;
   elements?: Maybe<Scalars['String']>;
@@ -321,7 +317,6 @@ export type Workspace = {
 
 export type WorkspaceInput = {
   name?: Maybe<Scalars['String']>;
-  photoURL?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
   file?: Maybe<Scalars['Upload']>;
 };

@@ -28,7 +28,6 @@ const NewWorkspaceInput = inputObjectType({
   definition(t) {
     t.string("name");
     t.string("url");
-    t.string("photoURL", { required: false });
   },
 });
 
@@ -36,7 +35,6 @@ const WorkspaceInput = inputObjectType({
   name: "WorkspaceInput",
   definition(t) {
     t.string("name");
-    t.string("photoURL", { required: false });
     t.string("url", { required: false });
     t.upload("file", { required: false });
   },

@@ -1,7 +1,7 @@
 const { SQLDataSource } = require("datasource-sql");
 const { knexConfig } = require("../../../db/dbConfig");
 const { ROLES } = require("../permissions");
-const { cloudinaryUpload } = require("../utils");
+const { cloudinaryStreamUpload } = require("../utils");
 const { v4 } = require("uuid");
 
 const WORKSPACE_TABLE = "Workspace";
@@ -52,10 +52,9 @@ class WorkspaceAPI extends SQLDataSource {
         const { createReadStream } = await workspace.file;
         
         const stream = createReadStream();
-        const image = await cloudinaryUpload({ stream, public_id });
+        const image = await cloudinaryStreamUpload({ stream, public_id });
         workspace.photoId = image.public_id;
         workspace.photoURL = image.secure_url;
-
         delete workspace.file;
       }
       return this._updateWorkspace(whereObj, workspace);

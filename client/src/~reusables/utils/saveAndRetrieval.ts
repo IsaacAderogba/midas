@@ -5,11 +5,11 @@ import {
   getElementAbsoluteX1,
   getElementAbsoluteX2,
   getElementAbsoluteY1,
-  getElementAbsoluteY2
+  getElementAbsoluteY2,
 } from "./coords";
 import {
   LOCAL_STORAGE_MIDAS_KEY,
-  LOCAL_STORAGE_MIDAS_STATE_KEY
+  LOCAL_STORAGE_MIDAS_STATE_KEY,
 } from "../constants/constants";
 import { generateDraw } from "./element";
 import { renderScene } from "./canvas";
@@ -19,7 +19,7 @@ export function saveAsJSON(elements: MidasElement[]) {
   const serialized = JSON.stringify({
     version: 1,
     source: window.location.origin,
-    elements
+    elements,
   });
 
   saveFile(
@@ -45,7 +45,7 @@ export function loadFromJSON(elements: MidasElement[]) {
 
   input.click();
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     reader.onloadend = () => {
       if (reader.readyState === FileReader.DONE) {
         const data = JSON.parse(reader.result as string);
@@ -60,14 +60,20 @@ interface IExportPNG {
   exportBackground: boolean;
   exportPadding?: number;
   viewBackgroundColor: string;
+  saveToDisk?: boolean;
 }
 
 export function exportAsPNG(
-  { exportBackground, exportPadding = 10, viewBackgroundColor }: IExportPNG,
+  {
+    exportBackground,
+    exportPadding = 10,
+    viewBackgroundColor,
+    saveToDisk = true,
+  }: IExportPNG,
   canvas: HTMLCanvasElement,
   elements: MidasElement[]
 ) {
-  if (!elements.length) return window.alert("Cannot export empty canvas.");
+  if (!elements.length) return;
 
   // calculate smallest area to fit the contents in
 
@@ -76,7 +82,7 @@ export function exportAsPNG(
   let subCanvasY1 = Infinity;
   let subCanvasY2 = 0;
 
-  elements.forEach(element => {
+  elements.forEach((element) => {
     subCanvasX1 = Math.min(subCanvasX1, getElementAbsoluteX1(element));
     subCanvasX2 = Math.max(subCanvasX2, getElementAbsoluteX2(element));
     subCanvasY1 = Math.min(subCanvasY1, getElementAbsoluteY1(element));
@@ -99,7 +105,7 @@ export function exportAsPNG(
     {
       viewBackgroundColor: exportBackground ? viewBackgroundColor : null,
       scrollX: 0,
-      scrollY: 0
+      scrollY: 0,
     },
     elements,
     [],
@@ -107,14 +113,18 @@ export function exportAsPNG(
       offsetX: -subCanvasX1 + exportPadding,
       offsetY: -subCanvasY1 + exportPadding,
       renderScrollbars: false,
-      renderSelection: false
+      renderSelection: false,
     }
   );
 
-  saveFile("midas.png", tempCanvas.toDataURL("image/png"));
+  const dataURL = tempCanvas.toDataURL("image/png");
+  if (saveToDisk) {
+    saveFile("midas.png", dataURL);
+  }
 
   // clean up the DOM
   if (tempCanvas !== canvas) tempCanvas.remove();
+  return dataURL;
 }
 
 export function saveFile(name: string, data: string) {
@@ -135,7 +145,7 @@ export const canvasStoreWhiteList: (keyof ICanvasStore)[] = [
   "exportBackground",
   "currentItemStrokeColor",
   "currentItemBackgroundColor",
-  "viewBackgroundColor"
+  "viewBackgroundColor",
 ];
 
 export function save(state: ICanvasStore, elements: MidasElement[]) {

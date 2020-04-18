@@ -80,7 +80,10 @@ const Project = objectType({
     t.string("elements", { nullable: true });
     t.string("createdAt", { nullable: false });
     t.string("updatedAt", { nullable: false });
-    t.list.field("collaborators", { type: CollaboratorPayload, nullable: true });
+    t.list.field("collaborators", {
+      type: CollaboratorPayload,
+      nullable: true,
+    });
     t.field("workspace", {
       type: Workspace,
       resolve: async (project, args, { dataSources }) => {
@@ -106,8 +109,6 @@ const NewProjectInput = inputObjectType({
     // workspaceId and workspaceUserId will be passed in through the context
     t.string("workspaceUserId", { required: true });
     t.string("title", { required: true });
-    t.string("thumbnailPhotoURL", { required: false });
-    t.string("thumbnailPhotoID", { required: false });
     t.field("inviteShareStatus", {
       type: ProjectInviteShareStatus,
       required: false,
@@ -125,8 +126,7 @@ const ProjectInput = inputObjectType({
     // middleware to check if it's completely empty
     t.string("workspaceUserId", { required: false });
     t.string("title", { required: false });
-    t.string("thumbnailPhotoURL", { required: false });
-    t.string("thumbnailPhotoID", { required: false });
+    t.string("dataURL", { required: false });
     t.field("inviteShareStatus", {
       type: ProjectInviteShareStatus,
       required: false,
@@ -152,7 +152,10 @@ const ProjectSubscriptionPayload = objectType({
   name: "ProjectSubscriptionPayload",
   definition(t) {
     t.field("mutation", { type: MutationType, nullable: true });
-    t.field("collaboratorPayload", { type: CollaboratorPayload, nullable: true });
+    t.field("collaboratorPayload", {
+      type: CollaboratorPayload,
+      nullable: true,
+    });
     t.field("data", { type: Project, nullable: true });
     t.list.string("updatedFields", { nullable: true });
   },

@@ -46,14 +46,11 @@ export interface NexusGenInputs {
   NewProjectInput: { // input type
     inviteSharePrivileges?: NexusGenEnums['ProjectInviteSharePrivileges'] | null; // ProjectInviteSharePrivileges
     inviteShareStatus?: NexusGenEnums['ProjectInviteShareStatus'] | null; // ProjectInviteShareStatus
-    thumbnailPhotoID?: string | null; // String
-    thumbnailPhotoURL?: string | null; // String
     title: string; // String!
     workspaceUserId: string; // String!
   }
   NewWorkspaceInput: { // input type
     name?: string | null; // String
-    photoURL?: string | null; // String
     url?: string | null; // String
   }
   NewWorkspaceUserInput: { // input type
@@ -62,11 +59,10 @@ export interface NexusGenInputs {
     workspaceId: number; // Int!
   }
   ProjectInput: { // input type
+    dataURL?: string | null; // String
     elements?: string | null; // String
     inviteSharePrivileges?: NexusGenEnums['ProjectInviteSharePrivileges'] | null; // ProjectInviteSharePrivileges
     inviteShareStatus?: NexusGenEnums['ProjectInviteShareStatus'] | null; // ProjectInviteShareStatus
-    thumbnailPhotoID?: string | null; // String
-    thumbnailPhotoURL?: string | null; // String
     title?: string | null; // String
     workspaceUserId?: string | null; // String
   }
@@ -92,7 +88,6 @@ export interface NexusGenInputs {
   WorkspaceInput: { // input type
     file?: any | null; // Upload
     name?: string | null; // String
-    photoURL?: string | null; // String
     url?: string | null; // String
   }
   WorkspaceUserInput: { // input type

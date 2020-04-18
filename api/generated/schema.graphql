@@ -89,15 +89,12 @@ enum MutationType {
 input NewProjectInput {
   inviteSharePrivileges: ProjectInviteSharePrivileges
   inviteShareStatus: ProjectInviteShareStatus
-  thumbnailPhotoID: String
-  thumbnailPhotoURL: String
   title: String!
   workspaceUserId: String!
 }
 
 input NewWorkspaceInput {
   name: String
-  photoURL: String
   url: String
 }
 
@@ -125,11 +122,10 @@ type Project {
 }
 
 input ProjectInput {
+  dataURL: String
   elements: String
   inviteSharePrivileges: ProjectInviteSharePrivileges
   inviteShareStatus: ProjectInviteShareStatus
-  thumbnailPhotoID: String
-  thumbnailPhotoURL: String
   title: String
   workspaceUserId: String
 }
@@ -214,7 +210,6 @@ type Workspace {
 input WorkspaceInput {
   file: Upload
   name: String
-  photoURL: String
   url: String
 }
 

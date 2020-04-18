@@ -13,7 +13,7 @@ import {
 } from "@ant-design/icons";
 import { CanvasIconWrapper } from "../../components/atoms/CanvasIconWrapper";
 import { Button, Avatar, Tooltip } from "antd";
-import { Container } from "../../components/atoms/Layout";
+import { Container, Box } from "../../components/atoms/Layout";
 import { CanvasShapes } from "../../components/elements/CanvasShapes";
 
 // helpers
@@ -119,24 +119,26 @@ export const CanvasTopbar: React.FC = () => {
                 placement="bottom"
                 title={`${firstName} ${lastName}`}
               >
-                <UserAvatar
-                  style={
-                    avatarURL
-                      ? {
-                          marginRight: space[6],
-                          border: `2px solid ${color}`,
-                        }
-                      : {
-                          marginRight: space[6],
-                          background: `${color}`,
-                          fontWeight: "bold",
-                        }
-                  }
-                  user={{
-                    firstName: firstName ? firstName : "Anon",
-                    avatarURL,
-                  }}
-                />
+                <Box>
+                  <UserAvatar
+                    style={
+                      avatarURL
+                        ? {
+                            marginRight: space[6],
+                            border: `2px solid ${color}`,
+                          }
+                        : {
+                            marginRight: space[6],
+                            background: `${color}`,
+                            fontWeight: "bold",
+                          }
+                    }
+                    user={{
+                      firstName: firstName ? firstName : "Anon",
+                      avatarURL,
+                    }}
+                  />
+                </Box>
               </Tooltip>
             );
           }
@@ -145,7 +147,7 @@ export const CanvasTopbar: React.FC = () => {
           type="primary"
           style={{ marginRight: space[6] }}
           onClick={() => {
-            if (canvasRef.current) {
+            if (canvasRef && canvasRef.current) {
               exportAsPNG(
                 { exportBackground, viewBackgroundColor },
                 canvasRef.current,

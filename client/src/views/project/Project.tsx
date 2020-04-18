@@ -1,5 +1,6 @@
 // modules
 import React, { useEffect } from "react";
+import { useContextSelector } from "use-context-selector";
 import _ from "lodash";
 
 // components
@@ -13,27 +14,38 @@ import { Box } from "../../components/atoms/Layout";
 import {
   useProjectSubscription,
   CanvasScene,
-  useUpdateProjectMutation
+  useUpdateProjectMutation,
 } from "../../generated/graphql";
 import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
 import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
 import { getRandomColor } from "../../~reusables/utils/colors";
+import { exportAsPNG } from "../../~reusables/utils/saveAndRetrieval";
+import { CanvasContext } from "../../~reusables/contexts/CanvasProvider";
 
 export const Project: React.FC = () => {
-  const user = useAuthStore(state => state.user);
+  const user = useAuthStore((state) => state.user);
+  const { viewBackgroundColor, canvasRef } = useContextSelector(
+    CanvasContext,
+    (state) => ({
+      viewBackgroundColor: state.viewBackgroundColor,
+      canvasRef: state.canvasRef,
+    })
+  );
 
   let {
     project,
     removeCollaborator,
     addCollaborator,
     updateCollaborator,
-    updateScene
-  } = useProjectStore(state => ({
+    updateScene,
+    elements,
+  } = useProjectStore((state) => ({
     project: state.project,
     addCollaborator: state.addCollaborator,
     removeCollaborator: state.removeCollaborator,
     updateCollaborator: state.updateCollaborator,
-    updateScene: state.updateScene
+    updateScene: state.updateScene,
+    elements: state.elements,
   }));
 
   const [updateProject] = useUpdateProjectMutation({ ignoreResults: true });
@@ -47,7 +59,7 @@ export const Project: React.FC = () => {
           pointerCoordX,
           pointerCoordY,
           canvasScene,
-          userId
+          userId,
         } = collaboratorPayload;
 
         switch (canvasScene) {
@@ -55,7 +67,7 @@ export const Project: React.FC = () => {
             addCollaborator({
               ...collaboratorPayload,
               pointerCoordX: null,
-              pointerCoordY: null
+              pointerCoordY: null,
             });
             break;
           case CanvasScene.ClientDisconnect:
@@ -66,7 +78,7 @@ export const Project: React.FC = () => {
               updateCollaborator({
                 userId,
                 pointerCoordX,
-                pointerCoordY
+                pointerCoordY,
               });
             }
             break;
@@ -79,7 +91,7 @@ export const Project: React.FC = () => {
             break;
         }
       }
-    }
+    },
   });
 
   useEffect(() => {
@@ -94,22 +106,37 @@ export const Project: React.FC = () => {
             "workspaces",
             "photoId",
             "isVerified",
-            "id"
+            "id",
           ]),
-          canvasScene: CanvasScene.ClientConnect
-        }
-      }
+          canvasScene: CanvasScene.ClientConnect,
+        },
+      },
     });
 
     return () => {
+      let dataURL: string | undefined;
+      if (canvasRef.current) {
+        dataURL = exportAsPNG(
+          {
+            exportBackground: true,
+            viewBackgroundColor,
+            saveToDisk: false,
+            exportPadding: 40
+          },
+          canvasRef.current,
+          elements
+        );
+      }
+
       updateProject({
         variables: {
           where: { id: project?.id },
+          projectInput: { dataURL: dataURL ? dataURL : "" },
           collaboratorPayloadInput: {
             userId: user ? user.id : "",
-            canvasScene: CanvasScene.ClientDisconnect
-          }
-        }
+            canvasScene: CanvasScene.ClientDisconnect,
+          },
+        },
       });
     };
   }, []);

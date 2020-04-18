@@ -279,7 +279,6 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas, {scrollX:
           style={{
             width: canvasWidth,
             height: canvasHeight,
-            border: "1px solid red",
           }}
           width={canvasWidth * window.devicePixelRatio}
           height={canvasHeight * window.devicePixelRatio}
@@ -299,8 +298,6 @@ export class StatelessCanvas extends React.Component<IStatelessCanvas, {scrollX:
 
               // Whenever React sets the width/height of the canvas element,
               // the context loses the scale transform. We need to re-apply it
-              console.log(canvasWidth);
-              console.log(lastCanvasWidth);
               if (
                 canvasWidth !== lastCanvasWidth ||
                 canvasHeight !== lastCanvasHeight

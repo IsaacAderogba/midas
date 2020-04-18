@@ -8,7 +8,7 @@ const { knexConfig } = require("../../../db/dbConfig");
 const WorkspaceUserAPI = require("../workspace_user/workspaceUserDataSource");
 const Mailer = require("../../services/email/Mailer");
 const verificationTemplate = require("../../services/email/verificationTemplate");
-const { cloudinaryUpload } = require("../utils");
+const { cloudinaryStreamUpload } = require("../utils");
 
 // const MINUTE = 60;
 const USER_TABLE = "User";
@@ -93,7 +93,7 @@ class UserAPI extends SQLDataSource {
         const { createReadStream } = await user.file;
         const stream = createReadStream();
 
-        const image = await cloudinaryUpload({ stream, public_id });
+        const image = await cloudinaryStreamUpload({ stream, public_id });
         user.photoId = image.public_id;
         user.avatarURL = image.secure_url;
         delete user.file;

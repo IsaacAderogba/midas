@@ -125,8 +125,6 @@ const Mutation = extendType({
             projectInput ? projectInput : {}
           );
         }
-        console.log("UPDATED PROJECT", updatedProject);
-
         pubsub.publish(projectSubscriptionChannels.projects(user.workspaceId), {
           [projectSubscriptionKeys.projects]: {
             mutation: MutationEnum.UPDATED,

@@ -16,7 +16,7 @@ import { useCreateProjectMutation } from "../../generated/graphql";
 import { Members } from "../../components/molecules/Members";
 import { Settings } from "../../components/molecules/Settings";
 
-export const Workspace: React.FC<RouteComponentProps> = () => {
+export const Workspace: React.FC<RouteComponentProps> = ({history}) => {
   const { workspace, isWorkspaceLoading, workspaceUser } = useWorkspaceStore(
     (state) => ({
       workspace: state.workspace,
@@ -32,7 +32,11 @@ export const Workspace: React.FC<RouteComponentProps> = () => {
         workspaceUserId: workspaceUser ? workspaceUser.id : "",
       },
     },
-    update() {},
+    update(_, { data }) {
+      if(data && data.createProject) {
+        history.push(`/app/project/${data.createProject.id}`)
+      }
+    },
     onError() {},
   });
 

@@ -1,12 +1,13 @@
 const { SQLDataSource } = require("datasource-sql");
 const { knexConfig } = require("../../../db/dbConfig");
+const { cloudinaryDataURLUpload } = require("../utils");
+const { v4 } = require("uuid");
 
 const PROJECT_TABLE = "Project";
 
 class ProjectAPI extends SQLDataSource {
   async createProject(project) {
     try {
-      // TODO - update what's passed in with an updated at and created at
       return this._createProject({
         ...project,
         createdAt: new Date().toISOString(),
@@ -38,7 +39,21 @@ class ProjectAPI extends SQLDataSource {
 
   async updateProject(whereObj, project) {
     try {
-      // TODO - update what's passed in with an updated at and created at
+      if (project.dataURL) {
+        const fetchedProject = await this.readProject(whereObj);
+        const public_id = fetchedProject.thumbnailPhotoID
+          ? fetchedProject.thumbnailPhotoID
+          : v4();
+
+        const image = await cloudinaryDataURLUpload({
+          dataURL: project.dataURL,
+          public_id,
+        });
+        project.thumbnailPhotoID = image.public_id;
+        project.thumbnailPhotoURL = image.secure_url;
+      }
+      delete project.dataURL;
+
       return this._updateProject(whereObj, {
         ...project,
         updatedAt: new Date().toISOString(),
