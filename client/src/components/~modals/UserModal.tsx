@@ -10,6 +10,7 @@ import { useUIStore } from "../../~reusables/contexts/UIProvider";
 import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 import { useUpdateUserMutation } from "../../generated/graphql";
+import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 
 enum UserModalTabs {
   General = "General",
@@ -57,18 +58,32 @@ const GeneralSettings: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const [isUploading, setUploading] = useState(false);
   const { space } = useTheme();
-  const [updateUser, { loading, error }] = useUpdateUserMutation();
+  const [updateUser, { loading, error }] = useUpdateUserMutation({
+    onCompleted() {
+      setUploading(false);
+    },
+    onError() {
+      setUploading(false);
+    },
+  });
 
   const onFinish = (values: any) =>
     updateUser({ variables: { userInput: { ...values } } });
+
+  const uploadPhoto = (e: RcCustomRequestOptions) => {
+    setUploading(true);
+    console.log(e)
+    updateUser({
+      variables: { userInput: { file: e.file } },
+    });
+  };
 
   return (
     <div>
       <UploadPhoto
         imageUrl={user?.avatarURL}
         loading={isUploading}
-        beforeUpload={undefined}
-        onChange={undefined}
+        onUpload={uploadPhoto}
       />
       <Form
         layout="vertical"
@@ -108,7 +123,7 @@ const GeneralSettings: React.FC = () => {
             loading={loading}
             style={{ width: "100%", marginTop: `${space[5]}px` }}
           >
-            Update user
+            Update
           </Button>
         </Form.Item>
         {error &&

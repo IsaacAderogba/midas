@@ -302,7 +302,7 @@ export type User = {
 export type UserInput = {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
-  avatarUpload?: Maybe<Scalars['Upload']>;
+  file?: Maybe<Scalars['Upload']>;
   isVerified?: Maybe<Scalars['String']>;
   photoId?: Maybe<Scalars['String']>;
 };

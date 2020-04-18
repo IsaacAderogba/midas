@@ -1,12 +1,14 @@
 // TODO - Error Handling
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { v4 } = require("uuid");
 const { SQLDataSource } = require("datasource-sql");
 const { generateToken } = require("./userUtils");
 const { knexConfig } = require("../../../db/dbConfig");
 const WorkspaceUserAPI = require("../workspace_user/workspaceUserDataSource");
 const Mailer = require("../../services/email/Mailer");
 const verificationTemplate = require("../../services/email/verificationTemplate");
+const { cloudinaryUpload } = require("../utils");
 
 // const MINUTE = 60;
 const USER_TABLE = "User";
@@ -84,7 +86,19 @@ class UserAPI extends SQLDataSource {
 
   async updateUser(whereObj, user) {
     try {
-      console.log("USER UPLOAD", user);
+      if (user.file) {
+        const fetchedUser = await this._readUser(whereObj);
+        const public_id = fetchedUser.photoId ? fetchedUser.photoId : v4();
+
+        const { createReadStream } = await user.file;
+        const stream = createReadStream();
+
+        const image = await cloudinaryUpload({ stream, public_id });
+        user.photoId = image.public_id;
+        user.avatarURL = image.secure_url;
+        delete user.file;
+      }
+
       return this._updateUser(whereObj, user);
     } catch (err) {
       console.log(err);

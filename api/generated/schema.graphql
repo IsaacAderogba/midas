@@ -188,12 +188,12 @@ type User {
   id: ID!
   isVerified: Boolean!
   lastName: String!
-  photoId: Boolean
+  photoId: String
   workspaces: [Workspace!]
 }
 
 input UserInput {
-  avatarUpload: Upload
+  file: Upload
   firstName: String
   isVerified: String
   lastName: String

@@ -1852,7 +1852,7 @@
             "defaultValue": null
           },
           {
-            "name": "avatarUpload",
+            "name": "file",
             "description": "",
             "type": {
               "kind": "SCALAR",

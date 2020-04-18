@@ -54,11 +54,8 @@ const Mutation = extendType({
       args: {
         userInput: arg({ type: UserInput }),
       },
-      resolve: (parent, args, { dataSources, user }) => {
-        return dataSources.userAPI.updateUser(
-          { id: user.id },
-          { ...args.userInput }
-        );
+      resolve: async (parent, { userInput }, { dataSources, user }) => {
+        return dataSources.userAPI.updateUser({ id: user.id }, userInput);
       },
     });
     t.field(userMutationKeys.deleteUser, {

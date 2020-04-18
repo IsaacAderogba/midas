@@ -1,11 +1,10 @@
-// TODO - review helmet and cors
-// TODO - allow signup with google etc. (see Tandem)
 require("dotenv").config();
 const cors = require("cors");
 const helmet = require("helmet");
-const { makeSchema } = require("nexus");
+const cloudinary = require("cloudinary");
+const { makeSchema, asNexusMethod } = require("nexus");
 const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
+const { GraphQLUpload, ApolloServer } = require("apollo-server-express");
 const { applyMiddleware } = require("graphql-middleware");
 const path = require("path");
 const app = express();
@@ -16,6 +15,7 @@ const {
   redisPubSub,
 } = require("./services/redis/redis");
 
+
 const UserAPI = require("./resources/user/userDataSource");
 const WorkspaceAPI = require("./resources/workspace/workspaceDataSource");
 const WorkspaceUserAPI = require("./resources/workspace_user/workspaceUserDataSource");
@@ -23,12 +23,20 @@ const ProjectAPI = require("./resources/project/projectDataSource");
 
 const { Query, Mutation, Middleware, Subscription } = require("./resources");
 
+const Upload = asNexusMethod(GraphQLUpload, 'upload')
+
 const schema = makeSchema({
-  types: [Query, Mutation, Subscription],
+  types: [Upload, Query, Mutation, Subscription],
   outputs: {
     schema: __dirname + "/generated/schema.graphql",
     typegen: __dirname + "/generated/typings.ts",
   },
+});
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 app.use(helmet());

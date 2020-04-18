@@ -3,24 +3,32 @@ import React from "react";
 
 // components
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { Upload } from "antd";
+import { Upload, message } from "antd";
 import { UploadChangeParam } from "antd/lib/upload";
-import { UploadFile, RcFile } from "antd/lib/upload/interface";
+import { UploadFile, RcFile, RcCustomRequestOptions } from "antd/lib/upload/interface";
 
 interface IUploadPhoto {
   imageUrl: string | null | undefined;
   loading: boolean;
-  beforeUpload:
-    | ((file: RcFile, FileList: RcFile[]) => boolean | PromiseLike<void>)
-    | undefined;
-  onChange: ((info: UploadChangeParam<UploadFile<any>>) => void) | undefined;
+  onUpload: (option: RcCustomRequestOptions) => void;
+}
+
+function beforeUpload(file: RcFile) {
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+  if (!isJpgOrPng) {
+    message.error("You can only upload JPG/PNG file!");
+  }
+  const isLt1M = file.size / 1024 / 1024 < 1;
+  if (!isLt1M) {
+    message.error("Image must smaller than 1MB!");
+  }
+  return isJpgOrPng && isLt1M;
 }
 
 export const UploadPhoto: React.FC<IUploadPhoto> = ({
   imageUrl,
-  onChange,
-  beforeUpload,
   loading,
+  onUpload,
 }) => {
   const uploadButton = (
     <div>
@@ -35,9 +43,8 @@ export const UploadPhoto: React.FC<IUploadPhoto> = ({
       listType="picture-card"
       className="avatar-uploader"
       showUploadList={false}
-      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+      customRequest={onUpload}
       beforeUpload={beforeUpload}
-      onChange={onChange}
     >
       {imageUrl ? (
         <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />

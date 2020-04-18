@@ -1,6 +1,5 @@
 const { objectType, inputObjectType } = require("nexus");
 const { Workspace } = require("../workspace/workspaceTypes");
-const { GraphQLUpload } = require("apollo-server-express");
 
 const AuthUser = objectType({
   name: "AuthUser",
@@ -42,7 +41,7 @@ const User = objectType({
     t.boolean("isVerified", {
       nullable: false,
     });
-    t.boolean("photoId", {
+    t.string("photoId", {
       nullable: true,
     });
     t.list.field("workspaces", {
@@ -82,7 +81,7 @@ const UserInput = inputObjectType({
     // exclude email and password from being updated for now
     t.string("firstName", { required: false });
     t.string("lastName", { required: false });
-    t.field("avatarUpload", { type: GraphQLUpload, required: false });
+    t.upload("file", { required: false });
     t.string("isVerified", { required: false });
     t.string("photoId", { required: false });
   },

@@ -21,6 +21,7 @@
     "apollo-server-cache-redis": "^1.1.5",
     "apollo-server-express": "^2.11.0",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.21.0",
     "concurrently": "^5.1.0",
     "cors": "^2.8.5",
     "datasource-sql": "^1.1.1",

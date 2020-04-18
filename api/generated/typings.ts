@@ -4,9 +4,17 @@
  */
 
 
-
-
-
+import { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    upload<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Upload";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    upload<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Upload";
+  }
+}
 
 
 declare global {
@@ -75,7 +83,7 @@ export interface NexusGenInputs {
     password: string; // String!
   }
   UserInput: { // input type
-    avatarUpload?: any | null; // Upload
+    file?: any | null; // Upload
     firstName?: string | null; // String
     isVerified?: string | null; // String
     lastName?: string | null; // String
@@ -159,7 +167,7 @@ export interface NexusGenRootTypes {
     id: string; // ID!
     isVerified: boolean; // Boolean!
     lastName: string; // String!
-    photoId?: boolean | null; // Boolean
+    photoId?: string | null; // String
   }
   Workspace: { // root type
     id: string; // ID!
@@ -294,7 +302,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     isVerified: boolean; // Boolean!
     lastName: string; // String!
-    photoId: boolean | null; // Boolean
+    photoId: string | null; // String
     workspaces: NexusGenRootTypes['Workspace'][] | null; // [Workspace!]
   }
   Workspace: { // field return type
