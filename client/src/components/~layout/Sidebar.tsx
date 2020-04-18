@@ -7,6 +7,7 @@ import { Logo } from "../atoms/Logo";
 import { H6, H5 } from "../atoms/Text";
 import { PlusOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
+import { Flex, Container, Box } from "../atoms/Layout";
 
 // helpers
 import { styled, useTheme } from "../../~reusables/contexts/ThemeProvider";
@@ -22,16 +23,12 @@ export const Sidebar = () => {
 
   return (
     <StyledSidebar>
-      <section>
+      <Container flexDirection="column">
         <Logo />
-        <div
-          css={css`
-            padding: ${(p) => p.theme.space[8]}px 0 ${(p) => p.theme.space[5]}px
-              0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          `}
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          padding={`${space[8]}px 0 ${space[5]}px 0;`}
         >
           <H6 color={colors.greys[4]}>WORKSPACES</H6>
           <PlusOutlined
@@ -44,20 +41,19 @@ export const Sidebar = () => {
               fontSize: fontSizes[3],
             }}
           />
-        </div>
+        </Flex>
         {workspaces.map((workspace) => (
           <WorkspaceItem key={workspace.id} workspace={workspace} />
         ))}
-      </section>
-      <section
+      </Container>
+      <Flex
+        margin={`${space[6]}px 0`}
+        alignItems="center"
         onClick={() => {
           localStorage.clear();
           window.location.reload();
         }}
         css={css`
-          margin: ${(p) => p.theme.space[6]}px 0;
-          display: flex;
-          align-items: center;
           cursor: pointer;
         `}
       >
@@ -70,7 +66,7 @@ export const Sidebar = () => {
           }}
         />
         <H5 color={colors.greys[4]}>Log out</H5>
-      </section>
+      </Flex>
     </StyledSidebar>
   );
 };
@@ -90,7 +86,7 @@ const StyledSidebar = styled.aside`
 const WorkspaceItem: React.FC<{
   workspace: GetWorkspacesQuery["workspaces"][0];
 }> = ({ workspace: { id, name, photoURL } }) => {
-  const { fontSizes, colors, radii } = useTheme();
+  const { fontSizes, colors, radii, space } = useTheme();
   const { workspace, setWorkspace } = useWorkspaceStore((state) => ({
     workspace: state.workspace,
     setWorkspace: state.setWorkspace,
@@ -98,19 +94,18 @@ const WorkspaceItem: React.FC<{
   const isCurrentWorkspace = workspace?.id === id;
 
   return (
-    <section
+    <Flex
+      alignItems="center"
+      margin={`${space[4]}px 0`}
+      padding={`${space[3]}px ${space[5]}px`}
+      borderRadius={`${radii[2]}px`}
       onClick={() => {
         if (isCurrentWorkspace) return;
         setWorkspace(id);
       }}
       css={css`
-        display: flex;
-        align-items: center;
         cursor: pointer;
         background: ${isCurrentWorkspace ? colors.secondary : "auto"};
-        border-radius: ${radii[2]}px;
-        margin: ${(p) => p.theme.space[5]}px 0;
-        padding: ${(p) => p.theme.space[3]}px ${(p) => p.theme.space[5]}px;
         &:hover {
           transition: 120ms ease-in-out;
           opacity: ${isCurrentWorkspace ? 0.8 : 1};
@@ -120,11 +115,7 @@ const WorkspaceItem: React.FC<{
         }
       `}
     >
-      <div
-        css={css`
-          margin-right: ${(p) => p.theme.space[5]}px;
-        `}
-      >
+      <Box marginRight={`${space[5]}px`}>
         {photoURL ? (
           <Avatar
             size={fontSizes[4]}
@@ -144,10 +135,10 @@ const WorkspaceItem: React.FC<{
             {name[0].toUpperCase()}
           </Avatar>
         )}
-      </div>
+      </Box>
       <H5 color={isCurrentWorkspace ? colors.white : colors.greys[4]}>
         {name}
       </H5>
-    </section>
+    </Flex>
   );
 };

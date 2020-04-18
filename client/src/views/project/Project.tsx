@@ -7,6 +7,7 @@ import { CanvasTopbar } from "./CanvasTopbar";
 import { AssetsSidebar } from "./AssetsSidebar";
 import { CustomizeSidebar } from "./CustomizeSidebar";
 import { StatefulCanvas } from "./StatefulCanvas";
+import { Box } from "../../components/atoms/Layout";
 
 // helpers
 import {
@@ -114,11 +115,11 @@ export const Project: React.FC = () => {
   }, []);
 
   return (
-    <section>
+    <Box>
       <CanvasTopbar />
       <AssetsSidebar />
       <StatefulCanvas />
       <CustomizeSidebar />
-    </section>
+    </Box>
   );
 };

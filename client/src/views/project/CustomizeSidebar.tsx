@@ -1,10 +1,10 @@
 // modules
 import React from "react";
 import { useContextSelector } from "use-context-selector";
-import { css } from "styled-components/macro";
 
 // components
 import { CanvasSidebar } from "../../components/~layout/CanvasSidebar";
+import { Box, Container } from "../../components/atoms/Layout";
 import { Button } from "antd";
 
 // helpers
@@ -21,13 +21,14 @@ import {
   moveAllRight,
 } from "../../~reusables/utils/zindex";
 import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
-import { styled } from "../../~reusables/contexts/ThemeProvider";
+import { styled, useTheme } from "../../~reusables/contexts/ThemeProvider";
 
 const StyledButton = styled(Button)`
   width: 100%;
 `;
 
 export const CustomizeSidebar: React.FC = () => {
+  const { space, colors } = useTheme();
   const elements = useProjectStore((state) => state.elements);
   const { forceCanvasUpdate } = useContextSelector(CanvasContext, (state) => ({
     forceCanvasUpdate: state.forceCanvasUpdate,
@@ -36,13 +37,8 @@ export const CustomizeSidebar: React.FC = () => {
   return (
     <CanvasSidebar align="right">
       {someElementIsSelected(elements) && (
-        <div className="panelColumn">
-          <div
-            css={css`
-              padding: ${(p) => p.theme.space[6]}px;
-              border-bottom: 1px solid ${(p) => p.theme.colors.greys[8]};
-            `}
-          >
+        <Container flexDirection="column">
+          <Box padding={space[6]} borderBottom={`1px solid ${colors.greys[8]}`}>
             <StyledButton
               onClick={() =>
                 deleteSelectedElements(elements, forceCanvasUpdate)
@@ -50,13 +46,8 @@ export const CustomizeSidebar: React.FC = () => {
             >
               Delete
             </StyledButton>
-          </div>
-          <div
-            css={css`
-              padding: ${(p) =>
-                `${p.theme.space[6]}px ${p.theme.space[6]}px ${p.theme.space[4]}px`};
-            `}
-          >
+          </Box>
+          <Box padding={`${space[6]}px ${space[6]}px ${space[4]}px`}>
             <StyledButton
               onClick={() =>
                 moveOneRight(
@@ -68,13 +59,8 @@ export const CustomizeSidebar: React.FC = () => {
             >
               Bring forward
             </StyledButton>
-          </div>
-          <div
-            css={css`
-              padding: ${(p) =>
-                `${p.theme.space[6]}px ${p.theme.space[6]}px ${p.theme.space[4]}px`};
-            `}
-          >
+          </Box>
+          <Box padding={`${space[6]}px ${space[6]}px ${space[4]}px`}>
             <StyledButton
               onClick={() =>
                 moveAllRight(
@@ -86,13 +72,8 @@ export const CustomizeSidebar: React.FC = () => {
             >
               Bring to front
             </StyledButton>
-          </div>
-          <div
-            css={css`
-              padding: ${(p) =>
-                `${p.theme.space[6]}px ${p.theme.space[6]}px ${p.theme.space[4]}px`};
-            `}
-          >
+          </Box>
+          <Box padding={`${space[6]}px ${space[6]}px ${space[4]}px`}>
             <StyledButton
               onClick={() =>
                 moveOneLeft(
@@ -104,13 +85,8 @@ export const CustomizeSidebar: React.FC = () => {
             >
               Send backward
             </StyledButton>
-          </div>
-          <div
-            css={css`
-              padding: ${(p) =>
-                `${p.theme.space[6]}px ${p.theme.space[6]}px ${p.theme.space[4]}px`};
-            `}
-          >
+          </Box>
+          <Box padding={`${space[6]}px ${space[6]}px ${space[4]}px`}>
             <StyledButton
               onClick={() => {
                 moveAllLeft(
@@ -122,8 +98,8 @@ export const CustomizeSidebar: React.FC = () => {
             >
               Send to back
             </StyledButton>
-          </div>
-        </div>
+          </Box>
+        </Container>
       )}
     </CanvasSidebar>
   );

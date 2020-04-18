@@ -23,7 +23,7 @@ export function saveAsJSON(elements: MidasElement[]) {
   });
 
   saveFile(
-    "excalidraw.json",
+    "midas.json",
     "data:text/plain;charset=utf-8," + encodeURIComponent(serialized)
   );
 }
@@ -111,7 +111,7 @@ export function exportAsPNG(
     }
   );
 
-  saveFile("excalidraw.png", tempCanvas.toDataURL("image/png"));
+  saveFile("midas.png", tempCanvas.toDataURL("image/png"));
 
   // clean up the DOM
   if (tempCanvas !== canvas) tempCanvas.remove();

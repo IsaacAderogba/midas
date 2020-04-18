@@ -10,7 +10,7 @@ import {
 import { withCustomMathRandom, randomSeed } from "./seed";
 import { RoughCanvas } from "roughjs/bin/canvas";
 import { KEYS } from "../constants/constants";
-import { SHAPES } from "../../views/project/CanvasTopbar";
+import { CanvasShapes } from "../../components/elements/CanvasShapes";
 
 // Casting second argument (DrawingSurface) to any,
 // because it is requred by TS definitions and not required at runtime
@@ -59,7 +59,7 @@ export function getSelectedIndices(elements: MidasElement[]) {
 
 export function findElementByKey(key: string) {
   const defaultElement = "selection";
-  return SHAPES.reduce((element, shape) => {
+  return CanvasShapes.reduce((element, shape) => {
     if (shape.value[0] !== key) return element;
 
     return shape.value;

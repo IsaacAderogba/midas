@@ -2,7 +2,7 @@
 import React from "react";
 
 // components
-import { Container } from "./Container";
+import { PageContainer } from "./PageContainer";
 import { Button } from "antd";
 import { Logo } from "../atoms/Logo";
 
@@ -37,7 +37,7 @@ export const MarketingHeader: React.FC = () => {
   );
 };
 
-const StyledMarketingHeader = styled(Container)`
+const StyledMarketingHeader = styled(PageContainer)`
   padding-top: ${p => p.theme.space[7]}px;
   display: flex;
   justify-content: space-between;

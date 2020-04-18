@@ -3,7 +3,7 @@ import React from "react";
 import { css } from "styled-components/macro";
 
 // components
-import { SHAPES } from "./CanvasTopbar";
+import { CanvasShapes } from "../../components/elements/CanvasShapes";
 
 // helpers
 import { MidasElement } from "../../~reusables/utils/types";
@@ -41,7 +41,6 @@ import {
   isArrowKey,
 } from "../../~reusables/utils/element";
 import {
-  CanvasContext,
   ICanvasState,
 } from "../../~reusables/contexts/CanvasProvider";
 import {
@@ -54,7 +53,7 @@ import { ICollaborator } from "../../~reusables/contexts/ProjectProvider";
 
 let skipHistory = false;
 const stateHistory: string[] = [];
-const shapesShortcutKeys = SHAPES.map((shape) => shape.value[0]);
+const shapesShortcutKeys = CanvasShapes.map((shape) => shape.value[0]);
 let lastCanvasWidth = -1;
 let lastCanvasHeight = -1;
 let lastMouseUp: ((e: any) => void) | null = null;
