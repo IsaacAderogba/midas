@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { css } from "styled-components/macro";
 
 // components
-import { List, Avatar, Button, Empty } from "antd";
+import { List, Button, Empty } from "antd";
+import { UserAvatar } from "../elements/UserAvatar";
 
 // helpers
 import { styled } from "../../~reusables/contexts/ThemeProvider";
@@ -57,15 +58,7 @@ export const Members = () => {
           }) => (
             <List.Item>
               <List.Item.Meta
-                avatar={
-                  avatarURL ? (
-                    <Avatar src={avatarURL} />
-                  ) : (
-                    <Avatar>
-                      {firstName ? firstName[0].toUpperCase() : ""}
-                    </Avatar>
-                  )
-                }
+                avatar={<UserAvatar user={{ firstName, avatarURL }} />}
                 title={`${firstName} ${lastName}`}
                 description={`${role} - ${email}`}
               />

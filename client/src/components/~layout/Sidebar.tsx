@@ -15,16 +15,22 @@ import { SIDEBAR_WIDTH } from "../../~reusables/constants/dimensions";
 import { GetWorkspacesQuery } from "../../generated/graphql";
 import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
+import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
+import { UserAvatar } from "../elements/UserAvatar";
 
 export const Sidebar = () => {
   const { colors, fontSizes, space } = useTheme();
+  const user = useAuthStore((state) => state.user);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const setModalState = useUIStore((state) => state.setModalState);
 
   return (
     <StyledSidebar>
       <Container flexDirection="column">
-        <Logo />
+        <Flex justifyContent="space-between" alignItems="center">
+          <Logo />
+          <UserAvatar user={user} />
+        </Flex>
         <Flex
           justifyContent="space-between"
           alignItems="center"

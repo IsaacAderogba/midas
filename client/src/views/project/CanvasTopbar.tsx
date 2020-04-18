@@ -14,7 +14,7 @@ import {
 import { CanvasIconWrapper } from "../../components/atoms/CanvasIconWrapper";
 import { Button, Avatar, Tooltip } from "antd";
 import { Container } from "../../components/atoms/Layout";
-import { CanvasShapes } from '../../components/elements/CanvasShapes';
+import { CanvasShapes } from "../../components/elements/CanvasShapes";
 
 // helpers
 import { CANVAS_TOPBAR_HEIGHT } from "../../~reusables/constants/dimensions";
@@ -26,6 +26,7 @@ import {
   exportAsPNG,
 } from "../../~reusables/utils/saveAndRetrieval";
 import { useProjectStore } from "../../~reusables/contexts/ProjectProvider";
+import { UserAvatar } from "../../components/elements/UserAvatar";
 
 export const CanvasTopbar: React.FC = () => {
   const { space } = useTheme();
@@ -118,25 +119,24 @@ export const CanvasTopbar: React.FC = () => {
                 placement="bottom"
                 title={`${firstName} ${lastName}`}
               >
-                {avatarURL ? (
-                  <Avatar
-                    style={{
-                      marginRight: space[6],
-                      border: `2px solid ${color}`,
-                    }}
-                    src={avatarURL}
-                  />
-                ) : (
-                  <Avatar
-                    style={{
-                      marginRight: space[6],
-                      background: `${color}`,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {firstName ? firstName[0].toUpperCase() : ""}
-                  </Avatar>
-                )}
+                <UserAvatar
+                  style={
+                    avatarURL
+                      ? {
+                          marginRight: space[6],
+                          border: `2px solid ${color}`,
+                        }
+                      : {
+                          marginRight: space[6],
+                          background: `${color}`,
+                          fontWeight: "bold",
+                        }
+                  }
+                  user={{
+                    firstName: firstName ? firstName : "Anon",
+                    avatarURL,
+                  }}
+                />
               </Tooltip>
             );
           }
