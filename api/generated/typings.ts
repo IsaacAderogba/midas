@@ -75,7 +75,7 @@ export interface NexusGenInputs {
     password: string; // String!
   }
   UserInput: { // input type
-    avatarURL?: string | null; // String
+    avatarUpload?: any | null; // Upload
     firstName?: string | null; // String
     isVerified?: string | null; // String
     lastName?: string | null; // String
@@ -183,6 +183,7 @@ export interface NexusGenRootTypes {
   Float: number;
   Boolean: boolean;
   ID: string;
+  Upload: any;
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
@@ -396,7 +397,7 @@ export type NexusGenEnumNames = "CanvasScene" | "MutationType" | "ProjectInviteS
 
 export type NexusGenInterfaceNames = never;
 
-export type NexusGenScalarNames = "Boolean" | "Float" | "ID" | "Int" | "String";
+export type NexusGenScalarNames = "Boolean" | "Float" | "ID" | "Int" | "String" | "Upload";
 
 export type NexusGenUnionNames = never;
 

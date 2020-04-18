@@ -9,6 +9,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Upload: any;
 };
 
 export type AuthUser = {
@@ -285,6 +286,7 @@ export type SubscriptionProjectArgs = {
   where: ProjectWhere;
 };
 
+
 export type User = {
    __typename?: 'User';
   id: Scalars['ID'];
@@ -300,7 +302,7 @@ export type User = {
 export type UserInput = {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
-  avatarURL?: Maybe<Scalars['String']>;
+  avatarUpload?: Maybe<Scalars['Upload']>;
   isVerified?: Maybe<Scalars['String']>;
   photoId?: Maybe<Scalars['String']>;
 };
@@ -486,6 +488,19 @@ export type RegisterUserMutation = (
       & UserAttributesFragment
     ) }
   ) }
+);
+
+export type UpdateUserMutationVariables = {
+  userInput?: Maybe<UserInput>;
+};
+
+
+export type UpdateUserMutation = (
+  { __typename?: 'Mutation' }
+  & { updateUser?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'firstName' | 'lastName' | 'email' | 'avatarURL' | 'isVerified' | 'photoId'>
+  )> }
 );
 
 export type CreateWorkspaceMutationVariables = {
@@ -1005,6 +1020,44 @@ export function useRegisterUserMutation(baseOptions?: ApolloReactHooks.MutationH
 export type RegisterUserMutationHookResult = ReturnType<typeof useRegisterUserMutation>;
 export type RegisterUserMutationResult = ApolloReactCommon.MutationResult<RegisterUserMutation>;
 export type RegisterUserMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterUserMutation, RegisterUserMutationVariables>;
+export const UpdateUserDocument = gql`
+    mutation updateUser($userInput: UserInput) {
+  updateUser(userInput: $userInput) {
+    id
+    firstName
+    lastName
+    email
+    avatarURL
+    isVerified
+    photoId
+  }
+}
+    `;
+export type UpdateUserMutationFn = ApolloReactCommon.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      userInput: // value for 'userInput'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, baseOptions);
+      }
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = ApolloReactCommon.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const CreateWorkspaceDocument = gql`
     mutation createWorkspace($newWorkspaceInput: NewWorkspaceInput) {
   createWorkspace(newWorkspaceInput: $newWorkspaceInput) {

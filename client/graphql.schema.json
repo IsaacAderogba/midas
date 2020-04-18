@@ -1852,11 +1852,11 @@
             "defaultValue": null
           },
           {
-            "name": "avatarURL",
+            "name": "avatarUpload",
             "description": "",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Upload",
               "ofType": null
             },
             "defaultValue": null
@@ -1882,6 +1882,16 @@
             "defaultValue": null
           }
         ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "Upload",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null

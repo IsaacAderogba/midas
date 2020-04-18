@@ -1,5 +1,6 @@
 const { objectType, inputObjectType } = require("nexus");
 const { Workspace } = require("../workspace/workspaceTypes");
+const { GraphQLUpload } = require("apollo-server-express");
 
 const AuthUser = objectType({
   name: "AuthUser",
@@ -15,45 +16,45 @@ const AuthUser = objectType({
       nullable: false,
       resolve: (authUser, args, { dataSources }) => {
         return dataSources.userAPI.readUser({ id: authUser.userId });
-      }
+      },
     });
-  }
+  },
 });
 
 const User = objectType({
   name: "User",
   definition(t) {
     t.id("id", {
-      nullable: false
+      nullable: false,
     });
     t.string("firstName", {
-      nullable: false
+      nullable: false,
     });
     t.string("lastName", {
-      nullable: false
+      nullable: false,
     });
     t.string("email", {
-      nullable: false
+      nullable: false,
     });
     t.string("avatarURL", {
-      nullable: true
+      nullable: true,
     });
     t.boolean("isVerified", {
-      nullable: false
+      nullable: false,
     });
     t.boolean("photoId", {
-      nullable: true
+      nullable: true,
     });
     t.list.field("workspaces", {
       type: Workspace,
       nullable: true,
       resolve: async (user, args, { dataSources }) => {
         return dataSources.workspaceAPI.readWorkspaces({
-          userId: user.id
+          userId: user.id,
         });
-      }
+      },
     });
-  }
+  },
 });
 
 const LoginInput = inputObjectType({
@@ -61,7 +62,7 @@ const LoginInput = inputObjectType({
   definition(t) {
     t.string("email", { required: true });
     t.string("password", { required: true });
-  }
+  },
 });
 
 const RegisterInput = inputObjectType({
@@ -72,7 +73,7 @@ const RegisterInput = inputObjectType({
     t.string("email", { required: true });
     t.string("password", { required: true });
     t.string("avatarURL", { required: false });
-  }
+  },
 });
 
 const UserInput = inputObjectType({
@@ -81,10 +82,10 @@ const UserInput = inputObjectType({
     // exclude email and password from being updated for now
     t.string("firstName", { required: false });
     t.string("lastName", { required: false });
-    t.string("avatarURL", { required: false });
+    t.field("avatarUpload", { type: GraphQLUpload, required: false });
     t.string("isVerified", { required: false });
     t.string("photoId", { required: false });
-  }
+  },
 });
 
 module.exports = {
@@ -92,5 +93,5 @@ module.exports = {
   User,
   LoginInput,
   RegisterInput,
-  UserInput
+  UserInput,
 };

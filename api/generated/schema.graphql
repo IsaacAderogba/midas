@@ -178,6 +178,9 @@ type Subscription {
   projects: ProjectSubscriptionPayload!
 }
 
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 type User {
   avatarURL: String
   email: String!
@@ -190,7 +193,7 @@ type User {
 }
 
 input UserInput {
-  avatarURL: String
+  avatarUpload: Upload
   firstName: String
   isVerified: String
   lastName: String

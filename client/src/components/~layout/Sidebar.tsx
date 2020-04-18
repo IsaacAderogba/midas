@@ -6,7 +6,7 @@ import { css } from "styled-components/macro";
 import { Logo } from "../atoms/Logo";
 import { H6, H5 } from "../atoms/Text";
 import { PlusOutlined, ArrowLeftOutlined } from "@ant-design/icons";
-import { Avatar } from "antd";
+import { Avatar, Dropdown, Menu } from "antd";
 import { Flex, Container, Box } from "../atoms/Layout";
 
 // helpers
@@ -29,7 +29,27 @@ export const Sidebar = () => {
       <Container flexDirection="column">
         <Flex justifyContent="space-between" alignItems="center">
           <Logo />
-          <UserAvatar user={user} />
+          <Dropdown
+            placement="bottomLeft"
+            overlay={
+              <Menu>
+                <Menu.Item
+                  onClick={() =>
+                    setModalState({
+                      modal: "user-modal",
+                      props: {},
+                    })
+                  }
+                >
+                  Profile settings
+                </Menu.Item>
+              </Menu>
+            }
+          >
+            <Box>
+              <UserAvatar user={user} />
+            </Box>
+          </Dropdown>
         </Flex>
         <Flex
           justifyContent="space-between"

@@ -84,6 +84,7 @@ class UserAPI extends SQLDataSource {
 
   async updateUser(whereObj, user) {
     try {
+      console.log("USER UPLOAD", user);
       return this._updateUser(whereObj, user);
     } catch (err) {
       console.log(err);

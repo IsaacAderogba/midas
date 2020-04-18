@@ -33,3 +33,17 @@ export const registerUser = gql`
   }
   ${User.fragments.attributes}
 `;
+
+export const updateUser = gql`
+  mutation updateUser($userInput: UserInput) {
+    updateUser(userInput: $userInput) {
+      id
+      firstName
+      lastName
+      email
+      avatarURL
+      isVerified
+      photoId
+    }
+  }
+`

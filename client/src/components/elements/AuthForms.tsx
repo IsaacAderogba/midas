@@ -1,6 +1,5 @@
 // modules
 import React from "react";
-import { css } from "styled-components/macro";
 import { ApolloError } from "apollo-client";
 
 // components
@@ -8,6 +7,7 @@ import { Input, Form, Button, Alert } from "antd";
 
 // helpers
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
+import { Flex, Box } from "../atoms/Layout";
 
 interface IAuthForm {
   loading: boolean;
@@ -73,18 +73,8 @@ export const RegisterForm: React.FC<IAuthForm> = ({
 
   return (
     <Form layout="vertical" onFinish={onFinish}>
-      <section
-        css={css`
-          display: flex;
-          justify-content: space-between;
-        `}
-      >
-        <div
-          css={css`
-            margin-right: ${space[4]}px;
-            width: 100%;
-          `}
-        >
+      <Flex justifyContent="space-between">
+        <Box marginRight={`${space[4]}px`} width="100%">
           <Form.Item
             label="First name"
             name="firstName"
@@ -98,13 +88,8 @@ export const RegisterForm: React.FC<IAuthForm> = ({
           >
             <Input placeholder="John" />
           </Form.Item>
-        </div>
-        <div
-          css={css`
-            margin-left: ${space[4]}px;
-            width: 100%;
-          `}
-        >
+        </Box>
+        <Box marginLeft={`${space[4]}px`} width="100%">
           <Form.Item
             label="Last name"
             name="lastName"
@@ -118,8 +103,8 @@ export const RegisterForm: React.FC<IAuthForm> = ({
           >
             <Input placeholder="Doe" />
           </Form.Item>
-        </div>
-      </section>
+        </Box>
+      </Flex>
       <Form.Item
         label="Email"
         name="email"
