@@ -18,7 +18,6 @@ import { styled } from "./~reusables/contexts/ThemeProvider";
 import { SIDEBAR_WIDTH } from "./~reusables/constants/dimensions";
 
 export const AppRouter = () => {
-  console.log(process.env.REACT_APP_GRAPHQL_SUBSCRIPTION_ENDPOINT)
   return (
     <Switch>
       <Route
