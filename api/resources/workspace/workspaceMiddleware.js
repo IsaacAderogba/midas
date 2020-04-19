@@ -66,7 +66,7 @@ const WorkspacePermissions = shield(
     },
   },
   {
-    debug: process.env.DB_ENV === "development" ? true : false,
+    debug: process.env.DB_ENV === "development" ? true : true,
   }
 );
 

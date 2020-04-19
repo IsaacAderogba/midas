@@ -67,18 +67,23 @@ const ProjectPermissions = shield({
   },
 });
 
-const ProjectMiddleware = shield({
-  Query: {
-    [projectQueryKeys.project]: validProjectMiddleware,
+const ProjectMiddleware = shield(
+  {
+    Query: {
+      [projectQueryKeys.project]: validProjectMiddleware,
+    },
+    Mutation: {
+      [projectMutationKeys.updateProject]: validProjectMiddleware,
+      [projectMutationKeys.deleteProject]: validProjectMiddleware,
+    },
+    Subscription: {
+      [projectSubscriptionKeys.project]: validProjectMiddleware,
+    },
   },
-  Mutation: {
-    [projectMutationKeys.updateProject]: validProjectMiddleware,
-    [projectMutationKeys.deleteProject]: validProjectMiddleware,
-  },
-  Subscription: {
-    [projectSubscriptionKeys.project]: validProjectMiddleware,
-  },
-});
+  {
+    debug: process.env.DB_ENV === "development" ? true : true,
+  }
+);
 
 module.exports = {
   ProjectPermissions,
