@@ -59,3 +59,17 @@ export const updateWorkspace = gql`
     }
   }
 `;
+
+export const deleteWorkspace = gql`
+  mutation deleteWorkspace {
+    deleteWorkspace {
+      id
+      name
+      url
+      photoURL
+      photoId
+      trialStartedAt
+      seats
+    }
+  }
+`;

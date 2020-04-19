@@ -83,7 +83,7 @@ export type Mutation = {
   deleteUser: Scalars['Boolean'];
   createWorkspace?: Maybe<Workspace>;
   updateWorkspace?: Maybe<Workspace>;
-  deleteWorkspace: Scalars['Boolean'];
+  deleteWorkspace?: Maybe<Workspace>;
   createWorkspaceUser?: Maybe<WorkspaceUser>;
   updateWorkspaceUser?: Maybe<WorkspaceUser>;
   deleteWorkspaceUser: Scalars['Boolean'];
@@ -442,6 +442,19 @@ export type CreateProjectMutation = (
   )> }
 );
 
+export type DeleteProjectMutationVariables = {
+  where: ProjectWhere;
+};
+
+
+export type DeleteProjectMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteProject?: Maybe<(
+    { __typename?: 'Project' }
+    & Pick<Project, 'id' | 'workspaceId' | 'workspaceUserId' | 'title' | 'thumbnailPhotoURL' | 'thumbnailPhotoID' | 'inviteShareStatus' | 'inviteSharePrivileges' | 'createdAt' | 'updatedAt'>
+  )> }
+);
+
 export type GetUserQueryVariables = {};
 
 
@@ -500,6 +513,14 @@ export type UpdateUserMutation = (
   )> }
 );
 
+export type DeleteUserMutationVariables = {};
+
+
+export type DeleteUserMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteUser'>
+);
+
 export type CreateWorkspaceMutationVariables = {
   newWorkspaceInput?: Maybe<NewWorkspaceInput>;
 };
@@ -556,6 +577,17 @@ export type UpdateWorkspaceMutationVariables = {
 export type UpdateWorkspaceMutation = (
   { __typename?: 'Mutation' }
   & { updateWorkspace?: Maybe<(
+    { __typename?: 'Workspace' }
+    & Pick<Workspace, 'id' | 'name' | 'url' | 'photoURL' | 'photoId' | 'trialStartedAt' | 'seats'>
+  )> }
+);
+
+export type DeleteWorkspaceMutationVariables = {};
+
+
+export type DeleteWorkspaceMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteWorkspace?: Maybe<(
     { __typename?: 'Workspace' }
     & Pick<Workspace, 'id' | 'name' | 'url' | 'photoURL' | 'photoId' | 'trialStartedAt' | 'seats'>
   )> }
@@ -928,6 +960,47 @@ export function useCreateProjectMutation(baseOptions?: ApolloReactHooks.Mutation
 export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
 export type CreateProjectMutationResult = ApolloReactCommon.MutationResult<CreateProjectMutation>;
 export type CreateProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const DeleteProjectDocument = gql`
+    mutation deleteProject($where: ProjectWhere!) {
+  deleteProject(where: $where) {
+    id
+    workspaceId
+    workspaceUserId
+    title
+    thumbnailPhotoURL
+    thumbnailPhotoID
+    inviteShareStatus
+    inviteSharePrivileges
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type DeleteProjectMutationFn = ApolloReactCommon.MutationFunction<DeleteProjectMutation, DeleteProjectMutationVariables>;
+
+/**
+ * __useDeleteProjectMutation__
+ *
+ * To run a mutation, you first call `useDeleteProjectMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProjectMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProjectMutation, { data, loading, error }] = useDeleteProjectMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useDeleteProjectMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteProjectMutation, DeleteProjectMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteProjectMutation, DeleteProjectMutationVariables>(DeleteProjectDocument, baseOptions);
+      }
+export type DeleteProjectMutationHookResult = ReturnType<typeof useDeleteProjectMutation>;
+export type DeleteProjectMutationResult = ApolloReactCommon.MutationResult<DeleteProjectMutation>;
+export type DeleteProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteProjectMutation, DeleteProjectMutationVariables>;
 export const GetUserDocument = gql`
     query getUser {
   user {
@@ -1068,6 +1141,35 @@ export function useUpdateUserMutation(baseOptions?: ApolloReactHooks.MutationHoo
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = ApolloReactCommon.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const DeleteUserDocument = gql`
+    mutation deleteUser {
+  deleteUser
+}
+    `;
+export type DeleteUserMutationFn = ApolloReactCommon.MutationFunction<DeleteUserMutation, DeleteUserMutationVariables>;
+
+/**
+ * __useDeleteUserMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserMutation, { data, loading, error }] = useDeleteUserMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteUserMutation, DeleteUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(DeleteUserDocument, baseOptions);
+      }
+export type DeleteUserMutationHookResult = ReturnType<typeof useDeleteUserMutation>;
+export type DeleteUserMutationResult = ApolloReactCommon.MutationResult<DeleteUserMutation>;
+export type DeleteUserMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteUserMutation, DeleteUserMutationVariables>;
 export const CreateWorkspaceDocument = gql`
     mutation createWorkspace($newWorkspaceInput: NewWorkspaceInput) {
   createWorkspace(newWorkspaceInput: $newWorkspaceInput) {
@@ -1221,6 +1323,43 @@ export function useUpdateWorkspaceMutation(baseOptions?: ApolloReactHooks.Mutati
 export type UpdateWorkspaceMutationHookResult = ReturnType<typeof useUpdateWorkspaceMutation>;
 export type UpdateWorkspaceMutationResult = ApolloReactCommon.MutationResult<UpdateWorkspaceMutation>;
 export type UpdateWorkspaceMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
+export const DeleteWorkspaceDocument = gql`
+    mutation deleteWorkspace {
+  deleteWorkspace {
+    id
+    name
+    url
+    photoURL
+    photoId
+    trialStartedAt
+    seats
+  }
+}
+    `;
+export type DeleteWorkspaceMutationFn = ApolloReactCommon.MutationFunction<DeleteWorkspaceMutation, DeleteWorkspaceMutationVariables>;
+
+/**
+ * __useDeleteWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useDeleteWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteWorkspaceMutation, { data, loading, error }] = useDeleteWorkspaceMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteWorkspaceMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<DeleteWorkspaceMutation, DeleteWorkspaceMutationVariables>) {
+        return ApolloReactHooks.useMutation<DeleteWorkspaceMutation, DeleteWorkspaceMutationVariables>(DeleteWorkspaceDocument, baseOptions);
+      }
+export type DeleteWorkspaceMutationHookResult = ReturnType<typeof useDeleteWorkspaceMutation>;
+export type DeleteWorkspaceMutationResult = ApolloReactCommon.MutationResult<DeleteWorkspaceMutation>;
+export type DeleteWorkspaceMutationOptions = ApolloReactCommon.BaseMutationOptions<DeleteWorkspaceMutation, DeleteWorkspaceMutationVariables>;
 export const WorkspaceUsersDocument = gql`
     query workspaceUsers {
   workspaceUsers {

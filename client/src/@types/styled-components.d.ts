@@ -39,6 +39,7 @@ declare module "styled-components" {
       background: string;
       lightBackground: string;
       grey: string;
+      danger: string;
       greys: string[];
       primaries: string[];
       secondaries: string[];

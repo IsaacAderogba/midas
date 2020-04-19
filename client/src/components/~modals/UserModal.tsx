@@ -5,12 +5,16 @@ import React, { useState } from "react";
 import { Modal, Tabs, Input, Form, Button, Alert } from "antd";
 import { UploadPhoto } from "../elements/UploadPhoto";
 import { Box } from "../atoms/Layout";
+import { P2 } from "../atoms/Text";
 
 // helpers
 import { useUIStore } from "../../~reusables/contexts/UIProvider";
 import { useAuthStore } from "../../~reusables/contexts/AuthProvider";
 import { useTheme } from "../../~reusables/contexts/ThemeProvider";
-import { useUpdateUserMutation } from "../../generated/graphql";
+import {
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} from "../../generated/graphql";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 
 enum UserModalTabs {
@@ -136,5 +140,27 @@ const GeneralSettings: React.FC = () => {
 };
 
 const AccountSettings: React.FC = () => {
-  return <div></div>;
+  const { colors, space } = useTheme();
+  const [deleteUser, { loading, error }] = useDeleteUserMutation({
+    onCompleted() {
+      localStorage.clear();
+      window.location.reload();
+    },
+    onError() {},
+  });
+
+  return (
+    <Box>
+      <P2 marginBottom={`${space[5]}px`} color={colors.danger}>
+        Danger zone
+      </P2>
+      <Button loading={loading} onClick={() => deleteUser()} danger>
+        Delete user
+      </Button>
+      {error &&
+        error.graphQLErrors.map(({ message }, i) => (
+          <Alert closable key={i} message={message} type="error" showIcon />
+        ))}
+    </Box>
+  );
 };

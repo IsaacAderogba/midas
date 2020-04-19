@@ -47,3 +47,9 @@ export const updateUser = gql`
     }
   }
 `
+
+export const deleteUser = gql`
+  mutation deleteUser {
+    deleteUser
+  }
+`

@@ -126,7 +126,7 @@ class UserAPI extends SQLDataSource {
       ? authHeader.split(" ")
       : [false, false];
 
-    if (workspaceId && token) {
+    if (token) {
       try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const user = await this._readUser({ id: decodedToken.userId });
@@ -136,15 +136,18 @@ class UserAPI extends SQLDataSource {
             firstName: user.firstName,
             lastName: user.lastName,
           };
-          const workspaceUser = await WorkspaceUserAPI._readWorkspaceUser({
-            userId: user.id,
-            workspaceId,
-          });
 
-          if (workspaceUser) {
-            authUser.role = workspaceUser.role;
-            authUser.workspaceUserId = workspaceUser.id;
-            authUser.workspaceId = workspaceUser.workspaceId;
+          if (workspaceId && workspaceId !== "null") {
+            const workspaceUser = await WorkspaceUserAPI._readWorkspaceUser({
+              userId: user.id,
+              workspaceId,
+            });
+
+            if (workspaceUser) {
+              authUser.role = workspaceUser.role;
+              authUser.workspaceUserId = workspaceUser.id;
+              authUser.workspaceId = workspaceUser.workspaceId;
+            }
           }
 
           return authUser;

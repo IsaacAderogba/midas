@@ -3,12 +3,12 @@
 const { extendType, arg } = require("nexus");
 const {
   workspaceQueryKeys,
-  workspaceMutationKeys
+  workspaceMutationKeys,
 } = require("./workspaceUtils");
 const {
   NewWorkspaceInput,
   Workspace,
-  WorkspaceInput
+  WorkspaceInput,
 } = require("./workspaceTypes");
 
 const Query = extendType({
@@ -19,19 +19,19 @@ const Query = extendType({
       nullable: true,
       resolve: (parent, args, { dataSources, user }) => {
         return dataSources.workspaceAPI.readWorkspace({
-          id: user.workspaceId
+          id: user.workspaceId,
         });
-      }
+      },
     });
     t.list.field(workspaceQueryKeys.workspaces, {
       type: Workspace,
       resolve: async (parent, args, { dataSources, user }) => {
         return await dataSources.workspaceAPI.readWorkspaces({
-          userId: user.id
+          userId: user.id,
         });
-      }
+      },
     });
-  }
+  },
 });
 
 const Mutation = extendType({
@@ -41,44 +41,43 @@ const Mutation = extendType({
       type: Workspace,
       nullable: true,
       args: {
-        newWorkspaceInput: arg({ type: NewWorkspaceInput })
+        newWorkspaceInput: arg({ type: NewWorkspaceInput }),
       },
       resolve: (parent, { newWorkspaceInput }, { dataSources, user }) => {
         return dataSources.workspaceAPI.createWorkspaceBatch(
           { ...newWorkspaceInput },
           user.id
         );
-      }
+      },
     });
 
     t.field(workspaceMutationKeys.updateWorkspace, {
       type: Workspace,
       nullable: true,
       args: {
-        workspaceInput: arg({ type: WorkspaceInput })
+        workspaceInput: arg({ type: WorkspaceInput }),
       },
       resolve: (parent, { workspaceInput }, { dataSources, user }) => {
         return dataSources.workspaceAPI.updateWorkspace(
           { id: user.workspaceId },
           workspaceInput
         );
-      }
+      },
     });
 
     t.field(workspaceMutationKeys.deleteWorkspace, {
-      type: "Boolean",
-      nullable: false,
-
+      type: Workspace,
+      nullable: true,
       resolve: (parent, args, { dataSources, user }) => {
         return dataSources.workspaceAPI.deleteWorkspace({
-          id: user.workspaceId
+          id: user.workspaceId,
         });
-      }
+      },
     });
-  }
+  },
 });
 
 module.exports = {
   WorkspaceQuery: Query,
-  WorkspaceMutation: Mutation
+  WorkspaceMutation: Mutation,
 };

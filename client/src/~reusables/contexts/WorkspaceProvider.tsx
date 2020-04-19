@@ -1,5 +1,8 @@
 // modules
 import React, { createContext, useEffect } from "react";
+import { RouteComponentProps } from "react-router-dom";
+
+// helpers
 import { useLocalStore } from "mobx-react";
 import {
   GetWorkspaceQuery,
@@ -8,10 +11,11 @@ import {
   useGetWorkspacesQuery,
   GetWorkspacesQuery,
 } from "../../generated/graphql";
-
-// helpers
 import { useStoreState } from "../hooks/useStoreState";
-import { setLocalStorageWorkspaceKey } from "../utils/localStorage";
+import {
+  setLocalStorageWorkspaceKey,
+  removeLocalStorageWorkspaceKey,
+} from "../utils/localStorage";
 import { useUIStore } from "./UIProvider";
 import { CreateWorkspaceModal } from "../../components/~modals/CreateWorkspaceModal";
 import { useAuthStore } from "./AuthProvider";
@@ -34,6 +38,7 @@ export interface IWorkspaceStore {
   isWorkspaceLoading: boolean;
   setWorkspace: (workspaceId: WorkspaceType["id"]) => void;
   createWorkspace: (createdWorkspaceId: WorkspaceType["id"]) => void;
+  removeWorkspace: () => void;
 }
 
 export const WorkspaceContext = createContext<IWorkspaceStore>({
@@ -43,12 +48,18 @@ export const WorkspaceContext = createContext<IWorkspaceStore>({
   isWorkspaceLoading: false,
   setWorkspace: () => {},
   createWorkspace: () => {},
+  removeWorkspace: () => {},
 });
 
-export const useWorkspaceStore = <S,>(dataSelector: (store: IWorkspaceStore) => S) =>
+export const useWorkspaceStore = <S,>(
+  dataSelector: (store: IWorkspaceStore) => S
+) =>
   useStoreState(WorkspaceContext, (contextData) => contextData!, dataSelector);
 
-export const WorkspaceProvider: React.FC = ({ children }) => {
+export const WorkspaceProvider: React.FC<RouteComponentProps> = ({
+  children,
+  history,
+}) => {
   const userId = useAuthStore((state) => state.user?.id);
   const modalState = useUIStore((state) => state.modalState);
   const workspace = useGetWorkspaceQuery({
@@ -72,6 +83,18 @@ export const WorkspaceProvider: React.FC = ({ children }) => {
     createWorkspace: (createdWorkspaceId) => {
       workspaces.refetch();
       store.setWorkspace(createdWorkspaceId);
+    },
+    removeWorkspace: () => {
+      if (store.workspaces.length > 1) {
+        workspaces.refetch();
+        store.setWorkspace(store.workspaces[0].id);
+      } else {
+        removeLocalStorageWorkspaceKey();
+        store.workspace = null;
+        store.workspaceUser = null;
+        store.workspaces.pop();
+      }
+      history.push("/app");
     },
   }));
 

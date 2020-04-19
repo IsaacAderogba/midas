@@ -248,7 +248,7 @@ export interface NexusGenFieldTypes {
     createWorkspaceUser: NexusGenRootTypes['WorkspaceUser'] | null; // WorkspaceUser
     deleteProject: NexusGenRootTypes['Project'] | null; // Project
     deleteUser: boolean; // Boolean!
-    deleteWorkspace: boolean; // Boolean!
+    deleteWorkspace: NexusGenRootTypes['Workspace'] | null; // Workspace
     deleteWorkspaceUser: boolean; // Boolean!
     loginUser: NexusGenRootTypes['AuthUser']; // AuthUser!
     registerUser: NexusGenRootTypes['AuthUser']; // AuthUser!

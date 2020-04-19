@@ -3,23 +3,18 @@ import React, { useEffect, useState } from "react";
 import { css } from "styled-components/macro";
 
 // components
-import { H5, P3 } from "../atoms/Text";
-import { EllipsisOutlined } from "@ant-design/icons";
-import { Card } from "antd";
-import { Link } from "react-router-dom";
 import { Empty } from "antd";
+import { ProjectItem } from "../elements/ProjectItem";
 
 // helpers
 import {
   useGetProjectsLazyQuery,
   ProjectsDocument,
   ProjectsSubscription,
-  GetProjectsQuery,
   MutationType,
 } from "../../generated/graphql";
 import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
 import { Maybe } from "../../~reusables/utils/types";
-import { useTheme } from "../../~reusables/contexts/ThemeProvider";
 
 export const Projects = () => {
   const [initLoading, setInitLoading] = useState(true);
@@ -31,6 +26,9 @@ export const Projects = () => {
     { loading, subscribeToMore, data },
   ] = useGetProjectsLazyQuery({
     fetchPolicy: "network-only",
+    onError(err) {
+      setInitLoading(false);
+    },
     onCompleted(data) {
       setInitLoading(false);
       if (data && data.projects) {
@@ -61,10 +59,6 @@ export const Projects = () => {
                 return prev;
             }
           },
-          onError(err) {
-            setInitLoading(false);
-            console.log(err);
-          },
         });
       }
     },
@@ -73,6 +67,8 @@ export const Projects = () => {
   useEffect(() => {
     if (workspace?.id) {
       getProjects();
+    } else {
+      setInitLoading(false);
     }
     return () => {
       if (unsubscribeFromMore) unsubscribeFromMore();
@@ -107,81 +103,5 @@ export const Projects = () => {
     >
       <Empty />
     </div>
-  );
-};
-
-const ProjectItem: React.FC<{
-  project?: GetProjectsQuery["projects"][0];
-  loading?: boolean;
-}> = ({ project, loading }) => {
-  const { fontSizes, colors } = useTheme();
-
-  return (
-    <Card
-      loading={loading}
-      bodyStyle={{ padding: 0 }}
-      css={css`
-        flex: 1 1 280px;
-        border-radius: ${(p) => p.theme.radii[2]}px;
-        margin: ${(props) =>
-          `0 ${props.theme.space[8]}px ${props.theme.space[8]}px 0`};
-        border: 1px solid ${(p) => p.theme.colors.greys[9]};
-        cursor: pointer;
-
-        &:hover {
-          box-shadow: ${(p) => p.theme.shadows.shallow};
-          transition: box-shadow 120ms ease-in-out;
-        }
-      `}
-    >
-      {project ? (
-        <Link to={`/app/project/${project.id}`}>
-          <section
-            css={css`
-              width: 100%;
-              height: 160px;
-              border-bottom: 1px solid ${(p) => p.theme.colors.greys[9]};
-            `}
-          >
-            <img
-              css={css`
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-              `}
-              alt={project.title}
-              src={
-                project.thumbnailPhotoURL ||
-                "https://res.cloudinary.com/isaacaderogba/image/upload/v1587228543/plain-white-background-1480544970glP_hhtvgo.jpg"
-              }
-            />
-          </section>
-          <section
-            css={css`
-              padding: ${(p) => `${p.theme.space[5]}px ${p.theme.space[5]}px`};
-            `}
-          >
-            <div>
-              <H5>{project.title}</H5>
-            </div>
-            <div
-              css={css`
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-              `}
-            >
-              <P3 color={colors.lightText}>{project.updatedAt}</P3>
-              <EllipsisOutlined
-                style={{ fontSize: fontSizes[4] }}
-                rotate={90}
-              />
-            </div>
-          </section>
-        </Link>
-      ) : (
-        <div></div>
-      )}
-    </Card>
   );
 };

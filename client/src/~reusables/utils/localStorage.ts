@@ -17,5 +17,11 @@ export const getLocalStorageTokenKey = () =>
 export const getLocalStorageWorkspaceKey = () =>
   localStorage.getItem(LOCAL_STORAGE_WORKSPACE_KEY);
 
+  export const removeLocalStorageTokenKey = () =>
+  localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
+
+export const removeLocalStorageWorkspaceKey = () =>
+  localStorage.removeItem(LOCAL_STORAGE_WORKSPACE_KEY);
+
 export const getAuthorizationToken = () =>
   `${getLocalStorageWorkspaceKey()} ${getLocalStorageTokenKey()}`;

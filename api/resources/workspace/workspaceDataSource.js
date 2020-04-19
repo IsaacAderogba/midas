@@ -50,7 +50,7 @@ class WorkspaceAPI extends SQLDataSource {
           : v4();
 
         const { createReadStream } = await workspace.file;
-        
+
         const stream = createReadStream();
         const image = await cloudinaryStreamUpload({ stream, public_id });
         workspace.photoId = image.public_id;
@@ -67,9 +67,12 @@ class WorkspaceAPI extends SQLDataSource {
   async deleteWorkspace(whereObj) {
     // TODO - make sure billing for workspace isn't active
     try {
+      const workspace = await this.readWorkspace(whereObj);
       const isSuccess = await this._deleteWorkspace(whereObj);
-      if (isSuccess) return true;
-      return false;
+      if (isSuccess) {
+        return workspace;
+      }
+      return null;
     } catch (err) {
       console.log(err);
       throw err;

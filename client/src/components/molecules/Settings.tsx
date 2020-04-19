@@ -4,12 +4,19 @@ import React, { useState } from "react";
 // components
 import { Container, Box } from "../atoms/Layout";
 import { UploadPhoto } from "../elements/UploadPhoto";
+import { P2 } from "../atoms/Text";
 
 // helpers
 import { useTheme, styled } from "../../~reusables/contexts/ThemeProvider";
-import { Tabs, Form, Input, Button, Alert, Spin } from "antd";
+import { Tabs, Form, Input, Button, Alert } from "antd";
 import { useWorkspaceStore } from "../../~reusables/contexts/WorkspaceProvider";
-import { useUpdateWorkspaceMutation } from "../../generated/graphql";
+import {
+  useUpdateWorkspaceMutation,
+  useDeleteWorkspaceMutation,
+  Maybe,
+  GetWorkspacesQuery,
+  GetWorkspacesDocument,
+} from "../../generated/graphql";
 import { RcCustomRequestOptions } from "antd/lib/upload/interface";
 
 enum SettingsTabs {
@@ -22,7 +29,7 @@ export const Settings = () => {
   const [activeTab, setActiveTab] = useState<SettingsTabs>(
     SettingsTabs.General
   );
-  const { space, colors, radii } = useTheme();
+  const { space } = useTheme();
   return (
     <Container>
       <Tabs
@@ -128,14 +135,53 @@ const SettingsGeneral: React.FC = () => {
           </Form>
         </Box>
       ) : (
-        <Spin />
+        <Box />
       )}
     </SettingsContainer>
   );
 };
 
 const SettingsAccount = () => {
-  return <SettingsContainer></SettingsContainer>;
+  const { colors, space } = useTheme();
+  const removeWorkspace = useWorkspaceStore((state) => state.removeWorkspace);
+  const [deleteWorkspace, { error, loading }] = useDeleteWorkspaceMutation({
+    onError() {},
+    update(cache, { data }) {
+      if (data && data.deleteWorkspace) {
+        const query: Maybe<GetWorkspacesQuery> = cache.readQuery({
+          query: GetWorkspacesDocument,
+        });
+        if (query && query.workspaces) {
+          cache.writeQuery({
+            query: GetWorkspacesDocument,
+            data: {
+              workspaces: query.workspaces.filter(
+                (w) => w.id !== data.deleteWorkspace?.id
+              ),
+            },
+          });
+        }
+        removeWorkspace();
+      }
+    },
+  });
+
+  return (
+    <SettingsContainer>
+      <Box>
+        <P2 marginBottom={`${space[5]}px`} color={colors.danger}>
+          Danger zone
+        </P2>
+        <Button loading={loading} onClick={() => deleteWorkspace()} danger>
+          Delete workspace
+        </Button>
+        {error &&
+          error.graphQLErrors.map(({ message }, i) => (
+            <Alert closable key={i} message={message} type="error" showIcon />
+          ))}
+      </Box>
+    </SettingsContainer>
+  );
 };
 
 const SettingsContainer = styled(Container)`

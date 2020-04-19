@@ -97,6 +97,7 @@ export const theme = {
     background: "#252E50",
     lightBackground: "#F4F4F4",
     grey: "#d1ddeb",
+    danger: "#f34250",
     primaries: [
       "#002081",
       "#103296",

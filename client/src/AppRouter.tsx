@@ -1,6 +1,6 @@
 // modules
 import React from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
 
 // components
 import { Landing } from "./views/marketing/Landing";
@@ -36,10 +36,13 @@ export const AppRouter = () => {
   );
 };
 
-const ProtectedAppRouter: React.FC = () => {
+const ProtectedAppRouter: React.FC<RouteComponentProps> = ({
+  children,
+  ...routeProps
+}) => {
   // provider for deciding which app?
   return (
-    <WorkspaceProvider>
+    <WorkspaceProvider {...routeProps}>
       <Switch>
         <Route
           exact

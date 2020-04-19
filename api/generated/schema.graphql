@@ -70,7 +70,7 @@ type Mutation {
   createWorkspaceUser(newWorkspaceUserInput: NewWorkspaceUserInput): WorkspaceUser
   deleteProject(where: ProjectWhere!): Project
   deleteUser: Boolean!
-  deleteWorkspace: Boolean!
+  deleteWorkspace: Workspace
   deleteWorkspaceUser(where: WorkspaceUserWhere): Boolean!
   loginUser(loginInput: LoginInput): AuthUser!
   registerUser(registerInput: RegisterInput): AuthUser!

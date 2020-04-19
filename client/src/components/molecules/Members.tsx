@@ -22,13 +22,16 @@ export const Members = () => {
     onCompleted() {
       setInitLoading(false);
     },
-    onError() {},
+    onError() {
+      setInitLoading(false);
+    },
   });
 
   useEffect(() => {
     if (workspace?.id) {
-      console.log("exec");
       getWorkspaceUsers();
+    } else {
+      setInitLoading(false);
     }
   }, [workspace?.id]);
 

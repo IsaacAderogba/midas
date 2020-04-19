@@ -23,6 +23,7 @@ export const Sidebar = () => {
   const user = useAuthStore((state) => state.user);
   const workspaces = useWorkspaceStore((state) => state.workspaces);
   const setModalState = useUIStore((state) => state.setModalState);
+  console.log(workspaces)
 
   return (
     <StyledSidebar>
@@ -118,6 +119,7 @@ const WorkspaceItem: React.FC<{
     setWorkspace: state.setWorkspace,
   }));
   const isCurrentWorkspace = workspace?.id === id;
+  console.log(workspace?.id, id)
 
   return (
     <Flex

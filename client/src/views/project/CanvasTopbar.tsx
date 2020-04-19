@@ -3,6 +3,7 @@ import React from "react";
 import { styled, useTheme } from "../../~reusables/contexts/ThemeProvider";
 import { css } from "styled-components/macro";
 import { useContextSelector } from "use-context-selector";
+import { Link } from "react-router-dom";
 
 // components
 import {
@@ -12,7 +13,7 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import { CanvasIconWrapper } from "../../components/atoms/CanvasIconWrapper";
-import { Button, Avatar, Tooltip } from "antd";
+import { Button, Dropdown, Menu, Tooltip } from "antd";
 import { Container, Box } from "../../components/atoms/Layout";
 import { CanvasShapes } from "../../components/elements/CanvasShapes";
 
@@ -67,7 +68,17 @@ export const CanvasTopbar: React.FC = () => {
           display: flex;
         `}
       >
-        <CanvasIconWrapper icon={MenuOutlined} title="Menu" />
+        <Dropdown
+          overlay={
+            <Menu>
+              <Menu.Item>
+                <Link to="/app/workspace">Back to workspace</Link>
+              </Menu.Item>
+            </Menu>
+          }
+        >
+          <CanvasIconWrapper icon={MenuOutlined} title="Menu" />
+        </Dropdown>
         <CanvasIconWrapper
           icon={ClearOutlined}
           title="Clear the canvas & reset background color"

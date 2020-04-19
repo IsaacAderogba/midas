@@ -2,6 +2,7 @@
 import React from "react";
 import { css } from "styled-components/macro";
 import { RouteComponentProps, Route, Switch, Redirect } from "react-router-dom";
+import faker from "faker";
 
 // components
 import { Button } from "antd";
@@ -16,7 +17,7 @@ import { useCreateProjectMutation } from "../../generated/graphql";
 import { Members } from "../../components/molecules/Members";
 import { Settings } from "../../components/molecules/Settings";
 
-export const Workspace: React.FC<RouteComponentProps> = ({history}) => {
+export const Workspace: React.FC<RouteComponentProps> = ({ history }) => {
   const { workspace, isWorkspaceLoading, workspaceUser } = useWorkspaceStore(
     (state) => ({
       workspace: state.workspace,
@@ -28,13 +29,13 @@ export const Workspace: React.FC<RouteComponentProps> = ({history}) => {
   const [createProject, { loading, error }] = useCreateProjectMutation({
     variables: {
       newProjectInput: {
-        title: "Untitled project",
+        title: faker.fake("{{hacker.adjective}}-{{hacker.noun}}"),
         workspaceUserId: workspaceUser ? workspaceUser.id : "",
       },
     },
     update(_, { data }) {
-      if(data && data.createProject) {
-        history.push(`/app/project/${data.createProject.id}`)
+      if (data && data.createProject) {
+        history.push(`/app/project/${data.createProject.id}`);
       }
     },
     onError() {},
@@ -86,26 +87,29 @@ export const Workspace: React.FC<RouteComponentProps> = ({history}) => {
           <PageNavItem name="Settings" link="/app/workspace/settings" />
         </PageNav>
       </header>
-      <section
-        css={css`
-          padding: ${(p) => `${p.theme.space[7]}px 0 0 ${p.theme.space[8]}px`};
-        `}
-      >
-        <Switch>
-          <Route exact path="/app/workspace" render={() => <Projects />} />
-          <Route
-            exact
-            path="/app/workspace/members"
-            render={() => <Members />}
-          />
-          <Route
-            exact
-            path="/app/workspace/settings"
-            render={() => <Settings />}
-          />
-          <Redirect to="/app/workspace" />
-        </Switch>
-      </section>
+      {workspace && (
+        <section
+          css={css`
+            padding: ${(p) =>
+              `${p.theme.space[7]}px 0 0 ${p.theme.space[8]}px`};
+          `}
+        >
+          <Switch>
+            <Route exact path="/app/workspace" render={() => <Projects />} />
+            <Route
+              exact
+              path="/app/workspace/members"
+              render={() => <Members />}
+            />
+            <Route
+              exact
+              path="/app/workspace/settings"
+              render={() => <Settings />}
+            />
+            <Redirect to="/app/workspace" />
+          </Switch>
+        </section>
+      )}
     </StyledWorkspace>
   );
 };

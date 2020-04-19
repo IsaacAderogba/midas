@@ -86,3 +86,20 @@ export const createProject = gql`
     }
   }
 `;
+
+export const deleteProject = gql`
+  mutation deleteProject($where: ProjectWhere!) {
+    deleteProject(where: $where) {
+      id
+      workspaceId
+      workspaceUserId
+      title
+      thumbnailPhotoURL
+      thumbnailPhotoID
+      inviteShareStatus
+      inviteSharePrivileges
+      createdAt
+      updatedAt
+    }
+  }
+`;
