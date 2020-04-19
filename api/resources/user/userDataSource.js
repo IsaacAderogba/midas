@@ -15,26 +15,29 @@ const USER_TABLE = "User";
 
 class UserAPI extends SQLDataSource {
   async registerUser(user) {
+    let password;
     try {
       const hash = await bcrypt.hash(user.password, 12);
-      user.password = hash;
+      password = hash;
     } catch (err) {
       console.log(err);
       throw err;
     }
 
     try {
-      const userId = await this._createUser(user);
+      const userId = await this._createUser({ ...user, password });
       if (userId) {
         let userDetails = await this._readUser({ id: userId });
 
-        const subject = "Please confirm your email";
-        const mailer = new Mailer(
-          { subject, email: userDetails.email },
-          verificationTemplate(userDetails.token)
-        );
+        if (process.env.DB_ENV !== "test") {
+          const subject = "Please confirm your email";
+          const mailer = new Mailer(
+            { subject, email: userDetails.email },
+            verificationTemplate(userDetails.token)
+          );
 
-        await mailer.send();
+          await mailer.send();
+        }
 
         return {
           userId: userDetails.id.toString(),

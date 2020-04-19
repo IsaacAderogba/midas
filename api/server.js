@@ -106,4 +106,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "public", "index.html"));
 });
 
-module.exports = httpServer;
+module.exports = {
+  httpServer,
+  apolloServer
+};

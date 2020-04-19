@@ -9,7 +9,7 @@
     "start": "node index.js",
     "server": "concurrently \"redis-server\" \"nodemon index.js\"",
     "client": "npm start --prefix client",
-    "test-server": "DB_ENV=test concurrently \"redis-server\" \"jest --watch\"",
+    "test-server": "DB_ENV=test concurrently \"redis-server\" \"jest --watch --runInBand\"",
     "test-client": "npm test --prefix client",
     "electron": "concurrently \"npm run dev\" \"nodemon --exec 'electron .'\""
   },
@@ -40,15 +40,20 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
+    "apollo-boost": "^0.4.7",
+    "cross-fetch": "^3.0.4",
     "electron": "^8.1.1",
     "eslint": "^6.8.0",
+    "graphql": "^15.0.0",
     "jest": "^24.9.0",
     "nodemon": "^2.0.2",
     "redis-server": "^1.2.2",
     "should": "^13.2.3"
   },
   "jest": {
-    "modulePathIgnorePatterns": ["client"],
+    "modulePathIgnorePatterns": [
+      "client"
+    ],
     "globalSetup": "./api/services/jest/globalSetup.js",
     "globalTeardown": "./api/services/jest/globalTeardown.js"
   }
