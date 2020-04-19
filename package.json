@@ -38,14 +38,14 @@
     "nexus": "^0.12.0-rc.14",
     "pg": "^7.18.2",
     "sendgrid": "^5.2.3",
-    "uuid": "^7.0.3"
+    "uuid": "^7.0.3",
+    "cross-fetch": "^3.0.4",
+    "apollo-boost": "^0.4.7",
+    "graphql": "^15.0.0"
   },
   "devDependencies": {
-    "apollo-boost": "^0.4.7",
-    "cross-fetch": "^3.0.4",
     "electron": "^8.1.1",
     "eslint": "^6.8.0",
-    "graphql": "^15.0.0",
     "jest": "^24.9.0",
     "nodemon": "^2.0.2",
     "redis-server": "^1.2.2",
