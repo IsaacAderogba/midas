@@ -59,7 +59,7 @@
   },
   "scripts": {
     "start": "concurrently \"react-app-rewired start\" \"npm run gen-types\"",
-    "build": "graphql-codegen --config codegen.js && react-app-rewired build && mv build ../public",
+    "build": "react-app-rewired build && mv build ../public",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
     "gen-types": "graphql-codegen --config codegen.js --watch"
