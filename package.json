@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "npm run build --prefix client",
+    "build": "npm install --prefix client && npm run build --prefix client",
     "test": "concurrently \"npm run test-server\" \"npm run test-client\"",
     "start": "node index.js",
     "server": "concurrently \"redis-server\" \"nodemon index.js\"",
