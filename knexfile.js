@@ -1,6 +1,18 @@
 // Todo - investigate __dirname
 // TODO - create PROCFILE so heroku runs knex migrate:latest
 module.exports = {
+  test: {
+    client: "pg",
+    connection: "postgres://localhost/midas-test",
+    migrations: {
+      directory: __dirname + "/db/migrations",
+      tableName: "db_migrations"
+    },
+    seeds: {
+      directory: __dirname + "/db/seeds"
+    },
+    useNullAsDefault: true
+  },
   development: {
     client: "pg",
     connection: "postgres://localhost/midas",
