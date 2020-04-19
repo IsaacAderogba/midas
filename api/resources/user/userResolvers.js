@@ -31,11 +31,15 @@ const Mutation = extendType({
         loginInput: LoginInput,
       },
       resolve: async (parent, args, { dataSources }) => {
-        const user = await dataSources.userAPI.loginUser({
-          ...args.loginInput,
-        });
-        if (!user) throw userErrors.EmailPasswordWrong;
-        return user;
+        try {
+          const user = await dataSources.userAPI.loginUser({
+            ...args.loginInput,
+          });
+          if (!user) return userErrors.EmailPasswordWrong;
+          return user;
+        } catch (err) {
+          return new Error(err);
+        }
       },
     });
     t.field(userMutationKeys.registerUser, {
