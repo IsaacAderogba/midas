@@ -9,7 +9,7 @@ function createWindow() {
     webPreferences: { nodeIntegration: true }
   });
 
-  mainWindow.loadURL('http://localhost:3000');
+  mainWindow.loadURL(process.env.DOMAIN);
 
   // Listen for window being closed
   mainWindow.on("closed", () => {
