@@ -1,23 +1,28 @@
 {
   "name": "midas",
   "version": "1.0.0",
-  "description": "",
+  "description": "A collaborative, rapid prototyping tool",
   "main": "main.js",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "npm install --prefix client && npm run build --prefix client",
-    "test": "concurrently \"npm run test-server\" \"npm run test-client\"",
     "start": "node index.js",
-    "server": "concurrently \"redis-server\" \"nodemon index.js\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "client": "npm start --prefix client",
-    "test-server": "DB_ENV=test concurrently \"redis-server\" \"jest --watch --runInBand\"",
-    "test-client": "npm test --prefix client",
-    "electron": "concurrently \"npm run dev\" \"nodemon --exec 'electron .'\""
+    "server": "concurrently \"redis-server\" \"nodemon index.js\"",
+    "electron": "concurrently \"npm run dev\" \"nodemon --exec 'electron .'\"",
+    "test": "concurrently \"npm run test:server\" \"npm run test:client\"",
+    "test:client": "npm test --prefix client",
+    "test:server": "DB_ENV=test concurrently \"redis-server\" \"jest --watch --runInBand\"",
+    "build": "npm install --prefix client && npm run build --prefix client",
+    "build:electron": "electron-builder -mwl",
+    "release:electron": "electron-builder -mwl -p 'onTagOrDraft'"
   },
+  "repository": "https://github.com/IsaacAderogba/midas",
+  "homepage": "https://getmidas.herokuapp.com",
   "keywords": [],
-  "author": "",
+  "author": "Isaac Aderogba",
   "license": "ISC",
   "dependencies": {
+    "apollo-boost": "^0.4.7",
     "apollo-server": "^2.11.0",
     "apollo-server-cache-redis": "^1.1.5",
     "apollo-server-express": "^2.11.0",
@@ -25,9 +30,13 @@
     "cloudinary": "^1.21.0",
     "concurrently": "^5.1.0",
     "cors": "^2.8.5",
+    "cross-fetch": "^3.0.4",
     "datasource-sql": "^1.1.1",
     "dotenv": "^8.2.0",
+    "electron-log": "^4.1.1",
+    "electron-updater": "^4.2.5",
     "express": "^4.17.1",
+    "graphql": "^15.0.0",
     "graphql-middleware": "^4.0.2",
     "graphql-redis-subscriptions": "^2.2.1",
     "graphql-shield": "^7.2.1",
@@ -38,13 +47,11 @@
     "nexus": "^0.12.0-rc.14",
     "pg": "^7.18.2",
     "sendgrid": "^5.2.3",
-    "uuid": "^7.0.3",
-    "cross-fetch": "^3.0.4",
-    "apollo-boost": "^0.4.7",
-    "graphql": "^15.0.0"
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
     "electron": "^8.1.1",
+    "electron-builder": "^22.5.1",
     "eslint": "^6.8.0",
     "jest": "^24.9.0",
     "nodemon": "^2.0.2",
@@ -57,5 +64,23 @@
     ],
     "globalSetup": "./api/services/jest/globalSetup.js",
     "globalTeardown": "./api/services/jest/globalTeardown.js"
+  },
+  "build": {
+    "appId": "com.isaacaderogba.midas",
+    "copyright": "Copyright 2020 Isaac Aderogba",
+    "publish": {
+      "provider": "github"
+    },
+    "mac": {
+      "category": "public.app-category.graphics-design"
+    },
+    "win": {
+      "certificateFile": "private/IsaacAderogbaMacCertificate.p12",
+      "certificatePassword": "",
+      "verifyUpdateCodeSignature": false
+    },
+    "linux": {
+      "category": "Graphics"
+    }
   }
 }
