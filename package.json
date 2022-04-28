@@ -30,7 +30,7 @@
     "cloudinary": "^1.21.0",
     "concurrently": "^5.1.0",
     "cors": "^2.8.5",
-    "cross-fetch": "^3.0.4",
+    "cross-fetch": "^3.1.5",
     "datasource-sql": "^1.1.1",
     "dotenv": "^8.2.0",
     "electron-log": "^4.1.1",
