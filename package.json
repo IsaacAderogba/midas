@@ -35,7 +35,7 @@
     "dotenv": "^8.2.0",
     "electron-log": "^4.1.1",
     "electron-updater": "^4.2.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "graphql": "^15.0.0",
     "graphql-middleware": "^4.0.2",
     "graphql-redis-subscriptions": "^2.2.1",
